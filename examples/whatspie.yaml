@@ -1,10 +1,13 @@
 openapi: 3.0.0
 info:
   title: Whatspie Saas API
-  description: |-
+  description: >-
     # Whatspie API Documentation
 
-    Welcome to Whatspie API Documentation this documentation describe all Whatspie Feature in Restfull API. To using this APIs you need to add token on every request, you can grab your token from **Profile**
+
+    Welcome to Whatspie API Documentation this documentation describe all
+    Whatspie Feature in Restfull API. To using this APIs you need to add token
+    on every request, you can grab your token from **Profile**
   contact: {}
   version: '1.0'
 servers:
@@ -17,6 +20,8 @@ paths:
         - Messages
       summary: Get Message
       operationId: GetMessage
+      security:
+        - bearer: []
       parameters:
         - name: device
           in: query
@@ -43,8 +48,6 @@ paths:
         - Messages
       summary: Sending Message
       description: |-
-        This Request Using Auth
-
         This endpoint is used to send messages of different types.
 
         **1. Sending Text Message:**
@@ -65,6 +68,8 @@ paths:
         **6. Sending Template Message:**
         Send a message using a predefined template.
       operationId: Sending Message
+      security:
+        - bearer: []
       requestBody:
         description: ''
         content:
@@ -193,6 +198,8 @@ paths:
         - Devices
       summary: Create Device (only for reseller)
       operationId: CreateDevice(onlyforreseller)
+      security:
+        - bearer: []
       requestBody:
         description: ''
         content:
@@ -286,15 +293,8 @@ paths:
         - Devices
       summary: Get Device List
       operationId: GetDeviceList
-      parameters:
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: application/json
+      security:
+        - bearer: []
       responses:
         '200':
           description: OK
@@ -475,6 +475,8 @@ paths:
         - Devices
       summary: Get QR Code
       operationId: GetQRCode
+      security:
+        - bearer: []
       parameters:
         - name: response_type
           in: query
@@ -485,14 +487,6 @@ paths:
           schema:
             type: string
             example: url
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: application/json
       responses:
         '200':
           description: OK
@@ -551,15 +545,8 @@ paths:
         - Devices
       summary: Get Device Information
       operationId: GetDeviceInformation
-      parameters:
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: application/json
+       security:
+        - bearer: []
       responses:
         '200':
           description: OK
@@ -674,6 +661,8 @@ paths:
         - Group
       summary: Get Group List
       operationId: GetGroupList
+      security:
+        - bearer: []
       parameters:
         - name: device
           in: query
@@ -685,14 +674,6 @@ paths:
             type: integer
             format: int64
             example: 6281776521626
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: application/json
       responses:
         '200':
           description: ''
@@ -704,15 +685,8 @@ paths:
         - Group
       summary: Get Group By ID
       operationId: GetGroupByID
-      parameters:
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: application/json
+      security:
+        - bearer: []
       responses:
         '200':
           description: OK
@@ -829,15 +803,8 @@ paths:
         - Group
       summary: Update Group Information
       operationId: UpdateGroupInformation
-      parameters:
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: application/json
+       security:
+        - bearer: []
       requestBody:
         description: ''
         content:
@@ -848,13 +815,15 @@ paths:
                 - example:
                     subject: Keluarga Bahagia
                     description: 'Ini deskrispsi '
-                    profile_url: https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
+                    profile_url: >-
+                      https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
                     permissions:
                       allow_send: true
             example:
               subject: Keluarga Bahagia
               description: 'Ini deskrispsi '
-              profile_url: https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
+              profile_url: >-
+                https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
               permissions:
                 allow_send: true
         required: true
@@ -907,10 +876,14 @@ paths:
                   - $ref: '#/components/schemas/ValidationErrorResponse1'
                   - example:
                       code: 406
-                      message: 'Key: ''GroupUpdateRequest.Subject'' Error:Field validation for ''Subject'' failed on the ''required'' tag'
+                      message: >-
+                        Key: 'GroupUpdateRequest.Subject' Error:Field validation
+                        for 'Subject' failed on the 'required' tag
               example:
                 code: 406
-                message: 'Key: ''GroupUpdateRequest.Subject'' Error:Field validation for ''Subject'' failed on the ''required'' tag'
+                message: >-
+                  Key: 'GroupUpdateRequest.Subject' Error:Field validation for
+                  'Subject' failed on the 'required' tag
       deprecated: false
   /groups/495/send:
     post:
@@ -918,15 +891,9 @@ paths:
         - Group
       summary: Send Message to Group by Group ID
       operationId: SendMessagetoGroupbyGroupID
-      parameters:
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: application/json
+       security:
+        - bearer: []
+     
       requestBody:
         description: ''
         content:
@@ -1047,15 +1014,8 @@ paths:
         - Group
       summary: Add Member to group
       operationId: AddMembertogroup
-      parameters:
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: application/json
+      security:
+        - bearer: []
       requestBody:
         description: ''
         content:
@@ -1158,15 +1118,8 @@ paths:
         - Group
       summary: Send Message to Group by WA Group ID
       operationId: SendMessagetoGroupbyWAGroupID
-      parameters:
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: application/json
+      security:
+        - bearer: []
       requestBody:
         description: ''
         content:
@@ -1193,17 +1146,13 @@ paths:
       tags:
         - Contacts
       summary: Check phone number is on WhatsApp
-      description: This API to check is phone number registered as WhatsApp number. This API only available on *STARTUP* Package. to use this function you must re-pair your device first to recieved this update
+      description: >-
+        This API to check is phone number registered as WhatsApp number. This
+        API only available on *STARTUP* Package. to use this function you must
+        re-pair your device first to recieved this update
       operationId: CheckphonenumberisonWhatsApp
-      parameters:
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: application/json
+      security:
+        - bearer: []
       requestBody:
         description: ''
         content:
@@ -1591,7 +1540,7 @@ components:
         created_at: '2022-03-19T09:27:21Z'
         updated_at: '2022-03-19T09:27:21Z'
     SendingTextMessageRequest:
-      title: Sending Text Message
+      title: SendingTextMessageRequest
       required:
         - device
         - receiver
@@ -1758,7 +1707,8 @@ components:
         receiver: '6285603051722'
         type: image
         message: Amonggfdfg Us
-        file_url: https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
+        file_url: >-
+          https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
         simulate_typing: 1
     SuccessResponse1:
       title: SuccessResponse1
@@ -1786,7 +1736,8 @@ components:
           chat_type: image
           body: Among Us
           status: PENDING
-          file_url: https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
+          file_url: >-
+            https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
           created_at: '2022-04-07T11:03:28.391493+07:00'
           updated_at: '2022-04-07T11:03:28.391493+07:00'
     Data1:
@@ -1834,7 +1785,8 @@ components:
         chat_type: image
         body: Among Us
         status: PENDING
-        file_url: https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
+        file_url: >-
+          https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
         created_at: '2022-04-07T11:03:28.391493+07:00'
         updated_at: '2022-04-07T11:03:28.391493+07:00'
     FailedResponse1:
@@ -1855,7 +1807,9 @@ components:
           nullable: true
       example:
         code: 406
-        message: 'Key: ''CreateTextMessageRequest.FileUrl'' Error:Field validation for ''FileUrl'' failed on the ''url'' tag'
+        message: >-
+          Key: 'CreateTextMessageRequest.FileUrl' Error:Field validation for
+          'FileUrl' failed on the 'url' tag
         data: null
     SendingFileMessageRequest:
       title: SendingFileMessageRequest
@@ -2466,7 +2420,8 @@ components:
         status: 200
         message: Device Disconnected
         data:
-          qr: data:image/png;base64,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
+          qr: >-
+            data:image/png;base64,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
     Data4:
       title: Data4
       required:
@@ -2476,7 +2431,8 @@ components:
         qr:
           type: string
       example:
-        qr: data:image/png;base64,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
+        qr: >-
+          data:image/png;base64,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
     GetQRURLResponse:
       title: GetQRURLResponse
       required:
@@ -2877,7 +2833,8 @@ components:
       example:
         subject: Keluarga Bahagia
         description: 'Ini deskrispsi '
-        profile_url: https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
+        profile_url: >-
+          https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
         permissions:
           allow_send: true
     Permissions:
@@ -2904,7 +2861,9 @@ components:
           type: string
       example:
         code: 406
-        message: 'Key: ''GroupUpdateRequest.Subject'' Error:Field validation for ''Subject'' failed on the ''required'' tag'
+        message: >-
+          Key: 'GroupUpdateRequest.Subject' Error:Field validation for 'Subject'
+          failed on the 'required' tag
     SuccessResponse4:
       title: SuccessResponse4
       required:
@@ -3241,5 +3200,8 @@ tags:
   - name: Messages
   - name: Devices
   - name: Group
-    description: 'This API is to interac with Whatsapp group function such as: Creating Group, Send Message to group, get group member and etc. This functin only available on STARTUP Package'
+    description: >-
+      This API is to interac with Whatsapp group function such as: Creating
+      Group, Send Message to group, get group member and etc. This functin only
+      available on STARTUP Package
   - name: Contacts
