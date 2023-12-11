@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Whatspie Saas API
+  title: Whatspie Sass API
   description: >-
     # Whatspie API Documentation
 
@@ -9,7 +9,7 @@ info:
     Whatspie Feature in Restfull API. To using this APIs you need to add token
     on every request, you can grab your token from **Profile**
   contact: {}
-  version: '1.0'
+  version: '2.0.0'
 servers:
   - url: https://api.whatspie.com
     variables: {}
@@ -3174,3 +3174,26 @@ tags:
       Group, Send Message to group, get group member and etc. This functin only
       available on STARTUP Package
   - name: Contacts
+  - name: Webhook
+x-webhooks:
+  receiveWebhook:
+    post:
+      summary: Receive Webhook
+      description: To receive a webhook message you need to configure the webhook url on each devices configuration. go to Devices -> configuration and add webhook url.
+      operationId: receiveWebhook
+      tags:
+        - Webhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+               oneOf:
+                - $ref: '#/components/schemas/SendingTextMessageRequest'
+                - $ref: '#/components/schemas/SendingFileMessageRequest'
+                - $ref: '#/components/schemas/SendingImageMessageRequest'
+                - $ref: '#/components/schemas/SendingListMessageRequest'
+                - $ref: '#/components/schemas/SendingLocationMessageRequest'
+                - $ref: '#/components/schemas/SendingTemplateMessageRequest'
+      responses:
+        "200":
+          description: Return a 200 status to indicate that the data was received successfully
