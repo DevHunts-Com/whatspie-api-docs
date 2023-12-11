@@ -258,7 +258,7 @@ paths:
             application/json; charset=utf-8:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/SuccessResponse2'
+                  - $ref: '#/components/schemas/DevicesSuccessResponse'
                   - example:
                       status: 200
                       message: OK
@@ -287,6 +287,12 @@ paths:
                   updated_at: '2022-09-09T01:36:11.000Z'
                   created_at: '2022-09-09T01:36:11.000Z'
                   webhook_url: null
+        '403':
+          $ref: '#/components/schemas/GeneralForbidden'
+        '404':
+          $ref: '#/components/schemas/GeneralNotFound'
+        '422':
+          $ref: '#/components/schemas/GeneralValidation'
       deprecated: false
     get:
       tags:
@@ -339,7 +345,7 @@ paths:
             application/json; charset=utf-8:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/SuccessResponse3'
+                  - $ref: '#/components/schemas/GetDeviceListResponse'
                   - example:
                       statu: 200
                       message: OK
@@ -468,6 +474,12 @@ paths:
                     updated_at: '2022-03-16T19:22:22.000Z'
                     Server:
                       name: ASIA (IDN1)
+        '403':
+          $ref: '#/components/schemas/GeneralForbidden'
+        '404':
+          $ref: '#/components/schemas/GeneralNotFound'
+        '422':
+          $ref: '#/components/schemas/GeneralValidation'
       deprecated: false
   /devices/5/qr:
     get:
@@ -538,6 +550,12 @@ paths:
               example:
                 status: 200
                 message: Device is Connected
+        '403':
+          $ref: '#/components/schemas/GeneralForbidden'
+        '404':
+          $ref: '#/components/schemas/GeneralNotFound'
+        '422':
+          $ref: '#/components/schemas/GeneralValidation'
       deprecated: false
   /devices/6:
     get:
@@ -591,7 +609,7 @@ paths:
             application/json; charset=utf-8:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/SuccessResposne'
+                  - $ref: '#/components/schemas/GetDeviceInformationResponse'
                   - example:
                       status: 200
                       message: OK
@@ -645,7 +663,7 @@ paths:
             application/json; charset=utf-8:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ForbiddenResponse3'
+                  - $ref: '#/components/schemas/GetDeviceForbiddenResponse'
                   - example:
                       code: 403
                       message: FORBIDDEN
@@ -654,6 +672,10 @@ paths:
                 code: 403
                 message: FORBIDDEN
                 data: null
+        '404':
+          $ref: '#/components/schemas/GeneralNotFound'
+        '422':
+          $ref: '#/components/schemas/GeneralValidation'
       deprecated: false
   /groups:
     get:
@@ -676,8 +698,13 @@ paths:
             example: 6281776521626
       responses:
         '200':
-          description: ''
-          headers: {}
+          $ref: '#/components/schemas/GeneralSuccess'
+        '403':
+          $ref: '#/components/schemas/GeneralForbidden'
+        '404':
+          $ref: '#/components/schemas/GeneralNotFound'
+        '422':
+          $ref: '#/components/schemas/GeneralValidation'
       deprecated: false
   /groups/482:
     get:
@@ -768,6 +795,12 @@ paths:
                   image_url: null
                   created_at: '2022-05-23T20:17:58.000Z'
                   updated_at: '2022-05-23T20:17:58.000Z'
+        '403':
+          $ref: '#/components/schemas/GeneralForbidden'
+        '404':
+          $ref: '#/components/schemas/GeneralNotFound'
+        '422':
+          $ref: '#/components/schemas/GeneralValidation'
         '500':
           description: Internal Server Error
           headers:
@@ -787,7 +820,7 @@ paths:
             application/json; charset=utf-8:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ForbiddenResponse1'
+                  - $ref: '#/components/schemas/GetGroupForbiddenResponse'
                   - example:
                       code: 500
                       message: FORBIDDEN
@@ -829,31 +862,11 @@ paths:
         required: true
       responses:
         '200':
-          description: OK
-          headers:
-            Date:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-                  example: Fri, 08 Apr 2022 02:09:33 GMT
-            Content-Length:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-                  example: '27'
-          content:
-            application/json; charset=utf-8:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/SuccessResponse4'
-                  - example:
-                      code: 200
-                      message: OK
-              example:
-                code: 200
-                message: OK
+          $ref: '#/components/schemas/GeneralSuccess'
+        '403':
+          $ref: '#/components/schemas/GeneralForbidden'
+        '404':
+          $ref: '#/components/schemas/GeneralNotFound'
         '406':
           description: Not Acceptable
           headers:
@@ -873,7 +886,7 @@ paths:
             application/json; charset=utf-8:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ValidationErrorResponse1'
+                  - $ref: '#/components/schemas/GetGroupInformationResponse'
                   - example:
                       code: 406
                       message: >-
@@ -884,6 +897,8 @@ paths:
                 message: >-
                   Key: 'GroupUpdateRequest.Subject' Error:Field validation for
                   'Subject' failed on the 'required' tag
+        '422':
+          $ref: '#/components/schemas/GeneralValidation'
       deprecated: false
   /groups/495/send:
     post:
@@ -1006,6 +1021,12 @@ paths:
                   file_size: null
                   file_mime: null
                   updated_at: null
+        '403':
+          $ref: '#/components/schemas/GeneralForbidden'
+        '404':
+          $ref: '#/components/schemas/GeneralNotFound'
+        '422':
+          $ref: '#/components/schemas/GeneralValidation'
       deprecated: false
   /api/groups/2/members/add:
     post:
@@ -1103,13 +1124,19 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/AddMembertogroup'
+                  - $ref: '#/components/schemas/AddMembertogroupResponse'
                   - example:
                       code: 200
                       message: Success adding participants to group
               example:
                 code: 200
                 message: Success adding participants to group
+        '403':
+          $ref: '#/components/schemas/GeneralForbidden'
+        '404':
+          $ref: '#/components/schemas/GeneralNotFound'
+        '422':
+          $ref: '#/components/schemas/GeneralValidation'
       deprecated: false
   /groups/1234567890@g.us/send:
     post:
@@ -1139,6 +1166,12 @@ paths:
         '200':
           description: ''
           headers: {}
+        '403':
+          $ref: '#/components/schemas/GeneralForbidden'
+        '404':
+          $ref: '#/components/schemas/GeneralNotFound'
+        '422':
+          $ref: '#/components/schemas/GeneralValidation'
       deprecated: false
   /contacts/check:
     post:
@@ -1214,7 +1247,7 @@ paths:
             application/json; charset=utf-8:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/SuccessResponse5'
+                  - $ref: '#/components/schemas/CheckNumberOnWhatsappSuccessResponse'
                   - example:
                       status: 200
                       message: OK
@@ -1231,6 +1264,10 @@ paths:
                     is_on_whatsapp: false
                   - phone: '6285603051722'
                     is_on_whatsapp: true
+        '403':
+          $ref: '#/components/schemas/GeneralForbidden'
+        '404':
+          $ref: '#/components/schemas/GeneralNotFound'
         '422':
           description: Unprocessable Entity
           headers:
@@ -1304,7 +1341,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/FailedResponse3'
+                  - $ref: '#/components/schemas/CheckNumberWhatsappFailedResponse'
                   - example:
                       message: The given data was invalid.
                       errors:
@@ -1368,7 +1405,7 @@ components:
                 example: Not Found
                 description: HTTP Status Message
     GetMessageSuccess:
-      title: GetMessageSuccess
+      title: Get Message Success
       required:
         - code
         - message
@@ -1383,7 +1420,7 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/Datum'
+            $ref: '#/components/schemas/GetMessageSuccessData'
           description: ''
       example:
         code: 200
@@ -1494,8 +1531,8 @@ components:
                 type: string
                 example: Forbidden
                 description: HTTP Status Message
-    Datum:
-      title: Datum
+    GetMessageSuccessData:
+      title: Get Message Success Data
       required:
         - id
         - device_id
@@ -1539,7 +1576,7 @@ components:
         created_at: '2022-03-19T09:27:21Z'
         updated_at: '2022-03-19T09:27:21Z'
     SendingTextMessageRequest:
-      title: SendingTextMessageRequest
+      title: Sending Text Message Request
       required:
         - device
         - receiver
@@ -1565,8 +1602,8 @@ components:
         type: chat
         message: Hi, this is my first message from Whatspie!
         simulate_typing: 1
-    QuoteExceed1:
-      title: QuoteExceed1
+    QuoteExceed:
+      title: Quote Exceed
       required:
         - code
         - message
@@ -1657,8 +1694,8 @@ components:
         status: PENDING
         created_at: '2022-04-07T10:35:43.346015+07:00'
         updated_at: '2022-04-07T10:35:43.346015+07:00'
-    ForbiddenResponse1:
-      title: ForbiddenResponse1
+    GetGroupForbiddenResponse:
+      title: Get Group Forbidden Response
       required:
         - code
         - message
@@ -1678,7 +1715,7 @@ components:
         message: FORBIDDEN
         error: null
     SendingImageMessageRequest:
-      title: SendingImageMessageRequest
+      title: Send Image Message
       required:
         - device
         - receiver
@@ -1709,38 +1746,8 @@ components:
         file_url: >-
           https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
         simulate_typing: 1
-    SuccessResponse1:
-      title: SuccessResponse1
-      required:
-        - code
-        - message
-        - data
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-        data:
-          $ref: '#/components/schemas/Data1'
-      example:
-        code: 200
-        message: OK
-        data:
-          id: 7637526
-          device_id: 5
-          from_number: '6281776521626'
-          to_number: '6285603051722'
-          chat_type: image
-          body: Among Us
-          status: PENDING
-          file_url: >-
-            https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
-          created_at: '2022-04-07T11:03:28.391493+07:00'
-          updated_at: '2022-04-07T11:03:28.391493+07:00'
-    Data1:
-      title: Data1
+    SendingFileMessageData:
+      title: Sending File Message Data
       required:
         - id
         - device_id
@@ -1788,30 +1795,8 @@ components:
           https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
         created_at: '2022-04-07T11:03:28.391493+07:00'
         updated_at: '2022-04-07T11:03:28.391493+07:00'
-    FailedResponse1:
-      title: FailedResponse1
-      required:
-        - code
-        - message
-        - data
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-        data:
-          type: string
-          nullable: true
-      example:
-        code: 406
-        message: >-
-          Key: 'CreateTextMessageRequest.FileUrl' Error:Field validation for
-          'FileUrl' failed on the 'url' tag
-        data: null
     SendingFileMessageRequest:
-      title: SendingFileMessageRequest
+      title: Send File Message Request
       required:
         - device
         - receiver
@@ -1846,7 +1831,7 @@ components:
         file_url: http://www.africau.edu/images/default/sample.pdf
         simulate_typing: 1
     SendingFileMessage:
-      title: SendingFileMessage
+      title: Send File Message
       required:
         - code
         - message
@@ -1859,7 +1844,7 @@ components:
         message:
           type: string
         data:
-          $ref: '#/components/schemas/Data1'
+          $ref: '#/components/schemas/SendingFileMessageData'
       example:
         code: 200
         message: OK
@@ -1875,7 +1860,7 @@ components:
           created_at: '2022-04-07T11:16:28.376977+07:00'
           updated_at: '2022-04-07T11:16:28.376977+07:00'
     SendingLocationMessageRequest:
-      title: SendingLocationMessageRequest
+      title: Send Location Message
       required:
         - device
         - receiver
@@ -1931,7 +1916,7 @@ components:
         degreesLatitude: 24.121231
         degreesLongitude: 55.1121221
     SendingTemplateMessageRequest:
-      title: SendingTemplateMessageRequest
+      title: Send Template Message
       required:
         - device
         - receiver
@@ -1947,7 +1932,7 @@ components:
         type:
           type: string
         params:
-          $ref: '#/components/schemas/Params1'
+          $ref: '#/components/schemas/TemplateMessageParams'
         simulate_typing:
           type: integer
           format: int32
@@ -1973,8 +1958,8 @@ components:
                 displayText: Me as Quick Reply
                 url: https://whatspie.com
         simulate_typing: 1
-    Params1:
-      title: Params1
+    TemplateMessageParams:
+      title: Template Message Params
       required:
         - text
         - footer
@@ -2089,7 +2074,7 @@ components:
         type:
           type: string
         params:
-          $ref: '#/components/schemas/Params2'
+          $ref: '#/components/schemas/SendListMessageParams'
         simulate_typing:
           type: integer
           format: int32
@@ -2120,8 +2105,8 @@ components:
                   rowId: option4
                   description: Im here
         simulate_typing: 1
-    Params2:
-      title: Params2
+    SendListMessageParams:
+      title: Send List Message Params
       required:
         - title
         - text
@@ -2141,7 +2126,7 @@ components:
         sections:
           type: array
           items:
-            $ref: '#/components/schemas/Section'
+            $ref: '#/components/schemas/SectionListMessage'
           description: ''
       example:
         title: Amazing whatspie List message
@@ -2165,8 +2150,8 @@ components:
               - title: Option 4
                 rowId: option4
                 description: Im here
-    Section:
-      title: Section
+    SectionListMessage:
+      title: Section List Message
       required:
         - title
         - rows
@@ -2177,7 +2162,7 @@ components:
         rows:
           type: array
           items:
-            $ref: '#/components/schemas/Row'
+            $ref: '#/components/schemas/RowListMessage'
           description: ''
       example:
         title: Section 1
@@ -2188,8 +2173,8 @@ components:
           - title: Option 2
             rowId: option2
             description: Im here
-    Row:
-      title: Row
+    RowListMessage:
+      title: Row List Message
       required:
         - title
         - rowId
@@ -2207,7 +2192,7 @@ components:
         rowId: option1
         description: Im here
     SendingButtonMessageRequest:
-      title: SendingButtonMessageRequest
+      title: Send Button Message
       required:
         - device
         - receiver
@@ -2223,7 +2208,7 @@ components:
         type:
           type: string
         params:
-          $ref: '#/components/schemas/Params3'
+          $ref: '#/components/schemas/SendButtonMessageParams'
         simulate_typing:
           type: integer
           format: int32
@@ -2240,8 +2225,8 @@ components:
                 displayText: Button 1
               type: 1
         simulate_typing: 1
-    Params3:
-      title: Params3
+    SendButtonMessageParams:
+      title: Send Button Message Params
       required:
         - text
         - footer
@@ -2309,8 +2294,8 @@ components:
       example:
         package: STARTUP240K
         phone: '62856123456'
-    SuccessResponse2:
-      title: SuccessResponse2
+    DevicesSuccessResponse:
+      title: Devices Success Response
       required:
         - status
         - message
@@ -2323,7 +2308,7 @@ components:
         message:
           type: string
         data:
-          $ref: '#/components/schemas/Data3'
+          $ref: '#/components/schemas/DeviceData'
       example:
         status: 200
         message: OK
@@ -2338,8 +2323,8 @@ components:
           updated_at: '2022-09-09T01:36:11.000Z'
           created_at: '2022-09-09T01:36:11.000Z'
           webhook_url: null
-    Data3:
-      title: Data3
+    DeviceData:
+      title: Device Data
       required:
         - id
         - server_id
@@ -2386,7 +2371,7 @@ components:
         created_at: '2022-09-09T01:36:11.000Z'
         webhook_url: null
     Devicealreadyconnected:
-      title: Devicealreadyconnected
+      title: Device Already Connected
       required:
         - status
         - message
@@ -2401,7 +2386,7 @@ components:
         status: 200
         message: Device is Connected
     GetQRCode:
-      title: GetQRCode
+      title: Get QR Code
       required:
         - status
         - message
@@ -2414,15 +2399,15 @@ components:
         message:
           type: string
         data:
-          $ref: '#/components/schemas/Data4'
+          $ref: '#/components/schemas/DeviceAlreadyConnectedData'
       example:
         status: 200
         message: Device Disconnected
         data:
           qr: >-
             data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARQAAAEUCAYAAADqcMl5AAAAAklEQVR4AewaftIAABJESURBVO3BQY4YybLgQDJR978yR0tfBZDIKLX+GzezP1hrrQse1lrrkoe11rrkYa21LnlYa61LHtZa65KHtda65GGttS55WGutSx7WWuuSh7XWuuRhrbUueVhrrUse1lrrkoe11rrkYa21LvnhI5W/qeJE5aTiRGWqmFROKk5UpopJZao4UZkq3lCZKiaVk4o3VKaKSWWqeEPlpOILlaliUpkqJpWTiknlb6r44mGttS55WGutSx7WWuuSHy6ruEnljYoTlaliqphUpopJ5Y2KSWWq+ELlC5WTihOVk4ovVKaKqWJSmVTeqJgq/ksVN6nc9LDWWpc8rLXWJQ9rrXXJD79M5Y2KN1TeqJhU3lA5UZkqvlCZKr6omFTeUJkqpopJ5QuVqWJSOak4UZkqJpWpYlKZKiaV36TyRsVvelhrrUse1lrrkoe11rrkh//PVbyhclJxU8VJxaQyVbxRMalMFScqJyonFZPKScUbKlPFpHKicqJyUjGp/C95WGutSx7WWuuSh7XWuuSH/8+pTBWTyhcqb6hMFScqU8Wk8obKicpJxaQyVUwqk8qJylQxqUwVJypTxaTyRsWkMqlMFf9LHtZa65KHtda65GGttS754ZdV/MsqJpWp4ouKSWWqeEPlROWLijdUJpWpYlI5qXhDZaqYVKaKSWVSmSpOVCaVk4qbKv4lD2utdcnDWmtd8rDWWpf8cJnKf6liUjlRmSomlaliUpkqJpWpYlKZKiaVqWJSmSomlaliUjlRmSpOKiaVqWJSOVGZKn5TxaQyVZxUTConKlPFicq/7GGttS55WGutSx7WWusS+4P/w1S+qJhUflPFicoXFScqJxVvqJxUvKFyUnGi8kbFGypTxYnKScX/koe11rrkYa21LnlYa61LfvhIZaqYVG6qmComlZOKSeWLijdU3qiYVKaKSWWqeEPlJpU3KiaVf5nKScWk8obKTRW/6WGttS55WGutSx7WWuuSHz6qeKPiC5Wp4g2Vm1Smir9JZar4ouJvUplUpop/WcWkclJxovJGxRsqJxVfPKy11iUPa611ycNaa13yw0cqU8VUMalMFScqJypTxW9S+ZdUnKicVEwqU8WkMlVMKm9UnKicVPwmlTcqJpWpYlKZKiaVN1T+Sw9rrXXJw1prXfKw1lqX2B98oHJS8TepTBVvqJxUTCpTxaQyVUwqX1RMKlPFGyonFZPKVPGGylRxovJFxaRyUvE3qZxUfKEyVdz0sNZalzystdYlD2utdckPl1VMKicVk8pJxRsqU8UbFV9U3FRxUnGi8kbFGyo3qUwVJyonKlPFpHKi8kXFScWJylTxhcpU8cXDWmtd8rDWWpc8rLXWJT9cpjJVTCqTylTxhspvUjmpeENlqphUTlS+qHhD5Y2KN1QmlaliUpkq3qg4qXijYlKZKt5QOam4qeKmh7XWuuRhrbUueVhrrUvsDz5QOamYVKaKE5WpYlKZKiaVLyomlZsqvlCZKk5UTiomlZOKL1TeqLhJZaqYVH5TxRcqU8UbKlPFFw9rrXXJw1prXfKw1lqX/PBRxYnKicpJxUnFGxWTylQxqUwVk8pUMalMFScqU8UbKicVJyonFZPKb6p4Q2WqmFSmijcqJpWpYlKZKk5Upor/Sx7WWuuSh7XWuuRhrbUu+eEylaliUnlD5aTiDZWp4qRiUpkqJpUTlaniDZU3KiaVk4oTlaniC5Wp4kRlqjhRmSpOVKaKLyomlaniDZWpYlKZKv6mh7XWuuRhrbUueVhrrUt++EhlqphUvqiYVCaVqWKqOFGZKiaVNyomlX9ZxaQyVUwVk8pUcaJyojJVTBVfqEwVb6icqEwVU8UbKlPFFypTxU0Pa611ycNaa13ysNZal/xwmcpJxaRyonJSMam8UfFGxaTyRsVJxRcVX1RMKicVk8pUMVVMKlPFpHJSMVV8UTGpnFS8oTJVnFR8oTJVTCpTxRcPa611ycNaa13ysNZal9gfXKQyVUwqU8UbKlPFpPJFxYnKFxWTylRxovJGxRsqJxVvqEwVv0llqjhRmSreUJkqJpWTiknlpOILlZOKLx7WWuuSh7XWuuRhrbUu+eGyiptU3qiYVKaKE5UvKn5TxU0qU8UXKlPFpHJS8TdVvKFyojJVnKi8oTJVTCpTxVTxmx7WWuuSh7XWuuRhrbUu+eEjlaliUvmi4g2VqWJSmSreqPibVKaKE5Wp4qRiUpkqTlSmii9UpooTlROVk4o3KiaVLypOVH6TylTxxcNaa13ysNZalzystdYlP3xUMalMFZPKpPKbVKaKSWWqeEPljYrfVPFFxYnKVDGpfFHxRsWkMlVMKpPKGxUnFW+onFRMKl+o/KaHtda65GGttS55WGutS364rOKLijdUpooTlROVqeJfonJTxaQyVZyonFRMKlPFGyonFZPKVDGpnFRMKl+oTBWTym+qmFRuelhrrUse1lrrkoe11rrE/uAilZOKN1S+qHhDZaqYVKaKSWWqmFROKk5U3qj4QmWqmFSmijdUTiomlaliUnmj4g2VNyomlaniROWk4kRlqvhND2utdcnDWmtd8rDWWpfYH1ykMlVMKlPFpDJVvKHyRsWkclIxqbxRMalMFW+ofFFxk8pUMalMFb9J5YuKSWWqmFSmijdUTipOVKaKSWWquOlhrbUueVhrrUse1lrrEvuDv0jlpGJSOamYVL6o+EJlqphU3qiYVG6qeEPlpOJE5Y2KE5UvKr5QOamYVKaKE5WTihOVNyq+eFhrrUse1lrrkoe11rrkh7+s4kRlqphUvqiYVE5UTiqmikllqnhDZaqYVKaKSWWqOFE5qZhUTlSmihOVSWWq+KJiUpkq3qj4QmWquKnib3pYa61LHtZa65KHtda6xP7gIpWp4kTlpopJ5aTiRGWqmFSmihOVqWJSmSomlaliUpkqJpXfVPGGyhsVJypvVEwqN1VMKn9TxaRyUvHFw1prXfKw1lqXPKy11iU//DKVqeKk4g2Vk4oTlZOKN1ROKiaVqWJSOVGZKr6oeENlUpkqJpU3KiaVqeKNipOKE5WpYlL5ouINlTcqJpWbHtZa65KHtda65GGttS754SOVN1TeUJkq3lD5TRUnKpPKFxWTyhsVk8qJylRxUjGpnFS8UfFGxaQyVUwqJxWTyonKVDGpnKhMFW+o/E0Pa611ycNaa13ysNZal/zwUcWkclPFGypTxaQyVUwqk8pUcaJyUjGpTCpTxUnFpDJVfFHxRcWkcpPKb6r4omJSeaPijYoTld/0sNZalzystdYlD2utdckPf1nFpDKp3KQyVbxRMalMFScVJxWTyqRyUvGGyonKTSonKl9UnKi8UTGpvFExqUwVk8qk8n/Zw1prXfKw1lqXPKy11iX2Bx+onFRMKlPFpDJV/JdUpoo3VKaKm1SmijdUTiomlZOKE5WpYlKZKk5U3qiYVKaKE5WpYlKZKt5QmSomlaliUnmj4qaHtda65GGttS55WGutS364rOKk4g2VqeINlaniJpU3VL6omCpOVL5QmSp+U8UbFScqX6hMFScVk8pU8YbKVDGpnFScqEwVXzystdYlD2utdcnDWmtd8sNlKlPFpPJGxW9SOak4qZhUpopJZaqYVE5UTipOKr5QmSomlaliqphUTiomlanipOKkYlKZKiaVqWJSmSomlZOKE5Wp4l/ysNZalzystdYlD2utdckPl1WcVLyhMlWcqEwVk8pJxaQyVbyhMlVMKlPFFypTxYnKFypTxaRyUjGpnFRMKlPFpPJGxaQyVUwqU8Wk8obKVPGGyknFb3pYa61LHtZa65KHtda65IePKiaVqWJSOamYKiaVqeJEZaqYVE4qTlTeUJkqTlT+popJZaqYVE4q3qg4UTlROamYVE4qJpUTlaniRGWquKliUvlND2utdcnDWmtd8rDWWpfYH3ygclJxovIvq/hC5aRiUpkq3lD5mypOVE4qJpWTiknlb6o4UZkqJpW/qWJSmSpuelhrrUse1lrrkoe11rrE/uADlTcqTlSmihOVqeJEZaq4SeWk4kTlpGJSmSomlZOKN1Smii9UTipOVKaKSeVvqphUpoovVKaKL1Smii8e1lrrkoe11rrkYa21Lvnho4pJZaqYVKaKqWJSmSpOVKaKqeJvqvibVL5Q+UJlqphUbqqYVE4q3lC5SWWquEllqvibHtZa65KHtda65GGttS754SOVE5UvKiaVk4o3VN6oeEPlpOKkYlKZKr5QmSomlaliUpkqvqg4UZkq3lCZKk4qJpU3Kv4lKr/pYa21LnlYa61LHtZa6xL7g4tUpoovVE4qTlROKr5QeaNiUnmj4g2VNyomlTcqTlR+U8WkclLxm1T+L6n44mGttS55WGutSx7WWusS+4MPVH5TxaQyVUwqU8Wk8kbFpDJVvKEyVbyhMlWcqJxU/CaVk4pJ5aRiUjmpmFSmihOVqWJSmSpOVE4qJpWp4guVqeKmh7XWuuRhrbUueVhrrUvsDz5QeaPiDZXfVDGpnFRMKlPFFyonFZPKScWkMlVMKm9UTConFZPKVDGpnFS8oTJVTCo3VUwqJxUnKm9UnKhMFV88rLXWJQ9rrXXJw1prXfLDRxUnKm+oTBUnKicVN6lMFScqU8UXKicVb6hMFZPKVHFSMam8oXJSMamcVJyoTBWTylQxqXxRMamcVJyovFFx08Naa13ysNZalzystdYl9gcfqEwVk8pNFZPKFxUnKlPFGyonFW+oTBW/SWWqmFROKv5LKlPFicpUcaIyVXyhclLxhcpJxRcPa611ycNaa13ysNZal/xwmcpUMamcVLxRMamcVPwmlZOKE5WTijdUpopJ5Q2VqWJSOVGZKk5UTipOKk5UTlSmihOVqWJSuUllqvgvPay11iUPa611ycNaa11if/CLVE4qTlS+qJhUvqiYVL6omFROKv4mlTcqJpWpYlI5qXhD5Y2KE5V/ScWkclJxojJVfPGw1lqXPKy11iUPa611if3BBypTxRsqU8UbKlPFpPKbKiaVNypOVG6qmFS+qHhD5Y2KE5U3Kk5UpopJ5Y2KSWWqeENlqphUTiomlanii4e11rrkYa21LnlYa61L7A9+kcpNFScqJxUnKlPFpHJScZPKVDGpTBWTym+qmFSmikllqphUpopJZaqYVN6oOFGZKiaVLypOVE4q3lA5qfjiYa21LnlYa61LHtZa6xL7gw9U3qiYVKaKE5Wp4iaVqeJEZao4UZkqTlSmihOVqWJSmSomlZOKE5WTiptUpooTlZOKL1ROKiaVk4pJ5aTiRGWquOlhrbUueVhrrUse1lrrEvuDD1S+qDhROak4UZkqTlROKiaVk4ovVE4qvlC5qeJE5Y2KSWWqeENlqphUbqqYVH5TxaQyVfymh7XWuuRhrbUueVhrrUt++KjiN1WcqHyhMlVMKicVJypfVEwqk8pNFW+o3FTxhspUMalMFZPKVPFfqnhDZVI5UZkqbnpYa61LHtZa65KHtda65IePVP6miqnii4qTiknlpopJZVI5qXhD5Q2VqeI3qZxUnKhMFZPKVHGiMlVMKr9JZap4o+JEZar44mGttS55WGutSx7WWuuSHy6ruEnlROWLii8qTlSmikllqphUpopJ5Y2KSeWk4r9U8UbFFypTxRcVJyonFW9U/Jce1lrrkoe11rrkYa21Lvnhl6m8UfFFxaTym1TeUJkqvqiYVKaKSeVE5TdVTCpTxaRyUnGiMlWcVEwqb1RMKlPFicpNKlPFVHHTw1prXfKw1lqXPKy11iU//I9R+S9V3FQxqZxUnFRMKl9UTCpTxaRyojJVvKFyojJVnFR8UXFScaLyhspUcaIyVXzxsNZalzystdYlD2utdckP/2MqJpWp4kRlqpgqTlTeqJhUpoqpYlL5TRVvVEwqU8WkMlVMKicVU8VNKlPFicpJxRsVk8pU8S95WGutSx7WWuuSh7XWuuSHX1bxmypuqphUpopJ5W9SmSomlaniN6m8ofJGxRcqU8UbFTep3KQyVfyXHtZa65KHtda65GGttS754TKVv0nlpGJS+U0Vk8qJylQxqZyoTBUnKlPFGypTxRsqJypTxRsqU8WkMlVMKlPFpPKbKiaVqWJSmVSmiknlNz2stdYlD2utdcnDWmtdYn+w1loXPKy11iUPa611ycNaa13ysNZalzystdYlD2utdcnDWmtd8rDWWpc8rLXWJQ9rrXXJw1prXfKw1lqXPKy11iUPa611ycNaa13y/wDZY5tzg/6jUQAAAABJRU5ErkJggg==
-    Data4:
-      title: Data4
+    DeviceAlreadyConnectedData:
+      title: Device Already Connected Data
       required:
         - qr
       type: object
@@ -2433,7 +2418,7 @@ components:
         qr: >-
           data:image/png;base64,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
     GetQRURLResponse:
-      title: GetQRURLResponse
+      title: Get QR URL Response
       required:
         - status
         - message
@@ -2446,14 +2431,14 @@ components:
         message:
           type: string
         data:
-          $ref: '#/components/schemas/Data5'
+          $ref: '#/components/schemas/GetQRURLResponseData'
       example:
         status: 200
         message: Device Disconnected
         data:
           url: https://api.whatspie.com/public/devices/<UNIQ_ID>/image
-    Data5:
-      title: Data5
+    GetQRURLResponseData:
+      title: Get QR URL Response Data
       required:
         - url
       type: object
@@ -2462,8 +2447,8 @@ components:
           type: string
       example:
         url: https://api.whatspie.com/public/devices/<UNIQ_ID>/image
-    SuccessResponse3:
-      title: SuccessResponse3
+    GetDeviceListResponse:
+      title: Get Device List Response
       required:
         - statu
         - message
@@ -2478,7 +2463,7 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/Data6'
+            $ref: '#/components/schemas/GetDeviceListResponseData'
           description: ''
       example:
         statu: 200
@@ -2544,8 +2529,8 @@ components:
             updated_at: '2022-03-16T19:22:22.000Z'
             Server:
               name: ASIA (IDN1)
-    Data6:
-      title: Data6
+    GetDeviceListResponseData:
+      title: Get Device List Response Data
       required:
         - id
         - server_id
@@ -2598,8 +2583,8 @@ components:
           type: string
       example:
         name: ASIA (SGP1)
-    ForbiddenResponse3:
-      title: ForbiddenResponse3
+    GetDeviceForbiddenResponse:
+      title: Get Device Forbidden Response
       required:
         - code
         - message
@@ -2618,8 +2603,8 @@ components:
         code: 403
         message: FORBIDDEN
         data: null
-    SuccessResposne:
-      title: SuccessResposne
+    GetDeviceInformationResponse:
+      title: Get Device Information Response
       required:
         - status
         - message
@@ -2632,7 +2617,7 @@ components:
         message:
           type: string
         data:
-          $ref: '#/components/schemas/Data7'
+          $ref: '#/components/schemas/GetDeviceInformationResponseData'
       example:
         status: 200
         message: OK
@@ -2650,8 +2635,8 @@ components:
           Subscription:
             quote_available: '-1'
             quote_used: '1'
-    Data7:
-      title: Data7
+    GetDeviceInformationResponseData:
+      title: Get Device Information Response Data
       required:
         - id
         - server_id
@@ -2714,7 +2699,7 @@ components:
         quote_available: '-1'
         quote_used: '1'
     GetGroupByID:
-      title: GetGroupByID
+      title: Get Group By Id
       required:
         - status
         - data
@@ -2724,7 +2709,7 @@ components:
           type: integer
           format: int32
         data:
-          $ref: '#/components/schemas/Data8'
+          $ref: '#/components/schemas/GetGroupByIDResponseData'
       example:
         status: 200
         data:
@@ -2743,8 +2728,8 @@ components:
           image_url: null
           created_at: '2022-05-23T20:17:58.000Z'
           updated_at: '2022-05-23T20:17:58.000Z'
-    Data8:
-      title: Data8
+    GetGroupByIDResponseData:
+      title: Get Group By ID Response Data
       required:
         - invitation_code
         - participants
@@ -2813,7 +2798,7 @@ components:
         id: '6285156055377'
         admin: null
     UpdateGroupInformationRequest:
-      title: UpdateGroupInformationRequest
+      title: Update Group Information Request
       required:
         - subject
         - description
@@ -2846,8 +2831,8 @@ components:
           type: boolean
       example:
         allow_send: true
-    ValidationErrorResponse1:
-      title: ValidationErrorResponse1
+    GetGroupInformationResponse:
+      title: Get Group Information Response
       required:
         - code
         - message
@@ -2863,23 +2848,8 @@ components:
         message: >-
           Key: 'GroupUpdateRequest.Subject' Error:Field validation for 'Subject'
           failed on the 'required' tag
-    SuccessResponse4:
-      title: SuccessResponse4
-      required:
-        - code
-        - message
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-      example:
-        code: 200
-        message: OK
     SendMessagetoGroupbyGroupIDRequest:
-      title: SendMessagetoGroupbyGroupIDRequest
+      title: Send Message To Group By Group ID
       required:
         - message
         - type
@@ -2891,7 +2861,7 @@ components:
         type:
           type: string
         params:
-          $ref: '#/components/schemas/Params4'
+          $ref: '#/components/schemas/SendMessagetoGroupbyGroupIDRequestParams'
       example:
         message: Hello
         type: chat
@@ -2899,8 +2869,8 @@ components:
           text: Hello @62856123456
           mentions:
             - 62856123456@s.whatsapp.net
-    Params4:
-      title: Params4
+    SendMessagetoGroupbyGroupIDRequestParams:
+      title: Send Message to Group by Group ID Request
       required:
         - text
         - mentions
@@ -2918,7 +2888,7 @@ components:
         mentions:
           - 62856123456@s.whatsapp.net
     SendMessagetoGroup:
-      title: SendMessagetoGroup
+      title: Send Message To Group
       required:
         - status
         - message
@@ -2931,7 +2901,7 @@ components:
         message:
           type: string
         data:
-          $ref: '#/components/schemas/Data9'
+          $ref: '#/components/schemas/SendMessagetoGroupResponseData'
       example:
         status: 200
         message: OK
@@ -2955,8 +2925,8 @@ components:
           file_size: null
           file_mime: null
           updated_at: null
-    Data9:
-      title: Data9
+    SendMessagetoGroupResponseData:
+      title: Send Message to Group Response Data
       required:
         - id
         - device_id
@@ -3047,7 +3017,7 @@ components:
         file_mime: null
         updated_at: null
     AddMembertogroupRequest:
-      title: AddMembertogroupRequest
+      title: Add Member To Group Request
       required:
         - participants
       type: object
@@ -3060,8 +3030,8 @@ components:
       example:
         participants:
           - '6287830605729'
-    AddMembertogroup:
-      title: AddMembertogroup
+    AddMembertogroupResponse:
+      title: Add Member To Group Response
       required:
         - code
         - message
@@ -3076,7 +3046,7 @@ components:
         code: 200
         message: Success adding participants to group
     SendMessagetoGroupbyWAGroupIDRequest:
-      title: SendMessagetoGroupbyWAGroupIDRequest
+      title: Send Message To Group By WA Group ID
       required:
         - type
         - params
@@ -3085,13 +3055,13 @@ components:
         type:
           type: string
         params:
-          $ref: '#/components/schemas/Params5'
+          $ref: '#/components/schemas/SendMessagetoGroupbyWAGroupIDRequestParams'
       example:
         type: chat
         params:
           text: Hello Everyone
-    Params5:
-      title: Params5
+    SendMessagetoGroupbyWAGroupIDRequestParams:
+      title: Send Message to Group by WA Group ID Request Params
       required:
         - text
       type: object
@@ -3101,7 +3071,7 @@ components:
       example:
         text: Hello Everyone
     CheckphonenumberisonWhatsAppRequest:
-      title: CheckphonenumberisonWhatsAppRequest
+      title: Check Phon Number Is On Whatsapp
       required:
         - device
         - phones
@@ -3119,8 +3089,8 @@ components:
         phones:
           - '6281776521626'
           - '6285603051722'
-    SuccessResponse5:
-      title: SuccessResponse5
+    CheckNumberOnWhatsappSuccessResponse:
+      title: Check Number On Whatsapp Success Response
       required:
         - status
         - message
@@ -3135,7 +3105,7 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/Data10'
+            $ref: '#/components/schemas/CheckNumberOnWhatsappSuccessResponseData'
           description: ''
       example:
         status: 200
@@ -3145,8 +3115,8 @@ components:
             is_on_whatsapp: false
           - phone: '6285603051722'
             is_on_whatsapp: true
-    Data10:
-      title: Data10
+    CheckNumberOnWhatsappSuccessResponseData:
+      title: Check Number On Whatsapp Success Response Data
       required:
         - phone
         - is_on_whatsapp
@@ -3173,8 +3143,8 @@ components:
       example:
         device:
           - The selected device is invalid.
-    FailedResponse3:
-      title: FailedResponse3
+    CheckNumberWhatsappFailedResponse:
+      title: Check Number Whatsaapp Failed Response
       required:
         - message
         - errors
