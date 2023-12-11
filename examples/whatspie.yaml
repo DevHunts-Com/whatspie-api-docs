@@ -545,7 +545,7 @@ paths:
         - Devices
       summary: Get Device Information
       operationId: GetDeviceInformation
-       security:
+      security:
         - bearer: []
       responses:
         '200':
@@ -803,7 +803,7 @@ paths:
         - Group
       summary: Update Group Information
       operationId: UpdateGroupInformation
-       security:
+      security:
         - bearer: []
       requestBody:
         description: ''
@@ -891,9 +891,8 @@ paths:
         - Group
       summary: Send Message to Group by Group ID
       operationId: SendMessagetoGroupbyGroupID
-       security:
+      security:
         - bearer: []
-     
       requestBody:
         description: ''
         content:
