@@ -76,6 +76,8 @@
   background-color: var(--openapi-code-orange);
 }
 
+
+/* MY CUSTOM */
 .navbar, .navbar-sidebar {
   background-color: rgb(96, 89, 237);
 }
@@ -86,5 +88,11 @@
 
 [data-theme="light"] .navbar__item:hover, .navbar__link:hover  {
   color: rgb(208, 212, 224);
+}
+
+@media (min-width: 997px) {
+.menu_node_modules-\@docusaurus-theme-classic-lib-theme-DocSidebar-Desktop-Content-styles-module {
+  background-color: rgb(96, 89, 237);
+}
 }
 
