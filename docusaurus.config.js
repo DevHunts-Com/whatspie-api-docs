@@ -134,12 +134,13 @@ const config = {
         docsPluginId: "classic",
         config: {
           whatspie: {
-            specPath: "examples/whatspie.yaml",
+            specPath: "examples/whatspie-v2-theme-2.yaml", // checkpoint source
             outputDir: "docs/whatspie",
             sidebarOptions: {
               groupPathsBy: "tag",
               categoryLinkSource: "tag",
             },
+            version: '2.0.0'
           },
         },
       },
