@@ -20,8 +20,3 @@ yarn-debug.log*
 yarn-error.log*
 
 # MY GIT IGNORE
-docs/
-!docs/intro.md
-
-examples/
-!examples/whatspie.yaml
