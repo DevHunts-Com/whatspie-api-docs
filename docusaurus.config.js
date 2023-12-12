@@ -6,18 +6,16 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "My Site",
-  tagline: "Dinosaurs are cool",
-  url: "https://your-docusaurus-test-site.com",
+  title: "Whatspie Sass API",
+  tagline: "V 2.0.0",
+  url: "https://whatspie.com",
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
 
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: "facebook", // Usually your GitHub org/user name.
-  projectName: "docusaurus", // Usually your repo name.
+  organizationName: "devhunts", // Usually your GitHub org/user name.
+  projectName: "whatspie-doc", // Usually your repo name.
 
   presets: [
     [
@@ -59,7 +57,7 @@ const config = {
         title: "Whatspie API",
         logo: {
           alt: "My Site Logo",
-          src: "img/logo.svg",
+          src: "img/favicon.ico",
         },
         items: [
           {
@@ -68,7 +66,7 @@ const config = {
             to: "/docs/api/v2",
           },
           {
-            href: "https://github.com/facebook/docusaurus",
+            href: "https://github.com/DevHunts-Com/whatspie-api-docs",
             label: "GitHub",
             position: "right",
           },
@@ -81,43 +79,26 @@ const config = {
             title: "Docs",
             items: [
               {
-                label: "Tutorial",
-                to: "/docs/intro",
+                label: "Documentation",
+                to: "/docs/whatspie/whatspie-sass-api",
               },
             ],
           },
           {
-            title: "Community",
+            title: "Our App",
             items: [
               {
-                label: "Stack Overflow",
-                href: "https://stackoverflow.com/questions/tagged/docusaurus",
+                label: "Whatspie Wa Blast",
+                to: "https://whatspie.com",
               },
               {
-                label: "Discord",
-                href: "https://discordapp.com/invite/docusaurus",
-              },
-              {
-                label: "Twitter",
-                href: "https://twitter.com/docusaurus",
-              },
-            ],
-          },
-          {
-            title: "More",
-            items: [
-              {
-                label: "Blog",
-                to: "/blog",
-              },
-              {
-                label: "GitHub",
-                href: "https://github.com/facebook/docusaurus",
+                label: "Whatspie Team Chat",
+                to: "#",
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} By Devhunts Team, Inc. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,
