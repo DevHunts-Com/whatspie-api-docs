@@ -158,19 +158,7 @@ module.exports = [
         ]
     },
     {
-        "type": "category",
-        "label": "Webhook",
-        "link": {
-            "type": "doc",
-            "id": "whatspie/webhook"
-        },
-        "items": [
-            {
-                "type": "doc",
-                "id": "whatspie/receive-webhook",
-                "label": "Receive Webhook",
-                "className": "api-method event"
-            }
-        ]
-    }
+        "type": "doc",
+        "id": "whatspie/webhook"
+    },
 ]

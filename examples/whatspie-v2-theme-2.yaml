@@ -3025,26 +3025,3 @@ tags:
       Group, Send Message to group, get group member and etc. This functin only
       available on STARTUP Package
   - name: Contacts
-  - name: Webhook
-x-webhooks:
-  receiveWebhook:
-    post:
-      summary: Receive Webhook
-      description: To receive a webhook message you need to configure the webhook url on each devices configuration. go to Devices -> configuration and add webhook url.
-      operationId: receiveWebhook
-      tags:
-        - Webhook
-      requestBody:
-        content:
-          application/json:
-            schema:
-               oneOf:
-                - $ref: '#/components/schemas/SendingTextMessageRequest'
-                - $ref: '#/components/schemas/SendingFileMessageRequest'
-                - $ref: '#/components/schemas/SendingImageMessageRequest'
-                - $ref: '#/components/schemas/SendingListMessageRequest'
-                - $ref: '#/components/schemas/SendingLocationMessageRequest'
-                - $ref: '#/components/schemas/SendingTemplateMessageRequest'
-      responses:
-        "200":
-          description: Return a 200 status to indicate that the data was received successfully
