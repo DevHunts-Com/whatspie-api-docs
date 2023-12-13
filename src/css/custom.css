@@ -82,11 +82,20 @@
   background-color: rgb(96, 89, 237);
 }
 
+[data-theme="dark"] .navbar-sidebar  {
+  background-color: rgb(47, 47, 53);
+}
+
+[data-theme="dark"] .navbar  {
+  background: rgb(2,0,36);
+background: linear-gradient(63deg, rgba(2,0,36,1) 0%, rgba(10,10,121,1) 6%, rgba(73,92,173,1) 75%);
+}
+
 [data-theme="light"] .navbar, .navbar__title, .navbar_inner, .menu__link, .navbar__item, .navbar__link  {
   color: white;
 }
 
-[data-theme="light"] .navbar__item:hover, .navbar__link:hover  {
+[data-theme="light"] .navbar__item:hover, .navbar__link:hover, .menu__link:hover  {
   color: rgb(208, 212, 224);
 }
 
@@ -94,5 +103,12 @@
 .menu_node_modules-\@docusaurus-theme-classic-lib-theme-DocSidebar-Desktop-Content-styles-module {
   background-color: rgb(96, 89, 237);
 }
+
+[data-theme="dark"] .menu_node_modules-\@docusaurus-theme-classic-lib-theme-DocSidebar-Desktop-Content-styles-module {
+  background-color: rgb(47, 47, 53);
+}
+
+
+
 }
 
