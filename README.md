@@ -9,6 +9,7 @@
 ## Installation
 
 - Clone whatspie doc
+- `yarn install`
 - `yarn start`
 
 ## Usage For Development 
