@@ -57,7 +57,7 @@ const config = {
         title: "Whatspie API",
         logo: {
           alt: "My Site Logo",
-          src: "img/favicon.ico",
+          src: "img/logo-icon.png",
         },
         items: [
           {
