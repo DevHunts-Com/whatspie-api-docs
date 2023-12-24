@@ -9,13 +9,13 @@ const config = {
   title: "Whatspie Sass API",
   tagline: "V 2.0.0",
   url: "https://whatspie.com",
-  baseUrl: "/",
+  baseUrl: "/whatspie-api-docs/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
 
-  organizationName: "devhunts", // Usually your GitHub org/user name.
-  projectName: "whatspie-doc", // Usually your repo name.
+  organizationName: "DevHunts-Com", // Usually your GitHub org/user name.
+  projectName: "whatspie-api-docs", // Usually your repo name.
 
   presets: [
     [
