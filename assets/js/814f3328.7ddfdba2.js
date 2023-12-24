@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkwhatspie_doc=self.webpackChunkwhatspie_doc||[]).push([[2535],{45641:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"Welcome","permalink":"/whatspie-api-docs/blog/welcome"}]}')}}]);

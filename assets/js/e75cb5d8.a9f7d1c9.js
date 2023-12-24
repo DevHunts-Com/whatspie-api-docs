@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkwhatspie_doc=self.webpackChunkwhatspie_doc||[]).push([[5605],{57160:a=>{a.exports=JSON.parse('{"label":"facebook","permalink":"/whatspie-api-docs/blog/tags/facebook","allTagsPath":"/whatspie-api-docs/blog/tags","count":1}')}}]);
