@@ -78,7 +78,7 @@
 
 
 /* MY CUSTOM */
-.navbar, .navbar-sidebar {
+.navbar, .navbar-sidebar__brand  {
   background-color: rgb(96, 89, 237);
 }
 
@@ -91,7 +91,7 @@
 background: linear-gradient(63deg, rgba(2,0,36,1) 0%, rgba(10,10,121,1) 6%, rgba(73,92,173,1) 75%);
 }
 
-[data-theme="light"] .navbar, .navbar__title, .navbar_inner, .menu__link, .navbar__item, .navbar__link  {
+[data-theme="light"] .navbar, .navbar__title, .navbar_inner, .navbar__link {
   color: white;
 }
 
@@ -99,16 +99,18 @@ background: linear-gradient(63deg, rgba(2,0,36,1) 0%, rgba(10,10,121,1) 6%, rgba
   color: rgb(208, 212, 224);
 }
 
+[data-theme="light"] .navbar-sidebar__back {
+  background-color: rgb(87, 60, 60);
+}
+
+
 @media (min-width: 997px) {
-.menu_node_modules-\@docusaurus-theme-classic-lib-theme-DocSidebar-Desktop-Content-styles-module {
-  background-color: rgb(96, 89, 237);
-}
+  /* .menu_node_modules-\@docusaurus-theme-classic-lib-theme-DocSidebar-Desktop-Content-styles-module {
+    background-color: rgb(96, 89, 237);
+  } */
 
-[data-theme="dark"] .menu_node_modules-\@docusaurus-theme-classic-lib-theme-DocSidebar-Desktop-Content-styles-module {
-  background-color: rgb(47, 47, 53);
-}
-
-
-
+  [data-theme="dark"] .menu_node_modules-\@docusaurus-theme-classic-lib-theme-DocSidebar-Desktop-Content-styles-module {
+    background-color: rgb(47, 47, 53);
+  }
 }
 
