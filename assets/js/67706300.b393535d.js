@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwhatspie_doc=self.webpackChunkwhatspie_doc||[]).push([[3527],{33466:s=>{s.exports=JSON.parse('{"label":"docusaurus","permalink":"/whatspie-api-docs/blog/tags/docusaurus","allTagsPath":"/whatspie-api-docs/blog/tags","count":1}')}}]);
