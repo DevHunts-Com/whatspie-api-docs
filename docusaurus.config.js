@@ -9,7 +9,7 @@ const config = {
   title: "Whatspie Sass API",
   tagline: "V 2.0.0",
   url: "https://whatspie.com",
-  baseUrl: "/",
+  baseUrl: "/whatspie-api-docs/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
