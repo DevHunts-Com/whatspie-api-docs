@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkwhatspie_doc=self.webpackChunkwhatspie_doc||[]).push([[2164],{11326:i=>{i.exports=JSON.parse('{"title":"Documentation","description":"Whatspie API","slug":"/api/v2","permalink":"/whatspie-api-docs/docs/api/v2","navigation":{"next":{"title":"Introduction","permalink":"/whatspie-api-docs/docs/whatspie/whatspie-sass-api"}}}')}}]);

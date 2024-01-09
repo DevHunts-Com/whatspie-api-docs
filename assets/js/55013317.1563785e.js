@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwhatspie_doc=self.webpackChunkwhatspie_doc||[]).push([[4765],{15745:e=>{e.exports=JSON.parse('{"name":"docusaurus-plugin-content-pages","id":"default"}')}}]);
