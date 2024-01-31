@@ -1433,7 +1433,6 @@ components:
         - receiver
         - type
         - message
-        - simulate_typing
       type: object
       properties:
         device:
@@ -1444,15 +1443,11 @@ components:
           type: string
         message:
           type: string
-        simulate_typing:
-          type: integer
-          format: int32
       example:
         device: '6281776521626'
         receiver: '6285603051722'
         type: chat
         message: Hi, this is my first message from Whatspie!
-        simulate_typing: 1
     QuoteExceed:
       title: Quote Exceed
       required:
@@ -1573,7 +1568,6 @@ components:
         - type
         - message
         - file_url
-        - simulate_typing
       type: object
       properties:
         device:
@@ -1586,9 +1580,6 @@ components:
           type: string
         file_url:
           type: string
-        simulate_typing:
-          type: integer
-          format: int32
       example:
         device: '6281776521626'
         receiver: '6285603051722'
@@ -1596,7 +1587,6 @@ components:
         message: Amonggfdfg Us
         file_url: >-
           https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
-        simulate_typing: 1
     SendingFileMessageData:
       title: Sending File Message Data
       required:
@@ -1655,7 +1645,6 @@ components:
         - message
         - file_caption
         - file_url
-        - simulate_typing
       type: object
       properties:
         device:
@@ -1670,9 +1659,6 @@ components:
           type: string
         file_url:
           type: string
-        simulate_typing:
-          type: integer
-          format: int32
       example:
         device: '6281776521626'
         receiver: '6285603051722'
@@ -1680,7 +1666,6 @@ components:
         message: document.pdf
         file_caption: Caption document.pdf
         file_url: http://www.africau.edu/images/default/sample.pdf
-        simulate_typing: 1
     SendingFileMessage:
       title: Send File Message
       required:
@@ -1717,7 +1702,6 @@ components:
         - receiver
         - type
         - params
-        - simulate_typing
       type: object
       properties:
         device:
@@ -1728,9 +1712,6 @@ components:
           type: string
         params:
           $ref: '#/components/schemas/Params'
-        simulate_typing:
-          type: integer
-          format: int32
       example:
         device: '6281776521626'
         receiver: '6285603051722'
@@ -1739,7 +1720,6 @@ components:
           location:
             degreesLatitude: 24.121231
             degreesLongitude: 55.1121221
-        simulate_typing: 1
     Params:
       title: Params
       required:
@@ -1773,7 +1753,6 @@ components:
         - receiver
         - type
         - params
-        - simulate_typing
       type: object
       properties:
         device:
@@ -1784,9 +1763,6 @@ components:
           type: string
         params:
           $ref: '#/components/schemas/TemplateMessageParams'
-        simulate_typing:
-          type: integer
-          format: int32
       example:
         device: '6281776521626'
         receiver: '6285603051722'
@@ -1808,7 +1784,6 @@ components:
               quickReplyButton:
                 displayText: Me as Quick Reply
                 url: https://whatspie.com
-        simulate_typing: 1
     TemplateMessageParams:
       title: Template Message Params
       required:
@@ -1915,7 +1890,6 @@ components:
         - receiver
         - type
         - params
-        - simulate_typing
       type: object
       properties:
         device:
@@ -1926,9 +1900,6 @@ components:
           type: string
         params:
           $ref: '#/components/schemas/SendListMessageParams'
-        simulate_typing:
-          type: integer
-          format: int32
       example:
         device: '6281776521626'
         receiver: '6285603051722'
@@ -1955,7 +1926,6 @@ components:
                 - title: Option 4
                   rowId: option4
                   description: Im here
-        simulate_typing: 1
     SendListMessageParams:
       title: Send List Message Params
       required:
@@ -2049,7 +2019,6 @@ components:
         - receiver
         - type
         - params
-        - simulate_typing
       type: object
       properties:
         device:
@@ -2060,9 +2029,6 @@ components:
           type: string
         params:
           $ref: '#/components/schemas/SendButtonMessageParams'
-        simulate_typing:
-          type: integer
-          format: int32
       example:
         device: '6281776521626'
         receiver: '6285603051722'
@@ -2075,7 +2041,6 @@ components:
               buttonText:
                 displayText: Button 1
               type: 1
-        simulate_typing: 1
     SendButtonMessageParams:
       title: Send Button Message Params
       required:

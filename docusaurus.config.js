@@ -115,7 +115,7 @@ const config = {
         docsPluginId: "classic",
         config: {
           whatspie: {
-            specPath: "examples/whatspie-v2-theme-2.yaml", // checkpoint source
+            specPath: "examples/whatspie-v2-theme-1.yaml", // checkpoint source
             outputDir: "docs/whatspie",
             sidebarOptions: {
               groupPathsBy: "tag",
