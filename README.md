@@ -17,7 +17,7 @@
 ### Command for generate docs from .yaml
 - `yarn docusaurus gen-api-docs whatspie`
 ### Command for clear docs
-- `yarn docusaurus clear-api-docs whatspie`
+- `yarn docusaurus clean-api-docs whatspie`
 
 ### Note
 > if you generate back docs using command, Some files will not be generated.
