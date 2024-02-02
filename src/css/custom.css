@@ -51,6 +51,10 @@
   color: white;
 }
 
+.deprecated {
+  text-decoration: line-through;
+}
+
 .get>.menu__link::before {
   content: "get";
   background-color: var(--ifm-color-primary);
@@ -102,6 +106,7 @@ background: linear-gradient(63deg, rgba(2,0,36,1) 0%, rgba(10,10,121,1) 6%, rgba
 [data-theme="light"] .navbar-sidebar__back {
   background-color: rgb(87, 60, 60);
 }
+
 
 
 @media (min-width: 997px) {

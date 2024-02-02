@@ -95,7 +95,6 @@ paths:
                     footer: This is footer
                     text: This is button message from Whatspie!
                   receiver: '6285603051722'
-                  simulate_typing: 1
                   type: template
               Sending File Message:
                 value:
@@ -103,7 +102,6 @@ paths:
                   file_url: http://www.africau.edu/images/default/sample.pdf
                   message: document.pdf
                   receiver: '6285603051722'
-                  simulate_typing: 1
                   type: file
               Sending Image Message:
                 value:
@@ -111,7 +109,6 @@ paths:
                   file_url: dss
                   message: Among Us
                   receiver: '6285603051722'
-                  simulate_typing: 1
                   type: image
               Sending List Message:
                 value:
@@ -139,7 +136,6 @@ paths:
                     text: This is new tempalte from Whatspie! 🥵
                     title: Amazing whatspie List message
                   receiver: '6285603051722'
-                  simulate_typing: 1
                   type: list
               Sending Location Message:
                 value:
@@ -149,7 +145,6 @@ paths:
                       degreesLatitude: 24.121231
                       degreesLongitude: 55.1121221
                   receiver: '6285603051722'
-                  simulate_typing: 1
                   type: location
               Sending Template Message:
                 value:
@@ -172,14 +167,12 @@ paths:
                     text: This is new tempalte from Whatspie!
                     viewOnce: true
                   receiver: '6285603051722'
-                  simulate_typing: 1
                   type: template
               Sending Text Message:
                 value:
                   device: 6281776s521626
                   message: Chat message here ya gan
                   receiver: '6285603051722'
-                  simulate_typing: 1
                   type: chat
         required: true
       responses:
@@ -1582,7 +1575,6 @@ components:
         - receiver
         - type
         - message
-        - simulate_typing
       type: object
       properties:
         device:
@@ -1593,15 +1585,11 @@ components:
           type: string
         message:
           type: string
-        simulate_typing:
-          type: integer
-          format: int32
       example:
         device: '6281776521626'
         receiver: '6285603051722'
         type: chat
         message: Hi, this is my first message from Whatspie!
-        simulate_typing: 1
     QuoteExceed:
       title: Quote Exceed
       required:
@@ -1722,7 +1710,6 @@ components:
         - type
         - message
         - file_url
-        - simulate_typing
       type: object
       properties:
         device:
@@ -1735,9 +1722,6 @@ components:
           type: string
         file_url:
           type: string
-        simulate_typing:
-          type: integer
-          format: int32
       example:
         device: '6281776521626'
         receiver: '6285603051722'
@@ -1745,7 +1729,6 @@ components:
         message: Amonggfdfg Us
         file_url: >-
           https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-21.png
-        simulate_typing: 1
     SendingFileMessageData:
       title: Sending File Message Data
       required:
@@ -1804,7 +1787,6 @@ components:
         - message
         - file_caption
         - file_url
-        - simulate_typing
       type: object
       properties:
         device:
@@ -1819,9 +1801,6 @@ components:
           type: string
         file_url:
           type: string
-        simulate_typing:
-          type: integer
-          format: int32
       example:
         device: '6281776521626'
         receiver: '6285603051722'
@@ -1829,7 +1808,6 @@ components:
         message: document.pdf
         file_caption: Caption document.pdf
         file_url: http://www.africau.edu/images/default/sample.pdf
-        simulate_typing: 1
     SendingFileMessage:
       title: Send File Message
       required:
@@ -1866,7 +1844,6 @@ components:
         - receiver
         - type
         - params
-        - simulate_typing
       type: object
       properties:
         device:
@@ -1877,9 +1854,6 @@ components:
           type: string
         params:
           $ref: '#/components/schemas/Params'
-        simulate_typing:
-          type: integer
-          format: int32
       example:
         device: '6281776521626'
         receiver: '6285603051722'
@@ -1888,7 +1862,6 @@ components:
           location:
             degreesLatitude: 24.121231
             degreesLongitude: 55.1121221
-        simulate_typing: 1
     Params:
       title: Params
       required:
@@ -1922,7 +1895,6 @@ components:
         - receiver
         - type
         - params
-        - simulate_typing
       type: object
       properties:
         device:
@@ -1933,9 +1905,6 @@ components:
           type: string
         params:
           $ref: '#/components/schemas/TemplateMessageParams'
-        simulate_typing:
-          type: integer
-          format: int32
       example:
         device: '6281776521626'
         receiver: '6285603051722'
@@ -1957,7 +1926,6 @@ components:
               quickReplyButton:
                 displayText: Me as Quick Reply
                 url: https://whatspie.com
-        simulate_typing: 1
     TemplateMessageParams:
       title: Template Message Params
       required:
@@ -2064,7 +2032,6 @@ components:
         - receiver
         - type
         - params
-        - simulate_typing
       type: object
       properties:
         device:
@@ -2075,9 +2042,6 @@ components:
           type: string
         params:
           $ref: '#/components/schemas/SendListMessageParams'
-        simulate_typing:
-          type: integer
-          format: int32
       example:
         device: '6281776521626'
         receiver: '6285603051722'
@@ -2104,7 +2068,6 @@ components:
                 - title: Option 4
                   rowId: option4
                   description: Im here
-        simulate_typing: 1
     SendListMessageParams:
       title: Send List Message Params
       required:
@@ -2198,7 +2161,6 @@ components:
         - receiver
         - type
         - params
-        - simulate_typing
       type: object
       properties:
         device:
@@ -2209,9 +2171,6 @@ components:
           type: string
         params:
           $ref: '#/components/schemas/SendButtonMessageParams'
-        simulate_typing:
-          type: integer
-          format: int32
       example:
         device: '6281776521626'
         receiver: '6285603051722'
@@ -2224,7 +2183,6 @@ components:
               buttonText:
                 displayText: Button 1
               type: 1
-        simulate_typing: 1
     SendButtonMessageParams:
       title: Send Button Message Params
       required:
@@ -3175,25 +3133,3 @@ tags:
       available on STARTUP Package
   - name: Contacts
   - name: Webhook
-x-webhooks:
-  receiveWebhook:
-    post:
-      summary: Receive Webhook
-      description: To receive a webhook message you need to configure the webhook url on each devices configuration. go to Devices -> configuration and add webhook url.
-      operationId: receiveWebhook
-      tags:
-        - Webhook
-      requestBody:
-        content:
-          application/json:
-            schema:
-               oneOf:
-                - $ref: '#/components/schemas/SendingTextMessageRequest'
-                - $ref: '#/components/schemas/SendingFileMessageRequest'
-                - $ref: '#/components/schemas/SendingImageMessageRequest'
-                - $ref: '#/components/schemas/SendingListMessageRequest'
-                - $ref: '#/components/schemas/SendingLocationMessageRequest'
-                - $ref: '#/components/schemas/SendingTemplateMessageRequest'
-      responses:
-        "200":
-          description: Return a 200 status to indicate that the data was received successfully
