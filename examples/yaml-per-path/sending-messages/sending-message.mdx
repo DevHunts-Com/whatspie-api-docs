@@ -26,14 +26,14 @@ import TabItem from "@theme/TabItem";
 
 <MethodEndpoint method={"post"} path={"/messages"}></MethodEndpoint>
 
+
+
 This endpoint is used to send messages of different types.
 
-<span className={""}>
-  <strong>1. Sending Text Message: </strong>
-</span>
+<span className={""}><strong>1. Sending Text Message: </strong></span>
 Send a simple text message.
-<br />
-<br />
+<br/>
+<br/>
 
 **2. Sending File Message:**
 Send a document file.
@@ -41,28 +41,26 @@ Send a document file.
 **3. Sending Image Message:**
 Send an image file.
 
-<span className={"deprecated"}>
-  <strong>4. Sending List Message: </strong>
-</span>
+<span className={"deprecated"}><strong>4. Sending List Message: </strong></span>
 Send a message containing a list.
-<br />
-<br />
+<br/>
+<br/>
 
 **5. Sending Location Message:**
 Send a message with geographical location.
 
-<span className={"deprecated"}>
-  <strong>6. Sending Template Message: </strong>
-</span>
+
+<span className={"deprecated"}><strong>6. Sending Template Message: </strong></span>
 Send a message using a predefined template.
-<br />
-<br />
-<span className={"deprecated"}>
-  <strong>7. Sending Button Message: </strong>
-</span>
-Send a message using a predefined template.
-<br />
-<br />
+<br/>
+<br/>
+<span className={"deprecated"}><strong>7. Sending Button Message: </strong></span>
+Send a message using a predefined template. 
+<br/>
+<br/>
+
+
+
 
 ## Request
 
@@ -83,4 +81,4 @@ General Not Found Error Response
 General Validation Error Response
 
 </div><div><MimeTabs className={"openapi-tabs__mime"} schemaType={"response"}><TabItem label={"application/json"} value={"application/json"}><SchemaTabs className={"openapi-tabs__schema"}><TabItem label={"Schema"} value={"Schema"}><details style={{}} className={"openapi-markdown__details response"} data-collapsed={false} open={true}><summary style={{}} className={"openapi-markdown__details-summary-response"}><strong>Schema</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><SchemaItem collapsible={false} name={"status"} required={false} schemaName={"integer"} qualifierMessage={undefined} schema={{"type":"integer","example":422,"description":"HTTP Status Code"}}></SchemaItem><SchemaItem collapsible={false} name={"message"} required={false} schemaName={"string"} qualifierMessage={undefined} schema={{"type":"string","example":"Validation Error ","description":"HTTP Status Message"}}></SchemaItem><SchemaItem collapsible={false} name={"errors"} required={false} schemaName={"string[]"} qualifierMessage={undefined} schema={{"type":"array","items":{"type":"string"}}}></SchemaItem></ul></details></TabItem><TabItem label={"Example (from schema)"} value={"Example (from schema)"}><ResponseSamples responseExample={"{\n  \"status\": 422,\n  \"message\": \"Validation Error \",\n  \"errors\": [\n    \"string\"\n  ]\n}"} language={"json"}></ResponseSamples></TabItem></SchemaTabs></TabItem></MimeTabs></div></TabItem></ApiTabs></div></div>
-
+      
