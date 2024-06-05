@@ -32,9 +32,9 @@ To receive a webhook message you need to configure the webhook url on each devic
    - Reply with Single Message
    - Reply With Image Message
    - Reply With File Message
-   - Reply With Button Message
-   - Reply With Template Message
-   - Reply With List Message
+   - Reply With Button Message (Deprecated)
+   - Reply With Template Message (Deprecated)
+   - Reply With List Message (Deprecated)
    - Reply With Reaction
    - Reply With Multiple Message
 
@@ -45,19 +45,18 @@ This i give you and examples format for handle your webhook:
 ### General Text Message
 
 ```jsx title="JSON"
-[
-  {
-    "type": "chat",
-    "body": "First message",
-    "simulation": true
-  },
-  {
-    "type": "chat",
-    "body": "Second Message",
-    "simulation": true
+{
+  "message": "help",
+  "from": "62856123456",
+  "timestamp": 1581651709,
+  "message_id": "3219EDE2131",
+  "from_user": {
+      "name": "Contact Name",
+      "jid" : "Unique WA ID",
   }
-];
-
+  "is_forwarded": false,
+  "is_broadcast": false
+}
 ```
 
 ### Document Type Message
@@ -195,7 +194,7 @@ to reply this message you need to return response will following JSON response:
 }
 ```
 
-### Reply with File message
+### Reply with File message 
 to reply this message you need to return response will following JSON response:
 
 ```jsx title="JSON"
@@ -212,7 +211,7 @@ to reply this message you need to return response will following JSON response:
 }
 ```
 
-### Reply with Button message
+### Reply with Button message (Deprecated)
 to reply this message you need to return response will following JSON response:
 
 ```jsx title="JSON"
@@ -235,7 +234,7 @@ to reply this message you need to return response will following JSON response:
 }
 ```
 
-### Reply with Template message
+### Reply with Template message (Deprecated)
 to reply this message you need to return response will following JSON response:
 
 ```jsx title="JSON"
@@ -275,7 +274,7 @@ to reply this message you need to return response will following JSON response:
 }
 ```
 
-### Reply with List message
+### Reply with List message (Deprecated)
 to reply this message you need to return response will following JSON response:
 
 ```jsx title="JSON"
