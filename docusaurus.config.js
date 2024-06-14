@@ -115,13 +115,18 @@ const config = {
         docsPluginId: "classic",
         config: {
           whatspie: {
-            specPath: "examples/whatspie-v2-theme-1.yaml", // checkpoint source
+            
+            // for endpoint custom (multiple (POST,GET,PUT,DELETE))
+            // specPath: "examples/yaml-theme-2/whatspie-send-image-to-group.yaml", // checkpoint source
+            // end
+
+            specPath: "examples/whatspie-v2-theme-2.yaml", // checkpoint source
             outputDir: "docs/whatspie",
             sidebarOptions: {
               groupPathsBy: "tag",
               categoryLinkSource: "tag",
             },
-            version: '2.0.0'
+            version: "2.0.0",
           },
         },
       },
