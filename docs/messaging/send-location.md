@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # 📍 Send Location Messages
 
-Share precise location coordinates with WhatsApp contacts using the Whatspie API V2 with support for custom location names and interactive maps.
+Share precise location coordinates with WhatsApp contacts using the Whatspie API with support for custom location names and interactive maps.
 
 <div style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '1.5rem', borderRadius: '8px', color: 'white', margin: '1.5rem 0'}}>
   <h3 style={{color: 'white', margin: '0 0 1rem 0'}}>🗺️ Interactive Location Sharing</h3>
@@ -35,7 +35,7 @@ Bearer token required with proper JSON content headers.
 
 ## 🗺️ Coordinate System
 
-Whatspie API V2 uses the **WGS84** coordinate system (same as GPS):
+Whatspie API uses the **WGS84** coordinate system (same as GPS):
 
 <!-- <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', margin: '1.5rem 0'">
   <div style={{background: '#f8f9ff', border: '1px solid #e1e5e9', borderRadius: '8px', padding: '1rem'">

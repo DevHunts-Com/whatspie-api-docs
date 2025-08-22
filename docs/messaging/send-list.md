@@ -4,7 +4,7 @@ sidebar_position: 6
 
 # 📋 Send List Messages
 
-Create interactive list messages with multiple sections and options using the Whatspie API V2, perfect for menus, catalogs, and organized selections.
+Create interactive list messages with multiple sections and options using the Whatspie API, perfect for menus, catalogs, and organized selections.
 
 <div style={{background: 'linear-gradient(135deg, #e0c3fc 0%, #9bb5ff 100%)', padding: '1.5rem', borderRadius: '8px', color: '#4c1d95', margin: '1.5rem 0'}}>
   <h3 style={{color: '#4c1d95', margin: '0 0 1rem 0'}}>📝 Structured Lists</h3>

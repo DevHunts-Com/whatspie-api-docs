@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # 🔐 Authentication
 
-The Whatspie SaaS API V2 uses **Bearer Token Authentication** for secure access to all endpoints. This streamlined authentication system is designed for enterprise applications with enhanced security features.
+The Whatspie API uses **Bearer Token Authentication** for secure access to all endpoints. This streamlined authentication system is designed for enterprise applications with enhanced security features.
 
 <div style={{background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)", padding: "1.5rem", borderRadius: "8px", color: "white", margin: "1.5rem 0"}}>
   <h3 style={{color: "white", margin: "0 0 1rem 0"}}>🛡️ Security First</h3>
@@ -13,9 +13,9 @@ The Whatspie SaaS API V2 uses **Bearer Token Authentication** for secure access 
 
 ## 🎯 Authentication Overview
 
-Whatspie API V2 uses a simple yet secure authentication method:
+Whatspie API uses a simple yet secure authentication method:
 
-1. **Get your API Token** from your Whatspie dashboard Profile section
+1. **Get your API Token** from your Whatspie dashboard -> Developers or this link [https://app.whatspie.com/profile?tab=developer](https://app.whatspie.com/profile?tab=developer)
 2. **Include the token** in the `Authorization` header for all requests  
 3. **Start using the API** immediately with full access to all features
 
@@ -42,7 +42,9 @@ curl -X POST "https://api.whatspie.com/messages" \
     "device": "6281234567890",
     "receiver": "6289876543210",
     "type": "chat",
-    "message": "Hello World!",
+    "params": {
+      "text": "Hello World!"
+    },
     "simulate_typing": 1
   }'
 ```
@@ -50,10 +52,17 @@ curl -X POST "https://api.whatspie.com/messages" \
 ## 🔑 Getting Your API Token
 
 ### From Whatspie Dashboard
-1. **Login** to your Whatspie dashboard
-2. **Navigate** to your Profile section
-3. **Copy** your API Token from the credentials area
+
+To obtain your API token, follow these steps:
+
+1. **Login** to your Whatspie dashboard at [https://app.whatspie.com](https://app.whatspie.com)
+2. **Navigate** to the **Developers** section in the sidebar, or go directly to your **Profile** → **Developer** tab: [https://app.whatspie.com/profile?tab=developer](https://app.whatspie.com/profile?tab=developer)
+3. **Copy** your API Token from the Developer credentials section
 4. **Use** this token in all API requests
+
+<div style={{background: "#f0f9ff", border: "1px solid #0ea5e9", borderRadius: "8px", padding: "1rem", margin: "1rem 0"}}>
+  <strong>📍 Quick Access:</strong> You can find your API token in the sidebar under <strong>Developers</strong> or by visiting your Profile → Developer tab.
+</div>
 
 ### Token Storage
 - Store tokens securely in your application
@@ -76,8 +85,7 @@ curl -X POST "https://api.whatspie.com/messages" \
 ```json
 {
   "code": 401,
-  "message": "Unauthorized",
-  "error": "Invalid API token"
+  "message": "Unauthorized"
 }
 ```
 
@@ -90,8 +98,7 @@ curl -X POST "https://api.whatspie.com/messages" \
 ```json
 {
   "code": 403,
-  "message": "Forbidden",
-  "error": "Insufficient permissions"
+  "message": "Forbidden"
 }
 ```
 
@@ -127,7 +134,9 @@ class WhatspieClient {
         device,
         receiver,
         type,
-        message,
+        params: {
+          text: message
+        },
         simulate_typing: 1,
         ...options
       };
@@ -151,7 +160,7 @@ const result = await client.sendMessage(
   '6281234567890',
   '6289876543210', 
   'chat',
-  'Hello from Whatspie API V2! 🚀'
+  'Hello from Whatspie API! 🚀'
 );
 ```
 
@@ -179,7 +188,9 @@ class WhatspieClient:
             'device': device,
             'receiver': receiver,
             'type': message_type,
-            'message': message,
+            'params': {
+              'text': message
+            },
             'simulate_typing': 1,
             **options
         }
@@ -235,7 +246,9 @@ class WhatspieClient {
             'device' => $device,
             'receiver' => $receiver,
             'type' => $type,
-            'message' => $message,
+            'params' => [
+              'text' => $message
+            ],
             'simulate_typing' => 1
         ], $options);
         
@@ -284,7 +297,9 @@ curl -X POST "https://api.whatspie.com/messages" \
     "device": "6281234567890",
     "receiver": "6289876543210",
     "type": "chat",
-    "message": "Test message from API! 🧪",
+    "params": {
+      "text": "Test message from API! 🧪"
+    },
     "simulate_typing": 1
   }'
 ```
@@ -300,7 +315,7 @@ curl -X POST "https://api.whatspie.com/messages" \
   -H "Authorization: Bearer $WHATSPIE_API_TOKEN" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
-  -d '{"device":"6281234567890","receiver":"6289876543210","type":"chat","message":"Hello World!"}'
+  -d '{"device":"6281234567890","receiver":"6289876543210","type":"chat","params":{"text":"Hello World!"}}'
 ```
 
 ## Next Steps

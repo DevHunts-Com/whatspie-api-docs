@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # 📄 Send File Messages
 
-Send documents, PDFs, and other files to WhatsApp contacts using the Whatspie API V2 with support for various file formats and automatic file type detection.
+Send documents, PDFs, and other files to WhatsApp contacts using the Whatspie API with support for various file formats and automatic file type detection.
 
 <div style={{background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', padding: '1.5rem', borderRadius: '8px', color: '#1a202c', margin: '1.5rem 0'}}>
   <h3 style={{color: '#1a202c', margin: '0 0 1rem 0'}}>📎 Universal File Support</h3>

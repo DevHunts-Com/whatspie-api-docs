@@ -68,7 +68,7 @@ https://api.whatspie.com
 
 ## 🚀 Quick Start
 
-Get started with Whatspie API V2 in just a few steps:
+Get started with Whatspie API in just a few steps:
 
 ### 1. Authentication
 

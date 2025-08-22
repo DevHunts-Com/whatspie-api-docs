@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # 💬 Send Text Messages
 
-Send rich text messages to WhatsApp contacts using the Whatspie API V2 with advanced features like typing simulation, message formatting, and real-time delivery tracking.
+Send rich text messages to WhatsApp contacts using the Whatspie API with advanced features like typing simulation, message formatting, and real-time delivery tracking.
 
 <div style={{background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", padding: "1.5rem", borderRadius: "8px", color: "white", margin: "1.5rem 0"}}>
   <h3 style={{color: "white", margin: "0 0 1rem 0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>✨ V2 Enhanced Features</h3>
@@ -44,7 +44,7 @@ curl -X POST "https://api.whatspie.com/messages" \
     "device": "6281234567890",
     "receiver": "6289876543210", 
     "type": "chat",
-    "message": "Hello! Welcome to Whatspie API V2 🚀",
+    "message": "Hello! Welcome to Whatspie API 🚀",
     "simulate_typing": 1
   }'
 ```
@@ -104,7 +104,7 @@ async function examples() {
   const receiver = '6289876543210';
 
   // Basic text message
-  await sendTextMessage(token, device, receiver, 'Hello from Whatspie API V2! 🚀');
+  await sendTextMessage(token, device, receiver, 'Hello from Whatspie API! 🚀');
 
   // Message with rich formatting
   const formattedMessage = `*Welcome to Whatspie!* 🎉
@@ -351,7 +351,7 @@ The `device` and `receiver` parameters should be in international format without
 
 ### WhatsApp Text Formatting
 
-Whatspie API V2 supports all WhatsApp text formatting options:
+Whatspie API supports all WhatsApp text formatting options:
 
 <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem", margin: "1.5rem 0"}}>
   <div style={{background: "#fef3c7", border: "1px solid #fed7aa", borderRadius: "8px", padding: "1rem"}}>

@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # 📝 Send Template Messages
 
-Create interactive template messages with buttons, footers, and rich content using the Whatspie API V2 for enhanced user engagement and professional communication.
+Create interactive template messages with buttons, footers, and rich content using the Whatspie API for enhanced user engagement and professional communication.
 
 <div style={{background: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)", padding: "1.5rem", borderRadius: "8px", color: "#8b4513", margin: "1.5rem 0"}}>
   <h3 style={{color: "#8b4513", margin: "0 0 1rem 0"}}>🎨 Interactive Templates</h3>
@@ -77,7 +77,7 @@ curl -X POST "https://api.whatspie.com/messages" \
     "type": "template",
     "params": {
       "text": "🎉 Welcome to Whatspie! Thanks for choosing our service.",
-      "footer": "Powered by Whatspie API V2",
+      "footer": "Powered by Whatspie API",
       "templateButtons": [
         {
           "index": 1,
@@ -522,7 +522,7 @@ Stay updated with the latest news, offers, and updates from our company!
     "receiver": "6289876543210",
     "params": {
       "text": "Welcome to Whatspie!",
-      "footer": "Powered by Whatspie API V2",
+      "footer": "Powered by Whatspie API",
       "templateButtons": [...]
     },
     "simulate_typing": 1,

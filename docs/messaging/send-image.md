@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # 🖼️ Send Image Messages
 
-Send stunning images with captions to WhatsApp contacts using the enhanced Whatspie API V2 with support for various formats and advanced delivery options.
+Send stunning images with captions to WhatsApp contacts using the enhanced Whatspie API with support for various formats and advanced delivery options.
 
 <div style={{background: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)", padding: "1.5rem", borderRadius: "8px", color: "white", margin: "1.5rem 0"}}>
   <h3 style={{color: "white", margin: "0 0 1rem 0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>📸 Rich Media Support</h3>
