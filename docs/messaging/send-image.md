@@ -28,8 +28,11 @@ Bearer token required with proper JSON content headers.
 | `device` | string | ✅ | Your registered WhatsApp device number |
 | `receiver` | string | ✅ | Recipient's phone number (international format) |
 | `type` | string | ✅ | Message type: `"image"` for image messages |
-| `message` | string | ❌ | Image caption text (supports formatting) |
-| `file_url` | string | ✅ | Direct URL to the image file |
+| `params` | object | ✅ | Message parameters containing image data |
+| `params.image` | object | ✅ | Image object with URL |
+| `params.image.url` | string | ✅ | Direct URL to the image file |
+| `params.caption` | string | ❌ | Image caption text (supports formatting) |
+| `params.viewOnce` | boolean | ❌ | Whether image should be viewable only once |
 | `simulate_typing` | integer | ❌ | Show typing indicator: `1` (yes) or `0` (no) |
 
 ## 🎨 Supported Image Formats
@@ -73,8 +76,12 @@ curl -X POST "https://api.whatspie.com/messages" \
     "device": "6281234567890",
     "receiver": "6289876543210",
     "type": "image",
-    "message": "Check out this amazing photo! 📸✨",
-    "file_url": "https://example.com/images/photo.jpg",
+    "params": {
+      "image": {
+        "url": "https://example.com/images/photo.jpg"
+      },
+      "caption": "Check out this amazing photo! 📸✨"
+    },
     "simulate_typing": 1
   }'
 ```
@@ -90,8 +97,12 @@ curl -X POST "https://api.whatspie.com/messages" \
     "device": "6281234567890", 
     "receiver": "6289876543210",
     "type": "image",
-    "message": "🎉 *NEW PRODUCT ALERT* 🎉\n\n_Premium Quality Headphones_\n\n✅ Noise Cancellation\n✅ 30h Battery Life\n✅ Fast Charging\n\n*Special Price: $199*\n~~Original: $299~~",
-    "file_url": "https://example.com/products/headphones.jpg",
+    "params": {
+      "image": {
+        "url": "https://example.com/products/headphones.jpg"
+      },
+      "caption": "🎉 *NEW PRODUCT ALERT* 🎉\n\n_Premium Quality Headphones_\n\n✅ Noise Cancellation\n✅ 30h Battery Life\n✅ Fast Charging\n\n*Special Price: $199*\n~~Original: $299~~"
+    },
     "simulate_typing": 1
   }'
 ```
@@ -107,7 +118,11 @@ curl -X POST "https://api.whatspie.com/messages" \
     "device": "6281234567890",
     "receiver": "6289876543210",
     "type": "image",
-    "file_url": "https://example.com/images/screenshot.png",
+    "params": {
+      "image": {
+        "url": "https://example.com/images/screenshot.png"
+      }
+    },
     "simulate_typing": 1
   }'
 ```
@@ -125,13 +140,17 @@ async function sendImageMessage(token, device, receiver, imageUrl, caption = '',
       device: device,
       receiver: receiver,
       type: 'image',
-      file_url: imageUrl,
+      params: {
+        image: {
+          url: imageUrl
+        }
+      },
       simulate_typing: simulateTyping ? 1 : 0
     };
 
     // Add caption if provided
     if (caption) {
-      payload.message = caption;
+      payload.params.caption = caption;
     }
 
     const response = await axios.post(
@@ -205,13 +224,17 @@ def send_image_message(token, device, receiver, image_url, caption='', simulate_
         'device': device,
         'receiver': receiver,
         'type': 'image',
-        'file_url': image_url,
+        'params': {
+            'image': {
+                'url': image_url
+            }
+        },
         'simulate_typing': 1 if simulate_typing else 0
     }
     
     # Add caption if provided
     if caption:
-        data['message'] = caption
+        data['params']['caption'] = caption
     
     response = requests.post(url, headers=headers, json=data)
     
@@ -270,13 +293,17 @@ function sendImageMessage($token, $device, $receiver, $imageUrl, $caption = '', 
         'device' => $device,
         'receiver' => $receiver,
         'type' => 'image',
-        'file_url' => $imageUrl,
+        'params' => [
+            'image' => [
+                'url' => $imageUrl
+            ]
+        ],
         'simulate_typing' => $simulateTyping ? 1 : 0
     ];
     
     // Add caption if provided
     if (!empty($caption)) {
-        $data['message'] = $caption;
+        $data['params']['caption'] = $caption;
     }
     
     $ch = curl_init();

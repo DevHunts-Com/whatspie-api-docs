@@ -28,8 +28,11 @@ Bearer token required with proper JSON content headers.
 | `device` | string | ✅ | Your registered WhatsApp device number |
 | `receiver` | string | ✅ | Recipient's phone number (international format) |
 | `type` | string | ✅ | Message type: `"file"` for file messages |
-| `message` | string | ❌ | File description or filename |
-| `file_url` | string | ✅ | Direct URL to the file |
+| `params` | object | ✅ | Message parameters containing file data |
+| `params.document` | object | ✅ | Document object with URL |
+| `params.document.url` | string | ✅ | Direct URL to the file |
+| `params.fileName` | string | ✅ | Display filename with extension |
+| `params.mimetype` | string | ✅ | MIME type of the file |
 | `simulate_typing` | integer | ❌ | Show typing indicator: `1` (yes) or `0` (no) |
 
 ## 📁 Supported File Formats
@@ -91,8 +94,13 @@ curl -X POST "https://api.whatspie.com/messages" \
     "device": "6281234567890",
     "receiver": "6289876543210",
     "type": "file",
-    "file_url": "https://example.com/documents/report.pdf",
-    "message": "📄 Monthly Sales Report - Q4 2024",
+    "params": {
+      "document": {
+        "url": "https://example.com/documents/report.pdf"
+      },
+      "fileName": "Monthly_Sales_Report_Q4_2024.pdf",
+      "mimetype": "application/pdf"
+    },
     "simulate_typing": 1
   }'
 ```
@@ -108,8 +116,13 @@ curl -X POST "https://api.whatspie.com/messages" \
     "device": "6281234567890",
     "receiver": "6289876543210",
     "type": "file",
-    "file_url": "https://cdn.example.com/files/presentation.pptx",
-    "message": "🎯 Product Launch Presentation\n\nPlease review before tomorrow'\''s meeting. Contains Q1 strategy and roadmap.",
+    "params": {
+      "document": {
+        "url": "https://cdn.example.com/files/presentation.pptx"
+      },
+      "fileName": "Product_Launch_Presentation_Q1.pptx",
+      "mimetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    },
     "simulate_typing": 1
   }'
 ```
@@ -138,20 +151,21 @@ curl -X POST "https://api.whatspie.com/messages" \
 ```javascript
 const axios = require('axios');
 
-async function sendFileMessage(token, device, receiver, fileUrl, message = null) {
+async function sendFileMessage(token, device, receiver, fileUrl, fileName, mimetype, message = null) {
   try {
     const payload = {
       device: device,
       receiver: receiver,
       type: 'file',
-      file_url: fileUrl,
+      params: {
+        document: {
+          url: fileUrl
+        },
+        fileName: fileName,
+        mimetype: mimetype
+      },
       simulate_typing: 1
     };
-
-    // Add message if provided
-    if (message) {
-      payload.message = message;
-    }
 
     const response = await axios.post(
       'https://api.whatspie.com/messages',
@@ -276,21 +290,22 @@ except requests.RequestException as e:
 
 ```php
 <?php
-function sendFileMessage($token, $device, $receiver, $fileUrl, $message = null) {
+function sendFileMessage($token, $device, $receiver, $fileUrl, $fileName, $mimetype, $message = null) {
     $url = 'https://api.whatspie.com/messages';
     
     $data = [
         'device' => $device,
         'receiver' => $receiver,
         'type' => 'file',
-        'file_url' => $fileUrl,
+        'params' => [
+            'document' => [
+                'url' => $fileUrl
+            ],
+            'fileName' => $fileName,
+            'mimetype' => $mimetype
+        ],
         'simulate_typing' => 1
     ];
-    
-    // Add message if provided
-    if ($message) {
-        $data['message'] = $message;
-    }
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);

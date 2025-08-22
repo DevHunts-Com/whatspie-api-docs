@@ -25,9 +25,7 @@ const sidebars: SidebarsConfig = {
         'messaging/send-text',
         'messaging/send-image',
         'messaging/send-file',
-        'messaging/send-location',
-        'messaging/send-template',
-        'messaging/send-list',
+        'messaging/send-location'
       ],
     },
     {

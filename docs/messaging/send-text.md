@@ -28,7 +28,8 @@ Bearer token required in the `Authorization` header with proper content headers.
 | `device` | string | ✅ | Your registered WhatsApp device number |
 | `receiver` | string | ✅ | Recipient's phone number (international format) |
 | `type` | string | ✅ | Message type: `"chat"` for text messages |
-| `message` | string | ✅ | Text message content (supports WhatsApp formatting) |
+| `params` | object | ✅ | Message parameters containing text content |
+| `params.text` | string | ✅ | Text message content (supports WhatsApp formatting) |
 | `simulate_typing` | integer | ❌ | Show typing indicator: `1` (yes) or `0` (no) |
 
 ## 🚀 Request Examples
@@ -44,7 +45,9 @@ curl -X POST "https://api.whatspie.com/messages" \
     "device": "6281234567890",
     "receiver": "6289876543210", 
     "type": "chat",
-    "message": "Hello! Welcome to Whatspie API 🚀",
+    "params": {
+      "text": "Hello! Welcome to Whatspie API 🚀"
+    },
     "simulate_typing": 1
   }'
 ```
@@ -59,8 +62,10 @@ curl -X POST "https://api.whatspie.com/messages" \
   -d '{
     "device": "6281234567890",
     "receiver": "6289876543210",
-    "type": "chat", 
-    "message": "*Bold Text* _Italic Text_ ~Strikethrough~ `Monospace`\n\nNew paragraph with emojis! 🎉✨",
+    "type": "chat",
+    "params": {
+      "text": "*Bold Text* _Italic Text_ ~Strikethrough~ `Monospace`\n\nNew paragraph with emojis! 🎉✨"
+    },
     "simulate_typing": 1
   }'
 ```
@@ -78,7 +83,9 @@ async function sendTextMessage(token, device, receiver, message, simulateTyping 
         device: device,
         receiver: receiver,
         type: 'chat',
-        message: message,
+        params: {
+          text: message
+        },
         simulate_typing: simulateTyping ? 1 : 0
       },
       {
@@ -150,7 +157,9 @@ def send_text_message(token, device, receiver, message, simulate_typing=True):
         'device': device,
         'receiver': receiver,
         'type': 'chat',
-        'message': message,
+        'params': {
+            'text': message
+        },
         'simulate_typing': 1 if simulate_typing else 0
     }
     
@@ -200,7 +209,9 @@ function sendTextMessage($token, $device, $receiver, $message, $simulateTyping =
         'device' => $device,
         'receiver' => $receiver,
         'type' => 'chat',
-        'message' => $message,
+        'params' => [
+            'text' => $message
+        ],
         'simulate_typing' => $simulateTyping ? 1 : 0
     ];
     

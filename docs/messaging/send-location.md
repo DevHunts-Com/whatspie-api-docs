@@ -28,9 +28,10 @@ Bearer token required with proper JSON content headers.
 | `device` | string | ✅ | Your registered WhatsApp device number |
 | `receiver` | string | ✅ | Recipient's phone number (international format) |
 | `type` | string | ✅ | Message type: `"location"` for location messages |
-| `latitude` | number | ✅ | Location latitude coordinate (-90 to 90) |
-| `longitude` | number | ✅ | Location longitude coordinate (-180 to 180) |
-| `location_name` | string | ❌ | Custom location name/address |
+| `params` | object | ✅ | Message parameters containing location data |
+| `params.location` | object | ✅ | Location object with coordinates |
+| `params.location.degreesLatitude` | number | ✅ | Location latitude coordinate (-90 to 90) |
+| `params.location.degreesLongitude` | number | ✅ | Location longitude coordinate (-180 to 180) |
 | `simulate_typing` | integer | ❌ | Show typing indicator: `1` (yes) or `0` (no) |
 
 ## 🗺️ Coordinate System
@@ -72,8 +73,12 @@ curl -X POST "https://api.whatspie.com/messages" \
     "device": "6281234567890",
     "receiver": "6289876543210",
     "type": "location",
-    "latitude": -6.2088,
-    "longitude": 106.8456,
+    "params": {
+      "location": {
+        "degreesLatitude": -6.2088,
+        "degreesLongitude": 106.8456
+      }
+    },
     "simulate_typing": 1
   }'
 ```
@@ -89,9 +94,12 @@ curl -X POST "https://api.whatspie.com/messages" \
     "device": "6281234567890",
     "receiver": "6289876543210",
     "type": "location",
-    "latitude": -6.2088,
-    "longitude": 106.8456,
-    "location_name": "Monas - National Monument Jakarta",
+    "params": {
+      "location": {
+        "degreesLatitude": -6.2088,
+        "degreesLongitude": 106.8456
+      }
+    },
     "simulate_typing": 1
   }'
 ```
@@ -127,15 +135,14 @@ async function sendLocationMessage(token, device, receiver, latitude, longitude,
       device: device,
       receiver: receiver,
       type: 'location',
-      latitude: parseFloat(latitude),
-      longitude: parseFloat(longitude),
+      params: {
+        location: {
+          degreesLatitude: parseFloat(latitude),
+          degreesLongitude: parseFloat(longitude)
+        }
+      },
       simulate_typing: 1
     };
-
-    // Add location name if provided
-    if (locationName) {
-      payload.location_name = locationName;
-    }
 
     const response = await axios.post(
       'https://api.whatspie.com/messages',
@@ -260,15 +267,14 @@ function sendLocationMessage($token, $device, $receiver, $latitude, $longitude, 
         'device' => $device,
         'receiver' => $receiver,
         'type' => 'location',
-        'latitude' => (float)$latitude,
-        'longitude' => (float)$longitude,
+        'params' => [
+            'location' => [
+                'degreesLatitude' => (float)$latitude,
+                'degreesLongitude' => (float)$longitude
+            ]
+        ],
         'simulate_typing' => 1
     ];
-    
-    // Add location name if provided
-    if ($locationName) {
-        $data['location_name'] = $locationName;
-    }
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
