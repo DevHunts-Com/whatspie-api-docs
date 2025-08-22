@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # 🚀 Introduction
 
-Welcome to the **Whatspie SaaS API V2** - The most powerful and developer-friendly WhatsApp Business API that enables seamless integration of WhatsApp messaging capabilities into your applications.
+Welcome to the **Whatspie** - The most powerful and developer-friendly WhatsApp Business API that enables seamless integration of WhatsApp messaging capabilities into your applications.
 
 <div style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '2rem', borderRadius: '12px', color: 'white', margin: '2rem 0'}}>
   <h2 style={{color: 'white', marginTop: '0'}}>✨ What makes Whatspie V2 Special?</h2>
@@ -88,25 +88,45 @@ curl -X POST 'https://api.whatspie.com/messages' \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json' \
   -d '{
-    'device': '6281234567890',
-    'receiver': '6289876543210',
-    'type': 'chat',
-    'message': 'Hello from Whatspie API V2! 🚀',
-    'simulate_typing': 1
-  }'
+    "device": "62895383079050",
+    "receiver": "6285603051722",
+    "type": "chat",
+    "params": {
+      "text": "Hi!"
+    },
+    "simulate_typing": 1
+}'
 ```
 
 ### 3. Handle Responses
 
 ```json
 {
-  'code': 200,
-  'message': 'Message sent successfully',
-  'data': {
-    'id': 'msg_12345',
-    'status': 'pending',
-    'timestamp': '2024-12-20T10:30:00Z'
-  }
+    "status": 200,
+    "message": "OK",
+    "data": {
+        "id": 36259782,
+        "from_number": "62895383079050",
+        "to_number": "6285603051722",
+        "type": "chat",
+        "msg_type": "outgoing",
+        "body": "Hi!",
+        "status": "PENDING",
+        "wa_id": null,
+        "retry": 0,
+        "failed_reason": null,
+        "file_url": null,
+        "file_name": null,
+        "file_caption": null,
+        "file_size": null,
+        "file_mime": null,
+        "params": {
+            "text": "Hi!"
+        },
+        "is_group": false,
+        "created_at": "2025-08-22T03:36:02.179279985Z",
+        "updated_at": "2025-08-22T03:36:02.179280065Z"
+    }
 }
 ```
 
@@ -140,7 +160,7 @@ All API responses follow a consistent format:
 ```json
 {
   'code': 200,
-  'message': 'Success',
+  'message': 'OK',
   'data': {
     // Response data here
   }
