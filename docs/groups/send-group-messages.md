@@ -229,16 +229,15 @@ curl -X POST "https://api.whatspie.com/groups/495/send" \
 ```json
 {
   "code": 200,
-  "message": "Group message sent successfully",
+  "message": "Message sent successfully",
   "data": {
     "id": "msg_group_12345",
     "status": "pending",
     "type": "text",
     "device": "6281234567890",
-    "group_id": "15378",
-    "group_jid": "120363022368688477@g.us",
-    "group_title": "Project Team",
+    "receiver": "120363022368688477@g.us",
     "message": "Team Update: Project milestone completed!",
+    "simulate_typing": 1,
     "timestamp": "2024-12-20T10:30:00Z"
   }
 }
@@ -450,10 +449,3 @@ Response:
 - [Send Location Messages](../messaging/send-location) - Location sharing
 - [Send Template Messages](../messaging/send-template) - Template message format
 - [Send List Messages](../messaging/send-list) - Interactive list messages
-
-## 📞 Support
-
-Need help with group messaging?
-- 📖 [Group Management Guide](../guides/group-management)
-- 🛠️ [Troubleshooting Guide](../troubleshooting)
-- 💬 [Community Forum](https://community.whatspie.com)
