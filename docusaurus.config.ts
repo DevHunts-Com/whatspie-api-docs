@@ -59,10 +59,10 @@ const config: Config = {
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
       title: 'Whatspie API',
-      logo: {
-        alt: 'Whatspie Logo',
-        src: 'img/logo.svg',
-      },
+      // logo: {
+      //   alt: 'Whatspie Logo',
+      //   src: 'img/logo.svg',
+      // },
       items: [
         {
           type: 'docSidebar',
@@ -70,7 +70,6 @@ const config: Config = {
           position: 'left',
           label: 'API Documentation',
         },
-        {to: '/blog', label: 'Changelog', position: 'left'},
         {
           href: 'https://github.com/DevHunts-Com/whatspie-api-docs',
           label: 'GitHub',
