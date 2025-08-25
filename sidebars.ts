@@ -32,7 +32,11 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: '👥 Group Management',
       items: [
-        'groups/create-group',
+        'groups/send-group-messages',
+        'groups/list-groups',
+        'groups/get-group',
+        'groups/update-group',
+        'groups/add-members',
       ],
     },
     {
