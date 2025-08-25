@@ -1,6 +1,6 @@
 {
-  "name": "wkwk",
-  "version": "0.0.0",
+  "name": "whatspie-docs",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
