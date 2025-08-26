@@ -15,14 +15,14 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://api-docs.whatspie.com',
+  url: 'https://docs.whatspie.com',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'whatspie', // Usually your GitHub org/user name.
+  organizationName: 'DevHunts-Com', // Usually your GitHub org/user name.
   projectName: 'whatspie-api-docs', // Usually your repo name.
 
   onBrokenLinks: 'ignore',
