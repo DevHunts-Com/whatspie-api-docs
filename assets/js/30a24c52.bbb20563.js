@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkwhatspie_doc=self.webpackChunkwhatspie_doc||[]).push([[453],{98605:e=>{e.exports=JSON.parse('{"label":"hello","permalink":"/blog/tags/hello","allTagsPath":"/blog/tags","count":1}')}}]);
