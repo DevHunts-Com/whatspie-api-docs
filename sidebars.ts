@@ -17,6 +17,7 @@ const sidebars: SidebarsConfig = {
   apiSidebar: [
     'intro',
     'authentication', 
+    'webhooks',
     'device-management',
     {
       type: 'category',

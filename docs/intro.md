@@ -174,10 +174,5 @@ Please be mindful of WhatsApp's rate limits to avoid being blocked:
 - **Group messages**: Depends on group size and message frequency
 - **QR code requests**: Limited to prevent abuse
 
-## Need Help?
-
-- 📖 Explore the detailed API documentation in the sidebar
-- 🐛 Report issues on our [GitHub repository](https://github.com/DevHunts-Com/whatspie-api-docs)
-- 🌐 Visit our [website](https://whatspie.com) for more information
 
 Let's get started with your WhatsApp integration! 🚀

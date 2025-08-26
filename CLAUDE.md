@@ -46,15 +46,6 @@ Use npm (package-lock.json present):
 - `static/` - Static assets (images, favicons, etc.)
 - `whatspie-node-collection.json` - Postman collection with WhatsApp API examples
 
-## API Reference
-
-The Postman collection includes comprehensive examples for:
-- Authentication
-- Group management (create, update, participants)
-- Message sending (text, images, documents, locations)
-- Template messages and interactive buttons
-- Contact verification
-
 ## Development Notes
 
 - TypeScript is enabled with Docusaurus TypeScript config
