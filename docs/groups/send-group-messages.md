@@ -85,7 +85,7 @@ curl -X POST "https://api.whatspie.com/groups/495/send" \
   -H "Accept: application/json" \
   -d '{
     "device": "6281234567890",
-    "type": "text",
+    "type": "chat",
     "params": {
       "text": "🎉 *Team Update* 🎉\n\nGreat news everyone! Our project milestone has been completed successfully.\n\n✅ All features tested\n✅ Documentation updated\n✅ Ready for deployment\n\nThanks for your hard work! 👏"
     },
@@ -233,7 +233,7 @@ curl -X POST "https://api.whatspie.com/groups/495/send" \
   "data": {
     "id": "msg_group_12345",
     "status": "pending",
-    "type": "text",
+    "type": "chat",
     "device": "6281234567890",
     "receiver": "120363022368688477@g.us",
     "message": "Team Update: Project milestone completed!",
@@ -273,7 +273,7 @@ curl -X POST "https://api.whatspie.com/groups/495/send" \
   -H "Content-Type: application/json" \
   -d '{
     "device": "6281234567890",
-    "type": "text",
+    "type": "chat",
     "params": {
       "text": "Hey @6289876543210 and @6281122334455, can you review the latest changes? 🔍",
       "mentions": ["6289876543210", "6281122334455"]
@@ -289,7 +289,7 @@ curl -X POST "https://api.whatspie.com/groups/495/send" \
   -H "Content-Type: application/json" \
   -d '{
     "device": "6281234567890",
-    "type": "text",
+    "type": "chat",
     "params": {
       "text": "Great point! Let me add some details to that.",
       "quotedMessageId": "msg_group_12344"
