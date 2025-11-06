@@ -29,93 +29,212 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 
-/* Sidebar Method labels */
-.api-method>.menu__link {
-  align-items: center;
-  justify-content: start;
+/* Custom styles for Whatspie API documentation */
+
+/* Feature highlight boxes */
+.feature-box {
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-.api-method>.menu__link::before {
-  width: 50px;
-  height: 20px;
-  font-size: 12px;
-  line-height: 20px;
-  text-transform: uppercase;
-  font-weight: 600;
-  border-radius: 0.25rem;
-  border: 1px solid;
-  margin-right: var(--ifm-spacing-horizontal);
+.feature-box h3 {
+  margin: 0 0 1rem 0;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.feature-box p {
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.feature-box-purple {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.feature-box-pink {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  color: white;
+}
+
+.feature-box-teal {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  color: #1a202c;
+}
+
+.feature-box-orange {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  color: #8b4513;
+}
+
+.feature-box-blue {
+  background: linear-gradient(135deg, #e0c3fc 0%, #9bb5ff 100%);
+  color: #4c1d95;
+}
+
+.feature-box-security {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.feature-box-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+/* Grid layouts */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.info-grid-small {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+/* Info cards */
+.info-card {
+  border-radius: 8px;
+  padding: 1rem;
   text-align: center;
-  flex-shrink: 0;
-  border-color: transparent;
-  color: white;
 }
 
-.deprecated {
-  text-decoration: line-through;
+.info-card h4 {
+  margin-top: 0;
+  font-size: 0.9rem;
 }
 
-.get>.menu__link::before {
-  content: "get";
-  background-color: var(--ifm-color-primary);
+.info-card small {
+  font-size: 0.85rem;
 }
 
-.put>.menu__link::before {
-  content: "put";
-  background-color: var(--openapi-code-blue);
+.info-card-blue {
+  background: #f8f9ff;
+  border: 1px solid #e1e5e9;
 }
 
-.post>.menu__link::before {
-  content: "post";
-  background-color: var(--openapi-code-green);
+.info-card-blue h4 {
+  color: #4f46e5;
 }
 
-.delete>.menu__link::before {
-  content: "del";
-  background-color: var(--openapi-code-red);
+.info-card-green {
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
 }
 
-.patch>.menu__link::before {
-  content: "patch";
-  background-color: var(--openapi-code-orange);
+.info-card-green h4 {
+  color: #059669;
 }
 
-
-/* MY CUSTOM */
-.navbar, .navbar-sidebar__brand  {
-  background-color: rgb(96, 89, 237);
+.info-card-yellow {
+  background: #fef3c7;
+  border: 1px solid #fed7aa;
 }
 
-[data-theme="dark"] .navbar-sidebar  {
-  background-color: rgb(47, 47, 53);
+.info-card-yellow h4 {
+  color: #d97706;
 }
 
-[data-theme="dark"] .navbar  {
-  background: rgb(2,0,36);
-background: linear-gradient(63deg, rgba(2,0,36,1) 0%, rgba(10,10,121,1) 6%, rgba(73,92,173,1) 75%);
+.info-card-pink {
+  background: #fdf2f8;
+  border: 1px solid #fce7f3;
 }
 
-[data-theme="light"] .navbar, .navbar__title, .navbar_inner, .navbar__link {
-  color: white;
+.info-card-pink h4 {
+  color: #be185d;
 }
 
-[data-theme="light"] .navbar__item:hover, .navbar__link:hover, .menu__link:hover  {
-  color: rgb(208, 212, 224);
+/* Content cards with borders */
+.content-card {
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
 }
 
-[data-theme="light"] .navbar-sidebar__back {
-  background-color: rgb(87, 60, 60);
+.content-card h4 {
+  margin-top: 0;
 }
 
-
-
-@media (min-width: 997px) {
-  /* .menu_node_modules-\@docusaurus-theme-classic-lib-theme-DocSidebar-Desktop-Content-styles-module {
-    background-color: rgb(96, 89, 237);
-  } */
-
-  [data-theme="dark"] .menu_node_modules-\@docusaurus-theme-classic-lib-theme-DocSidebar-Desktop-Content-styles-module {
-    background-color: rgb(47, 47, 53);
-  }
+.content-card ul {
+  margin: 0;
+  font-size: 0.9rem;
 }
 
+.content-card-light-yellow {
+  background: #fef5e7;
+  border: 1px solid #fed7aa;
+}
+
+.content-card-light-yellow h4 {
+  color: #d97706;
+}
+
+.content-card-light-blue {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+}
+
+.content-card-light-blue h4 {
+  color: #0284c7;
+}
+
+.content-card-light-green {
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+}
+
+.content-card-light-green h4 {
+  color: #059669;
+}
+
+.content-card-light-pink {
+  background: #fdf2f8;
+  border: 1px solid #fce7f3;
+}
+
+.content-card-light-pink h4 {
+  color: #be185d;
+}
+
+/* Phone number format table */
+.phone-format-table {
+  background: #f8f9ff;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+/* Format examples grid */
+.format-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.format-card {
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.format-card h4 {
+  margin-top: 0;
+}
+
+.format-card code {
+  font-size: 0.85rem;
+}
+
+.format-card small {
+  display: block;
+  margin-top: 0.5rem;
+  color: #666;
+}

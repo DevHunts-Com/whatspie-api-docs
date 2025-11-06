@@ -1,0 +1,8 @@
+{
+  "label": "Group Management",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Complete guide to WhatsApp group management including creation, messaging, member management, and group settings using the Whatspie API."
+  }
+}
