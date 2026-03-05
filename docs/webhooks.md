@@ -32,6 +32,15 @@ To receive webhook messages, configure the webhook URL in your device settings:
 - Should handle POST requests with JSON payload
 - Must be able to process webhook data within 5 seconds
 
+### Webhook Version (v1 / v2)
+
+In **Device Configuration → Webhook**, you can choose the webhook version:
+
+- **v1** (default): Payloads are sent in the legacy format (see sections below). Only incoming messages are sent.
+- **v2**: All events use a unified envelope `{ "type": "<event_type>", "data": { ... } }`. You can enable or disable each event type (incoming message, read receipt, message failed, device disconnected).
+
+When you save the webhook configuration, the device connection is reloaded so the new version and event settings take effect immediately.
+
 ## 📨 Incoming Message Types
 
 Your webhook will receive different message types based on your package plan. **Document, Image, Contact, and Audio messages are only available with the Startup package and above.**
@@ -179,6 +188,100 @@ Voice notes and audio files (Startup package required):
 | Field | Type | Description |
 |-------|------|-------------|
 | `file.seconds` | integer | Duration of audio in seconds |
+
+## 📬 Webhook v2 event format
+
+When **Webhook version** is set to **v2**, every request body is an object with:
+
+- **`type`**: Event type string (e.g. `message_incoming`, `message_read`, `message_failed`, `device_disconnected`).
+- **`data`**: Event-specific payload (same structure as v1 for messages, or as defined below for other events).
+
+You can enable or disable each event in the device webhook settings. Only enabled events are sent.
+
+### v2: Incoming message (`message_incoming`)
+
+Same content as v1 incoming messages, wrapped in `data`:
+
+```json
+{
+    "type": "message_incoming",
+    "data": {
+        "message": "Hello, I need help with my order",
+        "from": "62856123456",
+        "timestamp": 1581651709,
+        "message_id": "3219EDE2131",
+        "from_user": {
+            "name": "John Doe",
+            "jid": "62856123456@s.whatsapp.net"
+        },
+        "is_forwarded": false,
+        "is_broadcast": false
+    }
+}
+```
+
+### v2: Message read (`message_read`)
+
+Sent when the recipient has read the message (read receipt).
+
+```json
+{
+    "type": "message_read",
+    "data": {
+        "message_id": "3219EDE2131",
+        "wa_message_id": "xxxxxxx",
+        "read_at": "2026-02-03T10:00:00.000Z"
+    }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `message_id` | string | Your message identifier |
+| `wa_message_id` | string | WhatsApp message ID |
+| `read_at` | string | ISO 8601 datetime when the message was read |
+
+### v2: Message failed (`message_failed`)
+
+Sent when a message you sent fails to be delivered.
+
+```json
+{
+    "type": "message_failed",
+    "data": {
+        "message_id": "3219EDE2131",
+        "status": "ERROR",
+        "reason": "Invalid WhatsApp Number"
+    }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `message_id` | string | Your message identifier |
+| `status` | string | e.g. `ERROR` |
+| `reason` | string | Failure reason from WhatsApp or system |
+
+### v2: Device disconnected (`device_disconnected`)
+
+Sent when the device session is actually disconnected (logged out, conflict, connection replaced, etc.), not on temporary reconnection or max-connection events.
+
+```json
+{
+    "type": "device_disconnected",
+    "data": {
+        "device_Id": "3219EDE2131",
+        "status": "UNPAIRED",
+        "reason": "Conflict"
+    }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `device_Id` | string | Device ID (session identifier) |
+| `status` | string | e.g. `UNPAIRED` |
+| `reason` | string | Disconnect reason (e.g. Conflict, Logged out) |
 
 ## 📤 Webhook Response Formats
 
