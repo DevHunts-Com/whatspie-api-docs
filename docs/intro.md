@@ -37,7 +37,7 @@ Welcome to the **Whatspie** - The most powerful and developer-friendly WhatsApp 
     </ul>
   </div>
   
-  <!-- <div style={{background: '#fef3c7', border: '1px solid #fed7aa', borderRadius: '8px', padding: '1.5rem'}}>
+  {/* <div style={{background: '#fef3c7', border: '1px solid #fed7aa', borderRadius: '8px', padding: '1.5rem'}}>
     <h3 style={{color: '#d97706', marginTop: '0'}}>🔗 Real-time Webhooks</h3>
     <ul style={{margin: '0'}}>
       <li>Message delivery status</li>
@@ -46,7 +46,7 @@ Welcome to the **Whatspie** - The most powerful and developer-friendly WhatsApp 
       <li>Error notifications</li>
       <li>Custom event handling</li>
     </ul>
-  </div> -->
+  </div> */}
   
   <div style={{background: '#fdf2f8', border: '1px solid #fce7f3', borderRadius: '8px', padding: '1.5rem'}}>
     <h3 style={{color: '#be185d', marginTop: '0'}}>🔐 Enterprise Security</h3>
@@ -170,7 +170,7 @@ All API responses follow a consistent format:
 ## Rate Limits
 
 Please be mindful of WhatsApp's rate limits to avoid being blocked:
-<!-- - **Individual messages**: Up to 1000 messages per day for new business accounts -->
+{/* - **Individual messages**: Up to 1000 messages per day for new business accounts */}
 - **Group messages**: Depends on group size and message frequency
 - **QR code requests**: Limited to prevent abuse
 
