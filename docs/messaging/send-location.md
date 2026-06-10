@@ -38,9 +38,9 @@ Bearer token required with proper JSON content headers.
 
 Whatspie API uses the **WGS84** coordinate system (same as GPS):
 
-<!-- <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', margin: '1.5rem 0'">
-  <div style={{background: '#f8f9ff', border: '1px solid #e1e5e9', borderRadius: '8px', padding: '1rem'">
-    <h4 style={{color: '#4f46e5', marginTop: '0'">🌍 Latitude</h4>
+{/* <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', margin: '1.5rem 0'}}>
+  <div style={{background: '#f8f9ff', border: '1px solid #e1e5e9', borderRadius: '8px', padding: '1rem'}}>
+    <h4 style={{color: '#4f46e5', marginTop: '0'}}>🌍 Latitude</h4>
     <ul style={{margin: '0', fontSize: '0.9rem'}}>
       <li><strong>Range:</strong> -90 to +90</li>
       <li><strong>North:</strong> Positive values</li>
@@ -49,8 +49,8 @@ Whatspie API uses the **WGS84** coordinate system (same as GPS):
     </ul>
   </div>
   
-  <div style={{background: '#f0fdf4', border: '1px solid #dcfce7', borderRadius: '8px', padding: '1rem'">
-    <h4 style={{color: '#059669', marginTop: '0'">🌏 Longitude</h4>
+  <div style={{background: '#f0fdf4', border: '1px solid #dcfce7', borderRadius: '8px', padding: '1rem'}}>
+    <h4 style={{color: '#059669', marginTop: '0'}}>🌏 Longitude</h4>
     <ul style={{margin: '0', fontSize: '0.9rem'}}>
       <li><strong>Range:</strong> -180 to +180</li>
       <li><strong>East:</strong> Positive values</li>
@@ -58,7 +58,7 @@ Whatspie API uses the **WGS84** coordinate system (same as GPS):
       <li><strong>Example:</strong> -122.4194 (San Francisco)</li>
     </ul>
   </div>
-</div> -->
+</div> */}
 
 ## 🚀 Request Examples
 
