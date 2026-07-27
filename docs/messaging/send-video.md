@@ -29,8 +29,8 @@ Bearer token required with proper JSON content headers.
 | `receiver` | string | ✅ | Recipient's phone number (international format) |
 | `type` | string | ✅ | Message type: `"file"` for video messages |
 | `params` | object | ✅ | Message parameters containing video data |
-| `params.document` | object | ✅ | Document object with video URL |
-| `params.document.url` | string | ✅ | Direct URL to the video file |
+| `params.video` | object | ✅ | video object with video URL |
+| `params.video.url` | string | ✅ | Direct URL to the video file |
 | `params.mimetype` | string | ✅ | Video MIME type (e.g., "video/mp4") |
 | `params.caption` | string | ❌ | Video caption text (supports formatting) |
 | `params.viewOnce` | boolean | ❌ | Whether video should be viewable only once |
@@ -88,7 +88,7 @@ curl -X POST "https://api.whatspie.com/messages" \
     "receiver": "6289876543210",
     "type": "file",
     "params": {
-      "document": {
+      "video": {
         "url": "https://example.com/videos/demo.mp4"
       },
       "mimetype": "video/mp4",
@@ -110,7 +110,7 @@ curl -X POST "https://api.whatspie.com/messages" \
     "receiver": "6289876543210",
     "type": "file",
     "params": {
-      "document": {
+      "video": {
         "url": "https://example.com/videos/product-demo.mp4"
       },
       "mimetype": "video/mp4",
@@ -132,7 +132,7 @@ curl -X POST "https://api.whatspie.com/messages" \
     "receiver": "6289876543210",
     "type": "file",
     "params": {
-      "document": {
+      "video": {
         "url": "https://example.com/videos/tutorial.mp4"
       },
       "mimetype": "video/mp4"
@@ -252,7 +252,7 @@ Order now: https://shop.example.com`;
       receiver: '6289876543210',
       type: 'file',
       params: {
-        document: {
+        video: {
           url: 'https://example.com/videos/product-demo.mp4'
         },
         mimetype: 'video/mp4',
@@ -286,7 +286,7 @@ async function sendVideoToMultipleContacts(videoUrl, caption, contacts) {
           receiver: contact.phone,
           type: 'file',
           params: {
-            document: {
+            video: {
               url: videoUrl
             },
             mimetype: 'video/mp4',
@@ -373,7 +373,7 @@ async function sendValidatedVideo(token, receiver, videoUrl, caption) {
       receiver: receiver,
       type: 'file',
       params: {
-        document: {
+        video: {
           url: videoUrl
         },
         mimetype: 'video/mp4',
@@ -423,7 +423,7 @@ async function sendOptimizedVideo(token, receiver, videoUrl, caption) {
       receiver: receiver,
       type: 'file',
       params: {
-        document: {
+        video: {
           url: videoUrl
         },
         mimetype: 'video/mp4',
@@ -494,7 +494,7 @@ async function sendCDNVideo(token, receiver, fileName, caption) {
       receiver: receiver,
       type: 'file',
       params: {
-        document: {
+        video: {
           url: videoUrl
         },
         mimetype: 'video/mp4',
@@ -587,7 +587,7 @@ ${training.description}
       receiver: employeePhone,
       type: 'file',
       params: {
-        document: {
+        video: {
           url: training.videoUrl
         },
         mimetype: 'video/mp4',
@@ -629,7 +629,7 @@ ${product.features.map(f => `• ${f}`).join('\n')}
       receiver: customerPhone,
       type: 'file',
       params: {
-        document: {
+        video: {
           url: product.demoVideoUrl
         },
         mimetype: 'video/mp4',
@@ -668,7 +668,7 @@ Thank you for attending! Here are the best moments captured.
       receiver: attendeePhone,
       type: 'file',
       params: {
-        document: {
+        video: {
           url: event.highlightVideoUrl
         },
       
