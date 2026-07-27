@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwhatspie_docs=self.webpackChunkwhatspie_docs||[]).push([["452"],{5146(e,s,t){t.r(s),t.d(s,{default:()=>a});var c=t(6540),u=t(6347);function a(){let e=(0,u.W6)();return(0,c.useEffect)(()=>{e.replace("/docs/intro")},[e]),null}}}]);
