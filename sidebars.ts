@@ -28,7 +28,8 @@ const sidebars: SidebarsConfig = {
         'messaging/send-video',
         'messaging/send-file',
         'messaging/send-location',
-        'messaging/get-message'
+        'messaging/get-message',
+        'messaging/send-reaction'
       ],
     },
     {
@@ -40,6 +41,7 @@ const sidebars: SidebarsConfig = {
         'groups/get-group',
         'groups/update-group',
         'groups/add-members',
+        'groups/refresh-groups',
       ],
     },
     {
