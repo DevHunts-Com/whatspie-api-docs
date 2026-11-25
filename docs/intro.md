@@ -38,7 +38,9 @@ curl -X POST 'https://api.whatspie.com/messages' \
     "device": "6281111111111",
     "receiver": "6282222222222",
     "type": "chat",
-    "message": "Hi!"
+    "params": {
+      "text": "Hi!"
+    }
   }'
 ```
 
@@ -73,7 +75,7 @@ A successful request returns the queued message:
 }
 ```
 
-`PENDING` means the message is queued for sending. Use `data.id` with [Get message](./messaging/get-message.md) to check its delivery status later.
+`PENDING` means the message is queued for sending. Use `data.id` with [Get message](./messaging/get-message.md) to check its delivery status later. See [Status values](./messaging/get-message.md#status-values).
 
 ## Response format
 
@@ -89,8 +91,8 @@ An error looks like this:
 
 ```json
 {
-  "status": 400,
-  "message": "Message text is required for chat type"
+  "status": 403,
+  "message": "Invalid Authentication Token"
 }
 ```
 
@@ -98,7 +100,7 @@ An error looks like this:
 
 | Area | Pages |
 |---|---|
-| Messaging | [Send text](./messaging/send-text.md), [image](./messaging/send-image.md), [file](./messaging/send-file.md), [location](./messaging/send-location.md), [reaction](./messaging/send-reaction.md); [get a message](./messaging/get-message.md) |
+| Messaging | [Send text](./messaging/send-text.md), [image](./messaging/send-image.md), [file](./messaging/send-file.md), [video](./messaging/send-video.md), [location](./messaging/send-location.md), [reaction](./messaging/send-reaction.md); [get a message](./messaging/get-message.md) |
 | Groups | [List](./groups/list-groups.md), [get](./groups/get-group.md), [refresh](./groups/refresh-groups.md), [send messages](./groups/send-group-messages.md), [add members](./groups/add-members.md), [update](./groups/update-group.md) |
 | Contacts | [Check whether numbers use WhatsApp](./contacts/check-contacts.md) |
 | Devices | [Manage devices](./device-management.md) |

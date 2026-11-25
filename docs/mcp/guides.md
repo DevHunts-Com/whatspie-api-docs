@@ -107,7 +107,7 @@ environment:
 
 Use the host and port only. A path such as `/api` is dropped, so `http://host:3000/api` calls `http://host:3000/messages`.
 
-Your token must belong to that API instance. A token from one instance returns `401` on another.
+Your token must belong to that API instance. A token from one instance returns `403 Invalid Authentication Token` on another.
 
 ## Expose the server safely
 
@@ -123,7 +123,7 @@ On your own computer, keep the server on `localhost`. Before you make it reachab
 |---|---|---|
 | `401` with `Missing Whatspie API token` | The `Authorization` header is missing, or its value lacks `Bearer `. | Set the value to `Bearer YOUR_API_TOKEN`. |
 | `Dynamic Client Registration rejected (HTTP 404)` or `Cannot POST /register` | Same as above. After a `401`, the client tries OAuth, which the server does not support. | Fix the header. Do not click "Authenticate". |
-| `Whatspie API error (401)` | The server works, but the Whatspie API rejected the token. | Check the token in the dashboard. Check that it belongs to the API in `WHATSPIE_API_BASE_URL`. |
+| `Whatspie API error (403): Invalid Authentication Token` | The server works, but the Whatspie API rejected the token. | Check the token in the dashboard. Check that it belongs to the API in `WHATSPIE_API_BASE_URL`. |
 | `Unexpected error: fetch failed` | The server cannot reach the Whatspie API. | Check `WHATSPIE_API_BASE_URL` and the network between the two. |
 | `406 Not Acceptable` | A manual request without the right `Accept` header. | Send `Accept: application/json, text/event-stream`. |
 | Tools do not appear | The conversation started before the server was added. | Start a new conversation. In Claude Desktop, quit fully and reopen. |

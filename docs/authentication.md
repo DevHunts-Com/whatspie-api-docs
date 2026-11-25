@@ -1,153 +1,133 @@
 ---
-sidebar_position: 2
+title: Authentication
+description: Get your Whatspie API token, send it with every request, test it, and fix authentication errors.
 ---
 
-# 🔐 Authentication
+# Authentication
 
-The Whatspie API uses **Bearer Token Authentication** for secure access to all endpoints. This streamlined authentication system is designed for enterprise applications with enhanced security features.
+Every request to the Whatspie API must carry your API token in the `Authorization` header as a Bearer token. There are no other authentication methods.
 
-<div style={{background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)", padding: "1.5rem", borderRadius: "8px", color: "white", margin: "1.5rem 0"}}>
-  <h3 style={{color: "white", margin: "0 0 1rem 0"}}>🛡️ Security First</h3>
-  <p style={{margin: "0"}}>All API requests are authenticated using Bearer tokens with automatic rate limiting and request validation to ensure your application's security.</p>
-</div>
+## Overview
 
-## 🎯 Authentication Overview
+1. **Get your API token** from the Whatspie dashboard: **Developers** in the sidebar, or [app.whatspie.com/profile?tab=developer](https://app.whatspie.com/profile?tab=developer).
+2. **Send the token** in the `Authorization` header of every request.
+3. **Start using the API.** Your token gives access to the devices on your account.
 
-Whatspie API uses a simple yet secure authentication method:
-
-1. **Get your API Token** from your Whatspie dashboard -> Developers or this link [https://app.whatspie.com/profile?tab=developer](https://app.whatspie.com/profile?tab=developer)
-2. **Include the token** in the `Authorization` header for all requests  
-3. **Start using the API** immediately with full access to all features
-
-## 📋 Required Headers
-
-Every API request must include these headers:
+## Required headers
 
 | Header | Value | Description |
-|--------|-------|-------------|
-| `Authorization` | `Bearer YOUR_API_TOKEN` | Your unique API authentication token |
-| `Content-Type` | `application/json` | Request content type |
-| `Accept` | `application/json` | Expected response format |
+|---|---|---|
+| `Authorization` | `Bearer YOUR_API_TOKEN` | Your API token. Write `Bearer`, one space, then the token. |
+| `Content-Type` | `application/json` | Needed on requests with a JSON body. |
+| `Accept` | `application/json` | The API responds with JSON. |
 
-## 🚀 Authentication Example
-
-### Basic Request Structure
+## Example
 
 ```bash
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
     "device": "6281234567890",
     "receiver": "6289876543210",
     "type": "chat",
     "params": {
       "text": "Hello World!"
-    },
-    "simulate_typing": 1
+    }
   }'
 ```
 
-## 🔑 Getting Your API Token
+See [Send text message](./messaging/send-text.md) for the request and response fields.
 
-### From Whatspie Dashboard
+## Get your API token
 
-To obtain your API token, follow these steps:
+1. Log in to the Whatspie dashboard at [app.whatspie.com](https://app.whatspie.com).
+2. Open **Developers** in the sidebar, or go to **Profile** → **Developer**: [app.whatspie.com/profile?tab=developer](https://app.whatspie.com/profile?tab=developer).
+3. Copy your API token from the developer credentials section.
+4. Use this token in all API requests.
 
-1. **Login** to your Whatspie dashboard at [https://app.whatspie.com](https://app.whatspie.com)
-2. **Navigate** to the **Developers** section in the sidebar, or go directly to your **Profile** → **Developer** tab: [https://app.whatspie.com/profile?tab=developer](https://app.whatspie.com/profile?tab=developer)
-3. **Copy** your API Token from the Developer credentials section
-4. **Use** this token in all API requests
+### Token storage
 
-<div style={{background: "#f0f9ff", border: "1px solid #0ea5e9", borderRadius: "8px", padding: "1rem", margin: "1rem 0"}}>
-  <strong>📍 Quick Access:</strong> You can find your API token in the sidebar under <strong>Developers</strong> or by visiting your Profile → Developer tab.
-</div>
+- Store the token securely in your application.
+- Never put the token in client-side code or in logs.
+- Use environment variables in production.
 
-### Token Storage
-- Store tokens securely in your application
-- **Never expose tokens** in client-side code or logs
-- Use environment variables for production deployments
+### Security best practices
 
-### 🛡️ Security Best Practices
+1. **Secure storage:** keep the token in environment variables or a secrets manager, not in source code.
+2. **HTTPS only:** always call `https://api.whatspie.com`, never plain HTTP.
+3. **Token protection:** never expose the token in client-side code or logs.
+4. **Sending rate:** space out your messages. WhatsApp can block numbers that send too much too fast.
+5. **IP restrictions:** call the API only from your own servers, and restrict which of your machines hold the token.
 
-1. **Secure Storage**: Store API tokens securely using environment variables
-2. **HTTPS Only**: Always use HTTPS in production environments
-3. **Token Protection**: Never expose tokens in client-side code or logs
-4. **Rate Limiting**: Respect API rate limits to avoid temporary blocks
-5. **IP Restrictions**: Consider restricting API access to specific IP addresses
+## Test your token
 
-## Error Handling
+List your devices. This checks the token without sending a message:
 
-### Common Authentication Errors
+```bash
+curl 'https://api.whatspie.com/devices' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json'
+```
 
-#### 401 Unauthorized
+A valid token returns HTTP `200` with the devices on your account (fields trimmed):
+
 ```json
 {
-  "code": 401,
-  "message": "Unauthorized"
+  "status": 200,
+  "message": "OK",
+  "data": [
+    {
+      "id": 12,
+      "phone": "6281234567890",
+      "status": "ACTIVE",
+      "paired_status": "PAIRED",
+      "webhook_url": null,
+      "created_at": "2025-08-22T03:36:02Z",
+      "updated_at": "2025-08-22T03:36:02Z"
+    }
+  ]
 }
 ```
 
-**Solutions:**
-- Verify your API token is correct
-- Ensure the token is properly formatted in the Authorization header
-- Check if your token has been revoked or expired
+An invalid token returns HTTP `403`:
 
-#### 403 Forbidden
 ```json
 {
-  "code": 403,
-  "message": "Forbidden"
+  "status": 403,
+  "message": "Invalid Authentication Token"
 }
 ```
 
-**Solutions:**
-- Verify your account has the required permissions
-- Check if your subscription plan supports the requested feature
-- Ensure your account is active and in good standing
-
-
-## 🧪 Testing Authentication
-
-You can test your authentication setup using curl:
+### Environment variable setup
 
 ```bash
-# Test with your API token
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
-  -d '{
-    "device": "6281234567890",
-    "receiver": "6289876543210",
-    "type": "chat",
-    "params": {
-      "text": "Test message from API! 🧪"
-    },
-    "simulate_typing": 1
-  }'
-```
-
-### Environment Variable Setup
-
-```bash
-# Set your API token as environment variable
+# Set your API token as an environment variable
 export WHATSPIE_API_TOKEN="your_actual_token_here"
 
-# Use in curl request
-curl -X POST "https://api.whatspie.com/messages" \
+# Use it in a request
+curl 'https://api.whatspie.com/devices' \
   -H "Authorization: Bearer $WHATSPIE_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
-  -d '{"device":"6281234567890","receiver":"6289876543210","type":"chat","params":{"text":"Hello World!"}}'
+  -H 'Accept: application/json'
 ```
 
-## Next Steps
+## Errors
 
-Once you have successfully authenticated, you can:
-- [Connect your WhatsApp device](./device-management) using QR codes
-- [Send messages](./messaging/send-text) to contacts
-- [Manage groups](./groups/create-group) and participants
+Authentication errors return HTTP `403` with one of these messages:
 
-Remember to handle token expiration gracefully in your application and implement proper error handling for authentication failures.
+| `message` | Cause | Fix |
+|---|---|---|
+| `Missing Authorization header` | The request has no `Authorization` header. | Add `Authorization: Bearer YOUR_API_TOKEN`. |
+| `Missing token in Authorization header` | The header has no token after `Bearer `. | Check that the token is not empty, and that `Bearer` is followed by one space. |
+| `Invalid Authentication Token` | The token does not match an account. | Copy the token again from the dashboard. It may have been revoked or regenerated. |
+| `Device not found or access denied` | The `device` number in the request is not a device on your account. | Use a device number listed by `GET /devices`. |
+| Quota or subscription message | Your package has no quota left for this request. | Check your package and subscription in the dashboard. |
+
+## Next steps
+
+- [Connect your WhatsApp device](./device-management.md) using QR codes
+- [Send messages](./messaging/send-text.md) to contacts
+- [Manage groups](./groups/list-groups.md) and participants
+
+If a token is revoked or regenerated, requests with the old token fail with `Invalid Authentication Token`. Handle this error in your application, for example by alerting an operator instead of retrying.
