@@ -1,74 +1,62 @@
 ---
-sidebar_position: 4
+title: Send location message
+description: Send a location pin with latitude and longitude with POST /messages.
 ---
 
-# 📍 Send Location Messages
+# Send location message
 
-Share precise location coordinates with WhatsApp contacts using the Whatspie API with support for custom location names and interactive maps.
+Send a location pin to a phone number. The recipient sees a map preview and can open it in their map app.
 
-<div style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '1.5rem', borderRadius: '8px', color: 'white', margin: '1.5rem 0'}}>
-  <h3 style={{color: 'white', margin: '0 0 1rem 0'}}>🗺️ Interactive Location Sharing</h3>
-  <p style={{margin: '0'}}>Send precise GPS coordinates with automatic map preview, custom location names, and one-tap navigation for recipients.</p>
-</div>
+A location message carries only the coordinates. It has no name or address. To tell the recipient what the place is, send the name as a separate [text message](./send-text.md); see [Location with a name](#location-with-a-name).
 
-## 🌐 Endpoint
+## Endpoint
 
 ```
 POST https://api.whatspie.com/messages
 ```
 
-## 🔐 Authentication
+Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [Authentication](../authentication.md).
 
-Bearer token required with proper JSON content headers.
-
-## 📋 Request Parameters
+## Request
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `device` | string | ✅ | Your registered WhatsApp device number |
-| `receiver` | string | ✅ | Recipient's phone number (international format) |
-| `type` | string | ✅ | Message type: `"location"` for location messages |
-| `params` | object | ✅ | Message parameters containing location data |
-| `params.location` | object | ✅ | Location object with coordinates |
-| `params.location.degreesLatitude` | number | ✅ | Location latitude coordinate (-90 to 90) |
-| `params.location.degreesLongitude` | number | ✅ | Location longitude coordinate (-180 to 180) |
-| `simulate_typing` | integer | ❌ | Show typing indicator: `1` (yes) or `0` (no) |
+|---|---|---|---|
+| `device` | string | Yes | Phone number of your sending device, as registered in Whatspie. |
+| `receiver` | string | Yes | Recipient's phone number. Up to 35 characters. |
+| `type` | string | Yes | `location`. |
+| `params` | object | Yes | Message content. |
+| `params.location.degreesLatitude` | number | Yes | Latitude, -90 to 90. |
+| `params.location.degreesLongitude` | number | Yes | Longitude, -180 to 180. |
 
-## 🗺️ Coordinate System
+Write phone numbers in international format without `+`. See [Phone number format](./send-text.md#phone-number-format).
 
-Whatspie API uses the **WGS84** coordinate system (same as GPS):
+`params.location` accepts only `degreesLatitude` and `degreesLongitude`. Other keys, such as `name` or `address`, are rejected with `400`. Send coordinates as JSON numbers, not strings.
 
-{/* <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', margin: '1.5rem 0'}}>
-  <div style={{background: '#f8f9ff', border: '1px solid #e1e5e9', borderRadius: '8px', padding: '1rem'}}>
-    <h4 style={{color: '#4f46e5', marginTop: '0'}}>🌍 Latitude</h4>
-    <ul style={{margin: '0', fontSize: '0.9rem'}}>
-      <li><strong>Range:</strong> -90 to +90</li>
-      <li><strong>North:</strong> Positive values</li>
-      <li><strong>South:</strong> Negative values</li>
-      <li><strong>Example:</strong> 37.7749 (San Francisco)</li>
-    </ul>
-  </div>
-  
-  <div style={{background: '#f0fdf4', border: '1px solid #dcfce7', borderRadius: '8px', padding: '1rem'}}>
-    <h4 style={{color: '#059669', marginTop: '0'}}>🌏 Longitude</h4>
-    <ul style={{margin: '0', fontSize: '0.9rem'}}>
-      <li><strong>Range:</strong> -180 to +180</li>
-      <li><strong>East:</strong> Positive values</li>
-      <li><strong>West:</strong> Negative values</li>
-      <li><strong>Example:</strong> -122.4194 (San Francisco)</li>
-    </ul>
-  </div>
-</div> */}
+Location messages have no legacy format: a request without `params` is rejected.
 
-## 🚀 Request Examples
+## Coordinate system
 
-### Basic Location Message
+Coordinates use WGS84, the same system as GPS.
+
+| | Latitude | Longitude |
+|---|---|---|
+| Range | -90 to +90 | -180 to +180 |
+| Positive values | North | East |
+| Negative values | South | West |
+| Example (San Francisco) | `37.7749` | `-122.4194` |
+| Example (Jakarta) | `-6.2088` | `106.8456` |
+
+The API does not check the range. Validate coordinates yourself; see [Coordinate validation](#1-coordinate-validation).
+
+## Examples
+
+### Basic location message
 
 ```bash
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
     "device": "6281234567890",
     "receiver": "6289876543210",
@@ -78,337 +66,352 @@ curl -X POST "https://api.whatspie.com/messages" \
         "degreesLatitude": -6.2088,
         "degreesLongitude": 106.8456
       }
-    },
-    "simulate_typing": 1
+    }
   }'
 ```
 
-### Location with Custom Name
+### Location with a name
+
+Send the location, then send the name as a text message right after it:
 
 ```bash
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+# 1. The location pin
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
   -d '{
     "device": "6281234567890",
     "receiver": "6289876543210",
     "type": "location",
     "params": {
-      "location": {
-        "degreesLatitude": -6.2088,
-        "degreesLongitude": 106.8456
-      }
-    },
-    "simulate_typing": 1
+      "location": { "degreesLatitude": -6.1751, "degreesLongitude": 106.8650 }
+    }
   }'
-```
 
-### Business Location
-
-```bash
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+# 2. The name, as a text message
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
   -d '{
     "device": "6281234567890",
-    "receiver": "6289876543210", 
-    "type": "location",
-    "latitude": 37.7749,
-    "longitude": -122.4194,
-    "location_name": "🏢 Our Office - 123 Business St, San Francisco, CA",
-    "simulate_typing": 1
+    "receiver": "6289876543210",
+    "type": "chat",
+    "params": { "text": "📍 Monas - National Monument Jakarta" }
   }'
 ```
 
+### Business location
 
-## 📊 Response Format
+```bash
+# 1. The office location
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "device": "6281234567890",
+    "receiver": "6289876543210",
+    "type": "location",
+    "params": {
+      "location": { "degreesLatitude": 37.7749, "degreesLongitude": -122.4194 }
+    }
+  }'
 
-### Success Response
+# 2. The office name and address
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "device": "6281234567890",
+    "receiver": "6289876543210",
+    "type": "chat",
+    "params": { "text": "🏢 Our Office - 123 Business St, San Francisco, CA" }
+  }'
+```
+
+## Response
+
+A successful request returns HTTP `200` with the queued message. The fields are the same as for [text messages](./send-text.md#response-fields). For a location, `body` is an empty string and `params.location` holds the coordinates:
 
 ```json
 {
-  "code": 200,
-  "message": "Location sent successfully",
+  "status": 200,
+  "message": "OK",
   "data": {
-    "id": "msg_location_12345",
-    "status": "pending",
+    "id": 36259785,
+    "device_id": 12,
+    "from_number": "6281234567890",
+    "to_number": "6289876543210",
     "type": "location",
-    "coordinates": {
-      "latitude": -6.2088,
-      "longitude": 106.8456
+    "msg_type": "outgoing",
+    "body": "",
+    "status": "PENDING",
+    "wa_id": null,
+    "retry": 0,
+    "failed_reason": null,
+    "file_url": null,
+    "file_name": null,
+    "file_caption": null,
+    "file_size": null,
+    "file_mime": null,
+    "params": {
+      "location": { "degreesLatitude": -6.2088, "degreesLongitude": 106.8456 }
     },
-    "location_name": "Monas - National Monument Jakarta",
-    "timestamp": "2024-12-20T10:30:00Z"
+    "is_group": false,
+    "created_at": "2025-08-22T03:36:02Z",
+    "updated_at": "2025-08-22T03:36:02Z"
   }
 }
 ```
 
-### Error Response - Invalid Coordinates
+## Errors
 
 ```json
 {
-  "code": 400,
-  "message": "Invalid coordinates",
-  "error": "Latitude must be between -90 and 90, longitude must be between -180 and 180"
+  "status": 400,
+  "message": "Invalid message params: unknown location parameter 'name'. Allowed location parameters: degreesLatitude, degreesLongitude"
 }
 ```
 
-## 🌟 Advanced Examples
+| HTTP status | `message` | Cause |
+|---|---|---|
+| `400` | `Invalid message params: unknown location parameter ...` | `params.location` contains a key other than `degreesLatitude` and `degreesLongitude`. |
+| `400` | `Invalid message params: params validation failed: ...` | A coordinate is not a number, for example a string. |
+| `400` | `Invalid message params: location parameter must be an object ...` | `params.location` is not an object. |
+| `400` | `Params are required for message type: location` | The request has no `params`. |
+| `400` | `Invalid request body: ...` | The body is not valid JSON, or `device`, `receiver`, or `type` is missing. |
+| `403` | `Missing Authorization header`, `Missing token in Authorization header`, `Invalid Authentication Token` | Token problem. See [Authentication](../authentication.md#errors). |
+| `403` | `Device not found or access denied` | `device` is not a device on your account. |
+| `403` | Quota or subscription message | Your package has no messages left. |
+| `500` | Error description | Internal error, for example the message could not be saved. Try again later. |
 
-### Location with Address Lookup
+Coordinates outside the valid range are not rejected. Check them before sending.
+
+Sending failures, such as a disconnected device or a number that is not on WhatsApp, do not cause an error response either: the API accepts the message first and sends it in the background. They show up later as status `ERROR` with a `failed_reason`. Check them with [Get message](./get-message.md); see [Status values](./get-message.md#status-values).
+
+## Advanced examples
+
+The JavaScript examples on this page use this helper, plus `sendTextMessage` from [Send text](./send-text.md#example) and `sendImageMessage` from [Send image](./send-image.md#advanced-examples):
 
 ```javascript
-// Reverse geocoding to get address from coordinates
-async function sendLocationWithAddress(token, device, receiver, latitude, longitude) {
-  try {
-    // Get address from coordinates (using a geocoding service)
-    const address = await reverseGeocode(latitude, longitude);
-    
-    const locationName = `📍 ${address.name}\n${address.street}, ${address.city}`;
-    
-    return await sendLocationMessage(
-      token,
-      device, 
-      receiver, 
-      latitude, 
-      longitude, 
-      locationName
-    );
-  } catch (error) {
-    // Fallback to coordinates only if address lookup fails
-    return await sendLocationMessage(token, device, receiver, latitude, longitude);
+async function sendLocationMessage(token, device, receiver, latitude, longitude) {
+  const res = await fetch('https://api.whatspie.com/messages', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      device,
+      receiver,
+      type: 'location',
+      params: { location: { degreesLatitude: latitude, degreesLongitude: longitude } },
+    }),
+  });
+  const body = await res.json();
+  if (!res.ok) {
+    const error = new Error(body.message);
+    error.status = res.status;
+    throw error;
   }
+  return body;
+}
+
+// Location pin followed by a text message with its name
+async function sendNamedLocation(token, device, receiver, latitude, longitude, name) {
+  const location = await sendLocationMessage(token, device, receiver, latitude, longitude);
+  const label = name ? await sendTextMessage(token, device, receiver, name) : null;
+  return { location, label };
+}
+```
+
+### Location with address lookup
+
+```javascript
+// Reverse geocoding: get an address from coordinates, then send it with the pin
+async function sendLocationWithAddress(token, device, receiver, latitude, longitude) {
+  let name = null;
+  try {
+    const address = await reverseGeocode(latitude, longitude);
+    name = `📍 ${address.name}\n${address.street}, ${address.city}`;
+  } catch {
+    // Address lookup failed: send the pin without a name
+  }
+  return sendNamedLocation(token, device, receiver, latitude, longitude, name);
 }
 
 // Mock reverse geocoding function
 async function reverseGeocode(lat, lng) {
-  // In real implementation, use Google Maps API, OpenStreetMap, etc.
+  // In a real implementation, use Google Maps, OpenStreetMap, etc.
   return {
-    name: "Business Center",
-    street: "Jl. Sudirman No. 123",
-    city: "Jakarta"
+    name: 'Business Center',
+    street: 'Jl. Sudirman No. 123',
+    city: 'Jakarta',
   };
 }
 ```
 
-### Batch Location Sharing
+### Batch location sharing
 
 ```javascript
 async function sendMultipleLocations(token, device, receiver, locations) {
   const results = [];
-  
+
   for (const location of locations) {
     try {
-      const result = await sendLocationMessage(
-        token,
-        device,
-        receiver,
-        location.latitude,
-        location.longitude,
-        location.name
+      const result = await sendNamedLocation(
+        token, device, receiver, location.latitude, location.longitude, location.name,
       );
-      
-      results.push({
-        location: location.name,
-        success: true,
-        messageId: result.data.id
-      });
-      
-      // Delay between messages to avoid rate limiting
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      results.push({ location: location.name, success: true, messageId: result.location.data.id });
     } catch (error) {
-      results.push({
-        location: location.name,
-        success: false,
-        error: error.message
-      });
+      results.push({ location: location.name, success: false, error: error.message });
     }
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // pause between locations
   }
-  
+
   return results;
 }
 
-// Usage
 const touristSpots = [
-  { name: '🗿 Monas Jakarta', latitude: -6.1751, longitude: 106.8650 },
+  { name: '🗿 Monas Jakarta', latitude: -6.1751, longitude: 106.865 },
   { name: '🏛️ National Museum', latitude: -6.1717, longitude: 106.8219 },
-  { name: '🌊 Ancol Beach', latitude: -6.1260, longitude: 106.8421 }
+  { name: '🌊 Ancol Beach', latitude: -6.126, longitude: 106.8421 },
 ];
 
-sendMultipleLocations('YOUR_API_TOKEN', '6281234567890', '6289876543210', touristSpots);
+await sendMultipleLocations('YOUR_API_TOKEN', '6281234567890', '6289876543210', touristSpots);
 ```
 
-### Location with Custom Map Preview
+### Location with a custom map preview
 
 ```javascript
-// Generate custom map URL for location preview
+// Static map image URL for a location
 function generateMapPreview(latitude, longitude, zoom = 15) {
   return `https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=${zoom}&size=400x300&maptype=roadmap&markers=color:red%7C${latitude},${longitude}&key=YOUR_MAPS_API_KEY`;
 }
 
 async function sendLocationWithPreview(token, device, receiver, latitude, longitude, locationName) {
-  // First send the location
-  const locationResult = await sendLocationMessage(
-    token, 
-    device, 
-    receiver, 
-    latitude, 
-    longitude, 
-    locationName
-  );
-  
-  // Then send a map preview image (optional)
+  // 1. The location pin and its name
+  const locationResult = await sendNamedLocation(token, device, receiver, latitude, longitude, locationName);
+
+  // 2. A map image (optional)
   const mapUrl = generateMapPreview(latitude, longitude);
-  
-  const imageResult = await sendImageMessage(
-    token,
-    device,
-    receiver,
-    mapUrl,
-    '🗺️ Map Preview'
-  );
-  
-  return {
-    location: locationResult,
-    preview: imageResult
-  };
+  const imageResult = await sendImageMessage(token, device, receiver, mapUrl, '🗺️ Map Preview');
+
+  return { location: locationResult, preview: imageResult };
 }
 ```
 
-## 💡 Best Practices
+## Best practices
 
-### 1. Coordinate Validation
+### 1. Coordinate validation
 
 ```javascript
 function validateCoordinates(latitude, longitude) {
   const lat = parseFloat(latitude);
   const lng = parseFloat(longitude);
-  
+
   if (isNaN(lat) || lat < -90 || lat > 90) {
     throw new Error('Invalid latitude. Must be between -90 and 90');
   }
-  
   if (isNaN(lng) || lng < -180 || lng > 180) {
     throw new Error('Invalid longitude. Must be between -180 and 180');
   }
-  
-  return { latitude: lat, longitude: lng };
+
+  return { latitude: lat, longitude: lng }; // numbers, ready for params.location
 }
 ```
 
-### 2. Location Name Formatting
+### 2. Location name formatting
+
+Format the text you send after the pin:
 
 ```javascript
 function formatLocationName(name, address = null, category = null) {
-  let formattedName = '';
-  
-  // Add category emoji
   const categoryEmojis = {
-    'restaurant': '🍽️',
-    'hotel': '🏨',
-    'office': '🏢',
-    'hospital': '🏥',
-    'school': '🏫',
-    'shopping': '🛍️',
-    'gas_station': '⛽',
-    'bank': '🏦'
+    restaurant: '🍽️',
+    hotel: '🏨',
+    office: '🏢',
+    hospital: '🏥',
+    school: '🏫',
+    shopping: '🛍️',
+    gas_station: '⛽',
+    bank: '🏦',
   };
-  
-  if (category && categoryEmojis[category]) {
-    formattedName += categoryEmojis[category] + ' ';
-  } else {
-    formattedName += '📍 ';
-  }
-  
-  formattedName += name;
-  
-  if (address) {
-    formattedName += '\n' + address;
-  }
-  
+
+  let formattedName = `${categoryEmojis[category] || '📍'} ${name}`;
+  if (address) formattedName += `\n${address}`;
   return formattedName;
 }
 
-// Usage
-const locationName = formatLocationName(
-  'Central Park Mall',
-  'Jl. Letjen S. Parman, Jakarta Barat',
-  'shopping'
-);
-// Result: "🛍️ Central Park Mall\nJl. Letjen S. Parman, Jakarta Barat"
+const locationName = formatLocationName('Central Park Mall', 'Jl. Letjen S. Parman, Jakarta Barat', 'shopping');
+// "🛍️ Central Park Mall\nJl. Letjen S. Parman, Jakarta Barat"
 ```
 
-### 3. Distance Calculation
+### 3. Distance calculation
 
 ```javascript
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371; // Earth's radius in kilometers
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c; // Distance in kilometers
-  
-  return Math.round(distance * 100) / 100; // Round to 2 decimal places
+  return Math.round(R * c * 100) / 100; // kilometers, 2 decimals
 }
 
-// Usage
-const distance = calculateDistance(-6.2088, 106.8456, -6.1751, 106.8650);
+const distance = calculateDistance(-6.2088, 106.8456, -6.1751, 106.865);
 console.log(`Distance: ${distance} km`);
 ```
 
-## 🌍 Common Locations
+## Common locations
 
-### Famous Landmarks
+### Famous landmarks
 
 ```javascript
 const landmarks = {
   // Indonesia
-  monas: { lat: -6.1751, lng: 106.8650, name: '🗿 Monas - National Monument' },
+  monas: { lat: -6.1751, lng: 106.865, name: '🗿 Monas - National Monument' },
   borobudur: { lat: -7.6079, lng: 110.2038, name: '🏛️ Borobudur Temple' },
-  
+
   // International
   eiffel_tower: { lat: 48.8584, lng: 2.2945, name: '🗼 Eiffel Tower, Paris' },
   statue_liberty: { lat: 40.6892, lng: -74.0445, name: '🗽 Statue of Liberty, NYC' },
-  big_ben: { lat: 51.4994, lng: -0.1245, name: '🕰️ Big Ben, London' }
+  big_ben: { lat: 51.4994, lng: -0.1245, name: '🕰️ Big Ben, London' },
 };
 
-// Send landmark location
-await sendLocationMessage(
+await sendNamedLocation(
   'YOUR_API_TOKEN',
-  '6281234567890', 
+  '6281234567890',
   '6289876543210',
   landmarks.monas.lat,
   landmarks.monas.lng,
-  landmarks.monas.name
+  landmarks.monas.name,
 );
 ```
 
-## ⚠️ Limitations
+## Limitations
 
-- **Coordinate precision**: Up to 6 decimal places for accuracy
-- **Location name**: Maximum 100 characters
-- **Map providers**: Location display depends on recipient's map app
-- **Real-time tracking**: Static location only, no live tracking
-- **Offline access**: Recipients need internet to view map details
+- **No name or address:** a location message carries only coordinates. Send the name as a separate text message.
+- **Coordinate precision:** up to 6 decimal places is enough for accuracy.
+- **Map providers:** how the location displays depends on the recipient's map app.
+- **Real-time tracking:** static location only, no live location.
+- **Offline access:** recipients need internet to view map details.
 
-## 🔗 Related Endpoints
+## Related
 
-- [Send Text Messages](./send-text) - For location descriptions
-- [Send Image Messages](./send-image) - For map screenshots
-- [Get Message Status](../messages/get-messages) - Check delivery status
+- [Send text](./send-text.md): send the place name or directions
+- [Send image](./send-image.md): send map screenshots
+- [Get message](./get-message.md): check a message's delivery status
 
-## 🗺️ Map Integration Services
+## Map integration services
 
-For enhanced location features, consider integrating:
-- **Google Maps API** - Address lookup and static maps
-- **OpenStreetMap** - Open source mapping
-- **Mapbox** - Custom map styling
-- **Here Maps** - Enterprise mapping solutions
+For address lookup and map images, consider:
+
+- **Google Maps API:** address lookup and static maps
+- **OpenStreetMap:** open source mapping
+- **Mapbox:** custom map styling
+- **HERE Maps:** enterprise mapping

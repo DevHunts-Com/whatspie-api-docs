@@ -1,77 +1,46 @@
 ---
-sidebar_position: 2
+title: Send image message
+description: Send an image from a public URL, with an optional caption, with POST /messages.
 ---
 
-# 🖼️ Send Image Messages
+# Send image message
 
-Send stunning images with captions to WhatsApp contacts using the enhanced Whatspie API with support for various formats and advanced delivery options.
+Send an image from a public URL to a phone number, with an optional caption. The caption supports WhatsApp formatting.
 
-<div style={{background: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)", padding: "1.5rem", borderRadius: "8px", color: "white", margin: "1.5rem 0"}}>
-  <h3 style={{color: "white", margin: "0 0 1rem 0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>📸 Rich Media Support</h3>
-  <p style={{margin: "0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>Upload images directly from URLs with automatic optimization, caption support, and typing simulation for a natural conversation experience.</p>
-</div>
-
-## 🌐 Endpoint
+## Endpoint
 
 ```
 POST https://api.whatspie.com/messages
 ```
 
-## 🔐 Authentication
+Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [Authentication](../authentication.md).
 
-Bearer token required with proper JSON content headers.
-
-## 📋 Request Parameters
+## Request
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `device` | string | ✅ | Your registered WhatsApp device number |
-| `receiver` | string | ✅ | Recipient's phone number (international format) |
-| `type` | string | ✅ | Message type: `"image"` for image messages |
-| `params` | object | ✅ | Message parameters containing image data |
-| `params.image` | object | ✅ | Image object with URL |
-| `params.image.url` | string | ✅ | Direct URL to the image file |
-| `params.caption` | string | ❌ | Image caption text (supports formatting) |
-| `params.viewOnce` | boolean | ❌ | Whether image should be viewable only once |
-| `simulate_typing` | integer | ❌ | Show typing indicator: `1` (yes) or `0` (no) |
+|---|---|---|---|
+| `device` | string | Yes | Phone number of your sending device, as registered in Whatspie. |
+| `receiver` | string | Yes | Recipient's phone number. Up to 35 characters. |
+| `type` | string | Yes | `image`. |
+| `params` | object | Yes | Message content. |
+| `params.image.url` | string | Yes | Direct, public URL of the image file. |
+| `params.caption` | string | No | Caption shown under the image. Supports [WhatsApp formatting](./send-text.md#text-formatting). |
 
-## 🎨 Supported Image Formats
+Write phone numbers in international format without `+`. See [Phone number format](./send-text.md#phone-number-format).
 
-<div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", margin: "1.5rem 0"}}>
-  <div style={{background: "#f8f9ff", border: "1px solid #e1e5e9", borderRadius: "6px", padding: "1rem", textAlign: "center"}}>
-    <strong style={{color: "#4f46e5"}}>📷 JPEG/JPG</strong><br/>
-    <small>Most compatible format</small>
-  </div>
-  <div style={{background: "#f0fdf4", border: "1px solid #dcfce7", borderRadius: "6px", padding: "1rem", textAlign: "center"}}>
-    <strong style={{color: "#059669"}}>🖼️ PNG</strong><br/>
-    <small>Transparency support</small>
-  </div>
-  <div style={{background: "#fef3c7", border: "1px solid #fed7aa", borderRadius: "6px", padding: "1rem", textAlign: "center"}}>
-    <strong style={{color: "#d97706"}}>🎞️ GIF</strong><br/>
-    <small>Animated images</small>
-  </div>
-  <div style={{background: "#fdf2f8", border: "1px solid #fce7f3", borderRadius: "6px", padding: "1rem", textAlign: "center"}}>
-    <strong style={{color: "#be185d"}}>🚀 WebP</strong><br/>
-    <small>Modern format</small>
-  </div>
-</div>
+`params` accepts only these keys: `text`, `caption`, `fileName`, `mimetype`, `location`, `image`, `document`, `video`. Any other key, such as `viewOnce`, is rejected with `400`.
 
-## 📏 Image Requirements
+The older format, with the image URL in a top-level `file_url` field and the caption in a top-level `message` field, is still accepted for backward compatibility. New integrations should use `params`.
 
-- **Maximum file size**: 16MB
-- **Recommended dimensions**: Up to 1600x1600 pixels  
-- **File accessibility**: Must be publicly accessible via direct URL
-- **Upload time**: Images are automatically optimized for WhatsApp
+## Examples
 
-## 🚀 Request Examples
-
-### Basic Image Message
+### Basic image message
 
 ```bash
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
     "device": "6281234567890",
     "receiver": "6289876543210",
@@ -81,39 +50,37 @@ curl -X POST "https://api.whatspie.com/messages" \
         "url": "https://example.com/images/photo.jpg"
       },
       "caption": "Check out this amazing photo! 📸✨"
-    },
-    "simulate_typing": 1
+    }
   }'
 ```
 
-### Image with Rich Caption
+### Image with a formatted caption
 
 ```bash
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
-    "device": "6281234567890", 
+    "device": "6281234567890",
     "receiver": "6289876543210",
     "type": "image",
     "params": {
       "image": {
         "url": "https://example.com/products/headphones.jpg"
       },
-      "caption": "🎉 *NEW PRODUCT ALERT* 🎉\n\n_Premium Quality Headphones_\n\n✅ Noise Cancellation\n✅ 30h Battery Life\n✅ Fast Charging\n\n*Special Price: $199*\n~~Original: $299~~"
-    },
-    "simulate_typing": 1
+      "caption": "🎉 *NEW PRODUCT ALERT* 🎉\n\n_Premium Quality Headphones_\n\n✅ Noise Cancellation\n✅ 30h Battery Life\n✅ Fast Charging\n\n*Special Price: $199*\n~Original: $299~"
+    }
   }'
 ```
 
-### Image Without Caption
+### Image without a caption
 
 ```bash
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
     "device": "6281234567890",
     "receiver": "6289876543210",
@@ -122,329 +89,292 @@ curl -X POST "https://api.whatspie.com/messages" \
       "image": {
         "url": "https://example.com/images/screenshot.png"
       }
-    },
-    "simulate_typing": 1
+    }
   }'
 ```
 
+## Image requirements
 
-## 📊 Response Format
+The API does not download or check the image when it accepts your request. WhatsApp applies its own limits when the image is delivered:
 
-### Success Response
+| Format | Notes |
+|---|---|
+| JPEG / JPG | Most compatible format. |
+| PNG | Supports transparency. |
+| GIF | Animated images. |
+| WebP | Modern format. |
+
+- **Maximum file size:** 16 MB.
+- **Recommended dimensions:** up to 1600 × 1600 pixels.
+- **Accessibility:** the URL must be public and point directly to the image file, not to a web page or a login-protected link.
+- **Processing:** WhatsApp may compress the image when it is delivered.
+
+## Response
+
+A successful request returns HTTP `200` with the queued message. The fields are the same as for [text messages](./send-text.md#response-fields). For an image sent with `params`:
+
+- `body` holds the caption, or an empty string without one.
+- `params` holds the image URL and caption.
+- `file_url`, `file_name`, and `file_mime` are `null`. They are filled only when you use the older top-level `file_url` format.
 
 ```json
 {
-  "code": 200,
-  "message": "Image sent successfully",
+  "status": 200,
+  "message": "OK",
   "data": {
-    "id": "msg_image_12345",
-    "status": "pending",
+    "id": 36259783,
+    "device_id": 12,
+    "from_number": "6281234567890",
+    "to_number": "6289876543210",
     "type": "image",
-    "device": "6281234567890",
-    "receiver": "6289876543210",
-    "file_url": "https://example.com/images/photo.jpg",
-    "message": "Check out this amazing photo! 📸✨",
-    "simulate_typing": 1,
-    "timestamp": "2024-12-20T10:30:00Z"
+    "msg_type": "outgoing",
+    "body": "Check out this amazing photo! 📸✨",
+    "status": "PENDING",
+    "wa_id": null,
+    "retry": 0,
+    "failed_reason": null,
+    "file_url": null,
+    "file_name": null,
+    "file_caption": null,
+    "file_size": null,
+    "file_mime": null,
+    "params": {
+      "caption": "Check out this amazing photo! 📸✨",
+      "image": { "url": "https://example.com/images/photo.jpg" }
+    },
+    "is_group": false,
+    "created_at": "2025-08-22T03:36:02Z",
+    "updated_at": "2025-08-22T03:36:02Z"
   }
 }
 ```
 
-### Response Fields
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Unique message identifier |
-| `status` | string | Message status (`pending`, `sent`, `delivered`, `failed`) |
-| `type` | string | Message type (`image`) |
-| `device` | string | Sender device number |
-| `receiver` | string | Recipient's phone number |
-| `file_url` | string | URL of the sent image |
-| `message` | string | Image caption (if provided) |
-| `simulate_typing` | integer | Typing simulation setting (1 or 0) |
-| `timestamp` | string | Message sent timestamp (ISO 8601) |
-
-## Error Responses
-
-### Invalid Image URL
+## Errors
 
 ```json
 {
-  "code": 400,
-  "message": "Invalid image URL",
-  "error": "The provided image URL is not accessible or invalid"
+  "status": 400,
+  "message": "Invalid message params: unknown parameter 'viewOnce'. Allowed parameters: text, caption, fileName, mimetype, location, image, document"
 }
 ```
 
-### Unsupported Image Format
+| HTTP status | `message` | Cause |
+|---|---|---|
+| `400` | `Invalid message params: ...` | `params` contains a key that is not allowed, or `image` is not an object with only `url`. |
+| `400` | `File URL is required for image type` | The request has neither `params` nor a legacy `file_url` field. |
+| `400` | `Invalid request body: ...` | The body is not valid JSON, or `device`, `receiver`, or `type` is missing. |
+| `403` | `Missing Authorization header`, `Missing token in Authorization header`, `Invalid Authentication Token` | Token problem. See [Authentication](../authentication.md#errors). |
+| `403` | `Device not found or access denied` | `device` is not a device on your account. |
+| `403` | Quota or subscription message | Your package has no messages left. |
+| `500` | Error description | Internal error, for example the message could not be saved. Try again later. |
 
-```json
-{
-  "code": 400,
-  "message": "Unsupported file format",
-  "error": "Only JPEG, PNG, GIF, and WebP images are supported"
-}
-```
+Problems with the image itself, such as a dead link, a private URL, a file that is too large, or an unsupported format, do not cause an error response because the API accepts the request first and sends it in the background. The same goes for sending failures, such as a disconnected device or a number that is not on WhatsApp. They show up later as status `ERROR` with a `failed_reason`. Check them with [Get message](./get-message.md); see [Status values](./get-message.md#status-values).
 
-### Image Too Large
+## Advanced examples
 
-```json
-{
-  "code": 400,
-  "message": "File too large",
-  "error": "Image size exceeds 16MB limit"
-}
-```
-
-### URL Not Accessible
-
-```json
-{
-  "code": 400,
-  "message": "Unable to download image",
-  "error": "The image URL is not publicly accessible"
-}
-```
-
-## Advanced Examples
-
-### Image with Formatting in Caption
+The JavaScript examples on this page use this helper:
 
 ```javascript
-async function sendProductImage() {
+async function sendImageMessage(token, device, receiver, imageUrl, caption) {
+  const params = { image: { url: imageUrl } };
+  if (caption) params.caption = caption;
+
+  const res = await fetch('https://api.whatspie.com/messages', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({ device, receiver, type: 'image', params }),
+  });
+  const body = await res.json();
+  if (!res.ok) {
+    const error = new Error(body.message);
+    error.status = res.status;
+    throw error;
+  }
+  return body;
+}
+```
+
+### Image with formatting in the caption
+
+```javascript
+async function sendProductImage(token, device, receiver) {
   const caption = `🎉 *NEW PRODUCT ALERT* 🎉
 
 _Premium Wireless Headphones_
 
 ✅ Noise Cancellation
-✅ 30-hour Battery Life  
+✅ 30-hour Battery Life
 ✅ Fast Charging
 ✅ Premium Sound Quality
 
-~~$299~~ *$199* (33% OFF)
+~$299~ *$199* (33% OFF)
 
 Use code: *SAVE100*
 Valid until: December 31st
 
 Order now: https://shop.example.com`;
 
-  await sendImageMessage(
-    'YOUR_JWT_TOKEN',
-    '1234567890',
-    'https://example.com/headphones.jpg',
-    caption,
-    'headphones-promo.jpg'
-  );
+  return sendImageMessage(token, device, receiver, 'https://example.com/headphones.jpg', caption);
 }
 ```
 
-### Batch Image Sending
+### Batch image sending
 
 ```javascript
-async function sendImageCatalog(token, phoneNumber, products) {
+async function sendImageCatalog(token, device, receiver, products) {
   const results = [];
-  
+
   for (const product of products) {
     try {
       const caption = `${product.name}\nPrice: $${product.price}\n${product.description}`;
-      
-      const result = await sendImageMessage(
-        token,
-        phoneNumber,
-        product.imageUrl,
-        caption,
-        `${product.id}.jpg`
-      );
-      
-      results.push({ 
-        product: product.name, 
-        success: true, 
-        messageId: result.data.id 
-      });
-      
-      // Delay between messages to avoid rate limiting
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      const result = await sendImageMessage(token, device, receiver, product.imageUrl, caption);
+      results.push({ product: product.name, success: true, messageId: result.data.id });
     } catch (error) {
-      results.push({ 
-        product: product.name, 
-        success: false, 
-        error: error.message 
-      });
+      results.push({ product: product.name, success: false, error: error.message });
     }
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // pause between messages
   }
-  
+
   return results;
 }
 
-// Usage
 const products = [
   {
     id: 'p001',
     name: 'Wireless Headphones',
     price: 199,
     description: 'Premium quality with noise cancellation',
-    imageUrl: 'https://example.com/headphones.jpg'
+    imageUrl: 'https://example.com/headphones.jpg',
   },
   {
     id: 'p002',
     name: 'Smart Watch',
     price: 299,
     description: 'Track your fitness and stay connected',
-    imageUrl: 'https://example.com/smartwatch.jpg'
-  }
+    imageUrl: 'https://example.com/smartwatch.jpg',
+  },
 ];
 
-const results = await sendImageCatalog('YOUR_JWT_TOKEN', '1234567890', products);
+const results = await sendImageCatalog('YOUR_API_TOKEN', '6281234567890', '6289876543210', products);
 console.log('Catalog sent:', results);
 ```
 
-### Image URL Validation
+### Image URL validation
+
+Check the URL before sending, because the API accepts any URL:
 
 ```javascript
 function isValidImageUrl(url) {
   try {
     const urlObj = new URL(url);
-    
-    // Check if it's HTTP/HTTPS
-    if (!['http:', 'https:'].includes(urlObj.protocol)) {
-      return false;
-    }
-    
-    // Check for common image extensions
+    if (!['http:', 'https:'].includes(urlObj.protocol)) return false;
+
     const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-    const hasImageExtension = imageExtensions.some(ext => 
-      urlObj.pathname.toLowerCase().includes(ext)
-    );
-    
-    return hasImageExtension;
+    return imageExtensions.some((ext) => urlObj.pathname.toLowerCase().endsWith(ext));
   } catch {
     return false;
   }
 }
 
-async function sendValidatedImage(token, phoneNumber, imageUrl, caption) {
-  if (!isValidImageUrl(imageUrl)) {
-    throw new Error('Invalid image URL format');
-  }
-  
-  return await sendImageMessage(token, phoneNumber, imageUrl, caption);
+async function sendValidatedImage(token, device, receiver, imageUrl, caption) {
+  if (!isValidImageUrl(imageUrl)) throw new Error('Invalid image URL format');
+  return sendImageMessage(token, device, receiver, imageUrl, caption);
 }
 ```
 
-### Download and Upload Helper
+### Sending an image from your own server
 
-If you need to upload images from your local server:
+The API needs a public URL. To send a local file, upload it to your own storage or CDN first, then send its URL:
 
 ```javascript
-const fs = require('fs');
-const FormData = require('form-data');
-
-// Example function to upload image to your CDN/storage
+// Pseudo-code: replace uploadImageToCDN with your storage provider's upload call
 async function uploadImageToCDN(filePath) {
-  // This is pseudo-code - implement according to your storage solution
   const formData = new FormData();
-  formData.append('file', fs.createReadStream(filePath));
-  
-  const response = await axios.post('https://your-cdn.com/upload', formData, {
-    headers: formData.getHeaders()
-  });
-  
-  return response.data.url; // Returns public URL
+  formData.append('file', new Blob([await fs.promises.readFile(filePath)]));
+
+  const response = await fetch('https://your-cdn.com/upload', { method: 'POST', body: formData });
+  const { url } = await response.json();
+  return url; // public URL
 }
 
-// Send local image
-async function sendLocalImage(token, phoneNumber, localFilePath, caption) {
-  try {
-    // Upload to CDN first
-    const publicUrl = await uploadImageToCDN(localFilePath);
-    
-    // Send via WhatsApp
-    return await sendImageMessage(token, phoneNumber, publicUrl, caption);
-  } catch (error) {
-    console.error('Error sending local image:', error);
-    throw error;
-  }
+async function sendLocalImage(token, device, receiver, localFilePath, caption) {
+  const publicUrl = await uploadImageToCDN(localFilePath);
+  return sendImageMessage(token, device, receiver, publicUrl, caption);
 }
 ```
 
-## Best Practices
+## Best practices
 
-### 1. Image Optimization
+### 1. Image size
+
+Check the size before sending, so oversized images fail early:
 
 ```javascript
-// Check image size before sending
 async function getImageSize(url) {
   try {
     const response = await fetch(url, { method: 'HEAD' });
     const contentLength = response.headers.get('content-length');
-    return contentLength ? parseInt(contentLength) : null;
+    return contentLength ? parseInt(contentLength, 10) : null;
   } catch {
     return null;
   }
 }
 
-async function sendOptimizedImage(token, phoneNumber, imageUrl, caption) {
+async function sendOptimizedImage(token, device, receiver, imageUrl, caption) {
   const size = await getImageSize(imageUrl);
-  const maxSize = 16 * 1024 * 1024; // 16MB
-  
+  const maxSize = 16 * 1024 * 1024; // 16 MB, WhatsApp's image limit
+
   if (size && size > maxSize) {
     throw new Error(`Image too large: ${size} bytes. Maximum allowed: ${maxSize} bytes`);
   }
-  
-  return await sendImageMessage(token, phoneNumber, imageUrl, caption);
+  return sendImageMessage(token, device, receiver, imageUrl, caption);
 }
 ```
 
-### 2. CDN Usage
+### 2. CDN usage
 
-Use a reliable CDN for hosting images:
+Host images on a reliable CDN, so WhatsApp can always download them:
 
 ```javascript
 const CDN_BASE_URL = 'https://your-cdn.com/images/';
 
-function getCDNImageUrl(fileName) {
-  return `${CDN_BASE_URL}${fileName}`;
-}
-
-async function sendCDNImage(token, phoneNumber, fileName, caption) {
-  const imageUrl = getCDNImageUrl(fileName);
-  return await sendImageMessage(token, phoneNumber, imageUrl, caption);
+async function sendCDNImage(token, device, receiver, fileName, caption) {
+  return sendImageMessage(token, device, receiver, `${CDN_BASE_URL}${fileName}`, caption);
 }
 ```
 
-### 3. Error Handling and Retries
+### 3. Error handling and retries
+
+Retry only errors that can succeed on a second try:
 
 ```javascript
-async function sendImageWithRetry(token, phoneNumber, imageUrl, caption, maxRetries = 3) {
+async function sendImageWithRetry(token, device, receiver, imageUrl, caption, maxRetries = 3) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      return await sendImageMessage(token, phoneNumber, imageUrl, caption);
+      return await sendImageMessage(token, device, receiver, imageUrl, caption);
     } catch (error) {
-      if (error.response?.status === 400 && error.response?.data?.error?.includes('URL')) {
-        // Don't retry URL-related errors
-        throw error;
-      }
-      
-      if (attempt === maxRetries) {
-        throw error;
-      }
-      
-      const delay = Math.pow(2, attempt) * 1000;
-      await new Promise(resolve => setTimeout(resolve, delay));
+      // 400 and 403 will not succeed on retry
+      if (error.status === 400 || error.status === 403) throw error;
+      if (attempt === maxRetries) throw error;
+
+      await new Promise((resolve) => setTimeout(resolve, 2 ** attempt * 1000));
     }
   }
 }
 ```
 
-## Common Use Cases
+## Use cases
 
-### E-commerce Product Images
+### E-commerce product images
 
 ```javascript
-async function sendProductUpdate(token, customerPhone, product) {
+async function sendProductUpdate(token, device, customerPhone, product) {
   const caption = `🛍️ *${product.name}*
-  
+
 💰 Price: $${product.price}
 📦 Stock: ${product.stock > 0 ? 'Available' : 'Out of Stock'}
 ⭐ Rating: ${product.rating}/5
@@ -453,20 +383,14 @@ ${product.description}
 
 🛒 Order: ${product.orderUrl}`;
 
-  return await sendImageMessage(
-    token,
-    customerPhone,
-    product.imageUrl,
-    caption,
-    `${product.sku}.jpg`
-  );
+  return sendImageMessage(token, device, customerPhone, product.imageUrl, caption);
 }
 ```
 
-### Event Invitations
+### Event invitations
 
 ```javascript
-async function sendEventInvitation(token, guestPhone, event) {
+async function sendEventInvitation(token, device, guestPhone, event) {
   const caption = `🎉 You're Invited! 🎉
 
 *${event.title}*
@@ -479,25 +403,19 @@ ${event.description}
 
 RSVP: ${event.rsvpUrl}`;
 
-  return await sendImageMessage(
-    token,
-    guestPhone,
-    event.bannerUrl,
-    caption,
-    'event-invitation.jpg'
-  );
+  return sendImageMessage(token, device, guestPhone, event.bannerUrl, caption);
 }
 ```
 
 ## Limitations
 
-- **File size**: Maximum 16MB per image
-- **Formats**: JPEG, PNG, GIF, WebP only
-- **URL accessibility**: Images must be publicly accessible
-- **Rate limits**: Follow WhatsApp's messaging limits
+- **File size:** up to 16 MB per image (WhatsApp limit).
+- **Formats:** JPEG, PNG, GIF, WebP (WhatsApp limit).
+- **URL:** must be public and direct. The API does not check it; see [Errors](#errors).
+- **Sending rate:** space out your messages to avoid WhatsApp blocks.
 
-## Next Steps
+## Next steps
 
-- Learn about [sending text messages](./send-text) to contacts
-- Explore [contact verification](../contacts/check-contacts) before sending
-- Check out [group management](../groups/create-group) for group messaging
+- [Send text messages](./send-text.md) to contacts
+- [Check contacts](../contacts/check-contacts.md) before sending
+- [Send images to a group](../groups/send-group-messages.md)

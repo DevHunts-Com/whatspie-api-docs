@@ -26,7 +26,7 @@ const sidebars: SidebarsConfig = {
     'device-management',
     {
       type: 'category',
-      label: '💬 Messaging',
+      label: 'Messaging',
       items: [
         'messaging/send-text',
         'messaging/send-image',

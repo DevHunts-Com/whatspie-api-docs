@@ -1,88 +1,77 @@
 ---
-sidebar_position: 3
+title: Send video message
+description: Send a playable video from a public URL, with an optional caption, with POST /messages.
 ---
 
-# 🎥 Send Video Messages
+# Send video message
 
-Send engaging video messages with captions to WhatsApp contacts using the enhanced Whatspie API with support for various formats and advanced delivery options.
+Send a video from a public URL to a phone number, with an optional caption. The recipient can play it inline in WhatsApp.
 
-<div style={{background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", padding: "1.5rem", borderRadius: "8px", color: "white", margin: "1.5rem 0"}}>
-  <h3 style={{color: "white", margin: "0 0 1rem 0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>🎬 Video Content Support</h3>
-  <p style={{margin: "0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>Upload videos directly from URLs with automatic optimization, caption support, and typing simulation for a natural conversation experience.</p>
-</div>
+Videos use `type: "file"` with a `params.video` object. In Whatspie, `type` is a label for the message; what WhatsApp receives is decided by `params`. With `params.video` the recipient gets a playable video, while `params.document` (see [Send file](./send-file.md)) would deliver the same file as a document.
 
-## 🌐 Endpoint
+## Endpoint
 
 ```
 POST https://api.whatspie.com/messages
 ```
 
-## 🔐 Authentication
+Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [Authentication](../authentication.md).
 
-Bearer token required with proper JSON content headers.
-
-## 📋 Request Parameters
+## Request
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `device` | string | ✅ | Your registered WhatsApp device number |
-| `receiver` | string | ✅ | Recipient's phone number (international format) |
-| `type` | string | ✅ | Message type: `"file"` for video messages |
-| `params` | object | ✅ | Message parameters containing video data |
-| `params.video` | object | ✅ | video object with video URL |
-| `params.video.url` | string | ✅ | Direct URL to the video file |
-| `params.mimetype` | string | ✅ | Video MIME type (e.g., "video/mp4") |
-| `params.caption` | string | ❌ | Video caption text (supports formatting) |
-| `params.viewOnce` | boolean | ❌ | Whether video should be viewable only once |
-| `simulate_typing` | integer | ❌ | Show typing indicator: `1` (yes) or `0` (no) |
+|---|---|---|---|
+| `device` | string | Yes | Phone number of your sending device, as registered in Whatspie. |
+| `receiver` | string | Yes | Recipient's phone number. Up to 35 characters. |
+| `type` | string | Yes | `file`. There is no `video` type; it is rejected with `400`. |
+| `params` | object | Yes | Message content. |
+| `params.video.url` | string | Yes | Direct, public URL of the video file. |
+| `params.mimetype` | string | No, recommended | Video MIME type, for example `video/mp4`. See [Common video MIME types](#common-video-mime-types). |
+| `params.caption` | string | No | Caption shown under the video. Supports [WhatsApp formatting](./send-text.md#text-formatting). |
 
-## 🎨 Supported Video Formats
+Write phone numbers in international format without `+`. See [Phone number format](./send-text.md#phone-number-format).
 
-<div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", margin: "1.5rem 0"}}>
-  <div style={{background: "#f8f9ff", border: "1px solid #e1e5e9", borderRadius: "6px", padding: "1rem", textAlign: "center"}}>
-    <strong style={{color: "#4f46e5"}}>🎬 MP4</strong><br/>
-    <small>Most compatible format</small>
-  </div>
-  <div style={{background: "#f0fdf4", border: "1px solid #dcfce7", borderRadius: "6px", padding: "1rem", textAlign: "center"}}>
-    <strong style={{color: "#059669"}}>📹 MOV</strong><br/>
-    <small>Apple QuickTime</small>
-  </div>
-  <div style={{background: "#fef3c7", border: "1px solid #fed7aa", borderRadius: "6px", padding: "1rem", textAlign: "center"}}>
-    <strong style={{color: "#d97706"}}>🎞️ AVI</strong><br/>
-    <small>Windows format</small>
-  </div>
-  <div style={{background: "#fdf2f8", border: "1px solid #fce7f3", borderRadius: "6px", padding: "1rem", textAlign: "center"}}>
-    <strong style={{color: "#be185d"}}>🚀 WebM</strong><br/>
-    <small>Modern web format</small>
-  </div>
-</div>
+`params` accepts only these keys: `text`, `caption`, `fileName`, `mimetype`, `location`, `image`, `document`, `video`. Any other key, such as `viewOnce`, is rejected with `400`.
 
-## 📝 Common Video MIME Types
+Videos have no legacy format. A top-level `file_url` field sends the file as a document, not as a playable video.
 
-| Format | MIME Type | Extension |
-|--------|-----------|-----------|
-| MP4 | `video/mp4` | .mp4 |
-| MOV | `video/quicktime` | .mov |
-| AVI | `video/x-msvideo` | .avi |
-| WebM | `video/webm` | .webm |
-| MKV | `video/x-matroska` | .mkv |
+## Supported video formats
 
-## 📏 Video Requirements
+The API does not download or check the video when it accepts your request. WhatsApp applies its own limits when the video is delivered:
 
-- **Maximum file size**: 64MB
-- **Recommended duration**: Up to 90 seconds for optimal delivery
-- **File accessibility**: Must be publicly accessible via direct URL
-- **Upload time**: Videos are automatically optimized for WhatsApp
+| Format | Notes |
+|---|---|
+| MP4 | Most compatible format. |
+| MOV | Apple QuickTime. |
+| AVI | Windows format. |
+| WebM | Modern web format. |
 
-## 🚀 Request Examples
+## Common video MIME types
 
-### Basic Video Message
+| Format | MIME type | Extension |
+|---|---|---|
+| MP4 | `video/mp4` | `.mp4` |
+| MOV | `video/quicktime` | `.mov` |
+| AVI | `video/x-msvideo` | `.avi` |
+| WebM | `video/webm` | `.webm` |
+| MKV | `video/x-matroska` | `.mkv` |
+
+## Video requirements
+
+- **Maximum file size:** 64 MB.
+- **Recommended duration:** up to 90 seconds for reliable delivery.
+- **Accessibility:** the URL must be public and point directly to the video file.
+- **Processing:** WhatsApp may compress the video when it is delivered.
+
+## Examples
+
+### Basic video message
 
 ```bash
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
     "device": "6281234567890",
     "receiver": "6289876543210",
@@ -93,18 +82,17 @@ curl -X POST "https://api.whatspie.com/messages" \
       },
       "mimetype": "video/mp4",
       "caption": "Check out this amazing video! 🎥✨"
-    },
-    "simulate_typing": 1
+    }
   }'
 ```
 
-### Video with Rich Caption
+### Video with a formatted caption
 
 ```bash
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
     "device": "6281234567890",
     "receiver": "6289876543210",
@@ -115,18 +103,17 @@ curl -X POST "https://api.whatspie.com/messages" \
       },
       "mimetype": "video/mp4",
       "caption": "🎉 *NEW PRODUCT DEMO* 🎉\n\n_Watch our latest innovation in action_\n\n✅ Easy to Use\n✅ Powerful Features\n✅ Lightning Fast\n\n*Available Now!*\n\nOrder today: https://shop.example.com"
-    },
-    "simulate_typing": 1
+    }
   }'
 ```
 
-### Video Without Caption
+### Video without a caption
 
 ```bash
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
     "device": "6281234567890",
     "receiver": "6289876543210",
@@ -136,95 +123,105 @@ curl -X POST "https://api.whatspie.com/messages" \
         "url": "https://example.com/videos/tutorial.mp4"
       },
       "mimetype": "video/mp4"
-    },
-    "simulate_typing": 1
+    }
   }'
 ```
 
-## 📊 Response Format
+## Response
 
-### Success Response
+A successful request returns HTTP `200` with the queued message. The fields are the same as for [text messages](./send-text.md#response-fields). For a video:
+
+- `type` is `file`.
+- `body` holds the caption, or an empty string without one.
+- `params` holds the video URL, MIME type, and caption.
+- `file_url`, `file_name`, and `file_mime` are `null`.
 
 ```json
 {
-  "code": 200,
-  "message": "Video sent successfully",
+  "status": 200,
+  "message": "OK",
   "data": {
-    "id": "msg_video_12345",
-    "status": "pending",
+    "id": 36259786,
+    "device_id": 12,
+    "from_number": "6281234567890",
+    "to_number": "6289876543210",
     "type": "file",
-    "device": "6281234567890",
-    "receiver": "6289876543210",
-    "file_url": "https://example.com/videos/demo.mp4",
-    "message": "Check out this amazing video! 🎥✨",
-    "simulate_typing": 1,
-    "timestamp": "2024-12-20T10:30:00Z"
+    "msg_type": "outgoing",
+    "body": "Check out this amazing video! 🎥✨",
+    "status": "PENDING",
+    "wa_id": null,
+    "retry": 0,
+    "failed_reason": null,
+    "file_url": null,
+    "file_name": null,
+    "file_caption": null,
+    "file_size": null,
+    "file_mime": null,
+    "params": {
+      "caption": "Check out this amazing video! 🎥✨",
+      "mimetype": "video/mp4",
+      "video": { "url": "https://example.com/videos/demo.mp4" }
+    },
+    "is_group": false,
+    "created_at": "2025-08-22T03:36:02Z",
+    "updated_at": "2025-08-22T03:36:02Z"
   }
 }
 ```
 
-### Response Fields
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Unique message identifier |
-| `status` | string | Message status (`pending`, `sent`, `delivered`, `failed`) |
-| `type` | string | Message type (`file`) |
-| `device` | string | Sender device number |
-| `receiver` | string | Recipient's phone number |
-| `file_url` | string | URL of the sent video |
-| `message` | string | Video caption (if provided) |
-| `simulate_typing` | integer | Typing simulation setting (1 or 0) |
-| `timestamp` | string | Message sent timestamp (ISO 8601) |
-
-## Error Responses
-
-### Invalid Video URL
+## Errors
 
 ```json
 {
-  "code": 400,
-  "message": "Invalid video URL",
-  "error": "The provided video URL is not accessible or invalid"
+  "status": 400,
+  "message": "Invalid message type. Must be one of: chat, image, file, location, template, list"
 }
 ```
 
-### Unsupported Video Format
+| HTTP status | `message` | Cause |
+|---|---|---|
+| `400` | `Invalid message type. Must be one of: ...` | `type` is `video` or another unsupported value. Use `file`. |
+| `400` | `Invalid message params: ...` | `params` contains a key that is not allowed, or `video` is not an object with only `url`. |
+| `400` | `Invalid request body: ...` | The body is not valid JSON, or `device`, `receiver`, or `type` is missing. |
+| `403` | `Missing Authorization header`, `Missing token in Authorization header`, `Invalid Authentication Token` | Token problem. See [Authentication](../authentication.md#errors). |
+| `403` | `Device not found or access denied` | `device` is not a device on your account. |
+| `403` | Quota or subscription message | Your package has no messages left. |
+| `500` | Error description | Internal error, for example the message could not be saved. Try again later. |
 
-```json
-{
-  "code": 400,
-  "message": "Unsupported file format",
-  "error": "Only MP4, MOV, AVI, and WebM videos are supported"
-}
-```
+The API accepts the message first and sends it in the background. Problems with the video, such as a dead link or a file that is too large, and sending failures, such as a disconnected device or a number that is not on WhatsApp, do not cause an error response. They show up later as status `ERROR` with a `failed_reason`. Check them with [Get message](./get-message.md); see [Status values](./get-message.md#status-values).
 
-### Video Too Large
+## Advanced examples
 
-```json
-{
-  "code": 400,
-  "message": "File too large",
-  "error": "Video size exceeds 64MB limit"
-}
-```
-
-### URL Not Accessible
-
-```json
-{
-  "code": 400,
-  "message": "Unable to download video",
-  "error": "The video URL is not publicly accessible"
-}
-```
-
-## Advanced Examples
-
-### Video with Formatting in Caption
+The JavaScript examples on this page use this helper:
 
 ```javascript
-async function sendProductVideo() {
+async function sendVideoMessage(token, device, receiver, videoUrl, caption, mimetype = 'video/mp4') {
+  const params = { video: { url: videoUrl }, mimetype };
+  if (caption) params.caption = caption;
+
+  const res = await fetch('https://api.whatspie.com/messages', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({ device, receiver, type: 'file', params }),
+  });
+  const body = await res.json();
+  if (!res.ok) {
+    const error = new Error(body.message);
+    error.status = res.status;
+    throw error;
+  }
+  return body;
+}
+```
+
+### Video with formatting in the caption
+
+```javascript
+async function sendProductVideo(token, device, receiver) {
   const caption = `🎥 *PRODUCT DEMO* 🎥
 
 _See our new product in action_
@@ -233,338 +230,163 @@ _See our new product in action_
 ✅ Feature 2: User Friendly
 ✅ Feature 3: Secure & Reliable
 
-~~$499~~ *$399* (20% OFF)
+~$499~ *$399* (20% OFF)
 
 Use code: *VIDEO20*
 Valid until: December 31st
 
 Order now: https://shop.example.com`;
 
-  const response = await fetch('https://api.whatspie.com/messages', {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Bearer YOUR_API_TOKEN',
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      device: '6281234567890',
-      receiver: '6289876543210',
-      type: 'file',
-      params: {
-        video: {
-          url: 'https://example.com/videos/product-demo.mp4'
-        },
-        mimetype: 'video/mp4',
-        caption: caption
-      },
-      simulate_typing: 1
-    })
-  });
-
-  return await response.json();
+  return sendVideoMessage(token, device, receiver, 'https://example.com/videos/product-demo.mp4', caption);
 }
 ```
 
-### Batch Video Sending
+### Batch video sending
 
 ```javascript
-async function sendVideoToMultipleContacts(videoUrl, caption, contacts) {
+async function sendVideoToMultipleContacts(token, device, videoUrl, caption, contacts) {
   const results = [];
 
   for (const contact of contacts) {
     try {
-      const response = await fetch('https://api.whatspie.com/messages', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer YOUR_API_TOKEN',
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          device: '6281234567890',
-          receiver: contact.phone,
-          type: 'file',
-          params: {
-            video: {
-              url: videoUrl
-            },
-            mimetype: 'video/mp4',
-            caption: caption
-          },
-          simulate_typing: 1
-        })
-      });
-
-      const result = await response.json();
-      results.push({
-        contact: contact.name,
-        success: true,
-        messageId: result.data.id
-      });
-
-      // Delay between messages to avoid rate limiting
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
+      const result = await sendVideoMessage(token, device, contact.phone, videoUrl, caption);
+      results.push({ contact: contact.name, success: true, messageId: result.data.id });
     } catch (error) {
-      results.push({
-        contact: contact.name,
-        success: false,
-        error: error.message
-      });
+      results.push({ contact: contact.name, success: false, error: error.message });
     }
+    await new Promise((resolve) => setTimeout(resolve, 3000)); // pause between messages
   }
 
   return results;
 }
 
-// Usage
 const contacts = [
   { name: 'John Doe', phone: '6289876543210' },
-  { name: 'Jane Smith', phone: '6281122334455' }
+  { name: 'Jane Smith', phone: '6281122334455' },
 ];
 
 const results = await sendVideoToMultipleContacts(
+  'YOUR_API_TOKEN',
+  '6281234567890',
   'https://example.com/videos/announcement.mp4',
   '🎉 Important company announcement! Please watch. 🎥',
-  contacts
+  contacts,
 );
 console.log('Videos sent:', results);
 ```
 
-### Video URL Validation
+### Video URL validation
+
+Check the URL before sending, because the API accepts any URL:
 
 ```javascript
 function isValidVideoUrl(url) {
   try {
     const urlObj = new URL(url);
+    if (!['http:', 'https:'].includes(urlObj.protocol)) return false;
 
-    // Check if it's HTTP/HTTPS
-    if (!['http:', 'https:'].includes(urlObj.protocol)) {
-      return false;
-    }
-
-    // Check for common video extensions
     const videoExtensions = ['.mp4', '.mov', '.avi', '.webm', '.mkv', '.flv'];
-    const hasVideoExtension = videoExtensions.some(ext =>
-      urlObj.pathname.toLowerCase().includes(ext)
-    );
-
-    return hasVideoExtension;
+    return videoExtensions.some((ext) => urlObj.pathname.toLowerCase().endsWith(ext));
   } catch {
     return false;
   }
 }
 
-async function sendValidatedVideo(token, receiver, videoUrl, caption) {
-  if (!isValidVideoUrl(videoUrl)) {
-    throw new Error('Invalid video URL format');
-  }
-
-  const response = await fetch('https://api.whatspie.com/messages', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      device: '6281234567890',
-      receiver: receiver,
-      type: 'file',
-      params: {
-        video: {
-          url: videoUrl
-        },
-        mimetype: 'video/mp4',
-        caption: caption
-      },
-      simulate_typing: 1
-    })
-  });
-
-  return await response.json();
+async function sendValidatedVideo(token, device, receiver, videoUrl, caption) {
+  if (!isValidVideoUrl(videoUrl)) throw new Error('Invalid video URL format');
+  return sendVideoMessage(token, device, receiver, videoUrl, caption);
 }
 ```
 
-### Video Size Checker
+### Video size checker
 
 ```javascript
-// Check video size before sending
 async function getVideoSize(url) {
   try {
     const response = await fetch(url, { method: 'HEAD' });
     const contentLength = response.headers.get('content-length');
-    return contentLength ? parseInt(contentLength) : null;
+    return contentLength ? parseInt(contentLength, 10) : null;
   } catch {
     return null;
   }
 }
 
-async function sendOptimizedVideo(token, receiver, videoUrl, caption) {
+async function sendOptimizedVideo(token, device, receiver, videoUrl, caption) {
   const size = await getVideoSize(videoUrl);
-  const maxSize = 64 * 1024 * 1024; // 64MB
+  const maxSize = 64 * 1024 * 1024; // 64 MB, WhatsApp's video limit
 
   if (size && size > maxSize) {
     throw new Error(`Video too large: ${(size / 1024 / 1024).toFixed(2)}MB. Maximum allowed: 64MB`);
   }
+  if (size) console.log(`Video size: ${(size / 1024 / 1024).toFixed(2)}MB`);
 
-  console.log(`Video size: ${(size / 1024 / 1024).toFixed(2)}MB`);
-
-  const response = await fetch('https://api.whatspie.com/messages', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      device: '6281234567890',
-      receiver: receiver,
-      type: 'file',
-      params: {
-        video: {
-          url: videoUrl
-        },
-        mimetype: 'video/mp4',
-        caption: caption
-      },
-      simulate_typing: 1
-    })
-  });
-
-  return await response.json();
+  return sendVideoMessage(token, device, receiver, videoUrl, caption);
 }
 ```
 
-## Best Practices
+## Best practices
 
-### 1. Video Optimization
+### 1. Video optimization
 
 ```javascript
-// Recommend optimal video settings
 const VIDEO_RECOMMENDATIONS = {
-  maxSize: 64 * 1024 * 1024, // 64MB
+  maxSize: 64 * 1024 * 1024, // 64 MB
   maxDuration: 90, // seconds
   recommendedFormats: ['mp4', 'mov'],
   recommendedCodec: 'H.264',
-  recommendedResolution: '1280x720' // 720p
+  recommendedResolution: '1280x720', // 720p
 };
 
 async function validateVideoForWhatsApp(videoUrl) {
   const size = await getVideoSize(videoUrl);
 
-  if (size > VIDEO_RECOMMENDATIONS.maxSize) {
-    return {
-      valid: false,
-      message: 'Video exceeds 64MB limit. Please compress or reduce quality.'
-    };
+  if (size && size > VIDEO_RECOMMENDATIONS.maxSize) {
+    return { valid: false, message: 'Video exceeds 64MB limit. Please compress or reduce quality.' };
   }
-
-  return {
-    valid: true,
-    message: 'Video meets WhatsApp requirements'
-  };
+  return { valid: true, message: 'Video meets WhatsApp requirements' };
 }
 ```
 
-### 2. CDN Usage
+### 2. CDN usage
 
-Use a reliable CDN for hosting videos:
+Host videos on a reliable CDN, so WhatsApp can always download them:
 
 ```javascript
 const CDN_BASE_URL = 'https://your-cdn.com/videos/';
 
-function getCDNVideoUrl(fileName) {
-  return `${CDN_BASE_URL}${fileName}`;
-}
-
-async function sendCDNVideo(token, receiver, fileName, caption) {
-  const videoUrl = getCDNVideoUrl(fileName);
-
-  const response = await fetch('https://api.whatspie.com/messages', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      device: '6281234567890',
-      receiver: receiver,
-      type: 'file',
-      params: {
-        video: {
-          url: videoUrl
-        },
-        mimetype: 'video/mp4',
-        caption: caption
-      },
-      simulate_typing: 1
-    })
-  });
-
-  return await response.json();
+async function sendCDNVideo(token, device, receiver, fileName, caption) {
+  return sendVideoMessage(token, device, receiver, `${CDN_BASE_URL}${fileName}`, caption);
 }
 ```
 
-### 3. Error Handling and Retries
+### 3. Error handling and retries
+
+Retry only errors that can succeed on a second try:
 
 ```javascript
-async function sendVideoWithRetry(token, receiver, videoUrl, caption, maxRetries = 3) {
+async function sendVideoWithRetry(token, device, receiver, videoUrl, caption, maxRetries = 3) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      const response = await fetch('https://api.whatspie.com/messages', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          device: '6281234567890',
-          receiver: receiver,
-          type: 'video',
-          params: {
-            video: {
-              url: videoUrl
-            },
-            caption: caption
-          },
-          simulate_typing: 1
-        })
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        if (error.code === 400 && error.error?.includes('URL')) {
-          // Don't retry URL-related errors
-          throw new Error(error.error);
-        }
-        throw new Error(error.message);
-      }
-
-      return await response.json();
-
+      return await sendVideoMessage(token, device, receiver, videoUrl, caption);
     } catch (error) {
-      if (attempt === maxRetries) {
-        throw error;
-      }
+      // 400 and 403 will not succeed on retry
+      if (error.status === 400 || error.status === 403) throw error;
+      if (attempt === maxRetries) throw error;
 
-      const delay = Math.pow(2, attempt) * 1000;
+      const delay = 2 ** attempt * 1000;
       console.log(`Retry attempt ${attempt} after ${delay}ms...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 }
 ```
 
-## Common Use Cases
+## Common use cases
 
-### Training Videos
+### Training videos
 
 ```javascript
-async function sendTrainingVideo(token, employeePhone, training) {
+async function sendTrainingVideo(token, device, employeePhone, training) {
   const caption = `📚 *Training Module: ${training.title}*
 
 ⏱️ Duration: ${training.duration} minutes
@@ -575,78 +397,34 @@ ${training.description}
 
 📝 Please watch and complete the quiz at: ${training.quizUrl}`;
 
-  const response = await fetch('https://api.whatspie.com/messages', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      device: '6281234567890',
-      receiver: employeePhone,
-      type: 'file',
-      params: {
-        video: {
-          url: training.videoUrl
-        },
-        mimetype: 'video/mp4',
-        caption: caption
-      },
-      simulate_typing: 1
-    })
-  });
-
-  return await response.json();
+  return sendVideoMessage(token, device, employeePhone, training.videoUrl, caption);
 }
 ```
 
-### Product Demonstrations
+### Product demonstrations
 
 ```javascript
-async function sendProductDemo(token, customerPhone, product) {
+async function sendProductDemo(token, device, customerPhone, product) {
   const caption = `🎥 *${product.name} - Live Demo*
 
 💡 See how it works in action!
 
 ✨ Key Features:
-${product.features.map(f => `• ${f}`).join('\n')}
+${product.features.map((f) => `• ${f}`).join('\n')}
 
 💰 Special Price: $${product.price}
 📦 In Stock: ${product.inStock ? 'Yes' : 'No'}
 
 🛒 Order Now: ${product.orderUrl}`;
 
-  const response = await fetch('https://api.whatspie.com/messages', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      device: '6281234567890',
-      receiver: customerPhone,
-      type: 'file',
-      params: {
-        video: {
-          url: product.demoVideoUrl
-        },
-        mimetype: 'video/mp4',
-        caption: caption
-      },
-      simulate_typing: 1
-    })
-  });
-
-  return await response.json();
+  return sendVideoMessage(token, device, customerPhone, product.demoVideoUrl, caption);
 }
 ```
 
-### Event Highlights
+### Event highlights
 
 ```javascript
-async function sendEventHighlights(token, attendeePhone, event) {
+async function sendEventHighlights(token, device, attendeePhone, event) {
   const caption = `🎉 *${event.title} - Highlights*
 
 📅 ${event.date}
@@ -656,45 +434,22 @@ Thank you for attending! Here are the best moments captured.
 
 📸 Full gallery: ${event.galleryUrl}`;
 
-  const response = await fetch('https://api.whatspie.com/messages', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      device: '6281234567890',
-      receiver: attendeePhone,
-      type: 'file',
-      params: {
-        video: {
-          url: event.highlightVideoUrl
-        },
-      
-        mimetype: 'video/mp4',
-        caption: caption
-      },
-      simulate_typing: 1
-    })
-  });
-
-  return await response.json();
+  return sendVideoMessage(token, device, attendeePhone, event.highlightVideoUrl, caption);
 }
 ```
 
 ## Limitations
 
-- **File size**: Maximum 64MB per video
-- **Duration**: Recommended up to 90 seconds for optimal delivery
-- **Formats**: MP4, MOV, AVI, WebM supported
-- **URL accessibility**: Videos must be publicly accessible
-- **Rate limits**: Follow WhatsApp's messaging limits
-- **Compression**: Large videos may be compressed by WhatsApp
+- **File size:** up to 64 MB per video (WhatsApp limit).
+- **Duration:** up to 90 seconds is recommended for reliable delivery.
+- **Formats:** MP4, MOV, AVI, WebM (WhatsApp limit).
+- **URL:** must be public and direct. The API does not check it; see [Errors](#errors).
+- **Sending rate:** space out your messages to avoid WhatsApp blocks.
+- **Compression:** WhatsApp may compress large videos.
 
-## Next Steps
+## Next steps
 
-- Learn about [sending text messages](./send-text) to contacts
-- Explore [sending image messages](./send-image) for photo sharing
-- Check out [contact verification](../contacts/check-contacts) before sending
-- Discover [group messaging](../groups/send-group-messages) for video broadcasts
+- [Send text messages](./send-text.md) to contacts
+- [Send images](./send-image.md) for photo sharing
+- [Check contacts](../contacts/check-contacts.md) before sending
+- [Send videos to a group](../groups/send-group-messages.md)
