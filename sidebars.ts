@@ -16,7 +16,12 @@ const sidebars: SidebarsConfig = {
   // Main API documentation sidebar
   apiSidebar: [
     'intro',
-    'authentication', 
+    {
+      type: 'category',
+      label: 'MCP Server',
+      items: ['mcp/quickstart', 'mcp/guides', 'mcp/reference'],
+    },
+    'authentication',
     'webhooks',
     'device-management',
     {
