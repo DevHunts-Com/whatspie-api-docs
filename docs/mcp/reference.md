@@ -160,7 +160,7 @@ Send text, an image, or a file to a group. The message is always sent from the d
 | `file_name` | string | For `file` | File name with extension. |
 | `mimetype` | string | No | MIME type, for `file`. |
 
-The server does not enforce `message` for `chat` or `file_name` for `file`. Without them the request is still accepted, but a `chat` message with no text ends as `ERROR`. Always send them.
+The server does not enforce `message` for `chat`, `file_url` for `image` and `file`, or `file_name` for `file`. Without them the request is still accepted, but the message can end as `ERROR`; a `chat` message with no text always does. Always send them.
 
 #### `add_group_members`
 
@@ -281,7 +281,7 @@ Tool errors are returned as MCP tool results with `isError: true`:
 |---|---|
 | `Whatspie API error (<status>): <message>` | The Whatspie API returned an error. `<status>` is its HTTP status, `<message>` its error message. |
 | `Unexpected error: <message>` | Anything else, for example the API could not be reached (`fetch failed`). |
-| `MCP error -32602: Input validation error: ...` | A required parameter is missing, or a number parameter is not a number. The tool did not run. Text parameters are not type-checked: other values are converted to text and sent. |
+| `MCP error -32602: Input validation error: ...` | A required parameter is missing or has the wrong type. The tool did not run. Exceptions: phone-number parameters (`device`, `receiver`, `msisdn`, `from`, `to`, `phones`, `participants`) accept a number or a string, and IDs (`group_id`, `device_id`, `id`) accept a number or a numeric string. |
 
 A validation error lists each bad parameter on its own line, after `at`:
 

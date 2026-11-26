@@ -186,7 +186,7 @@ Send "Hello from Claude" from device 6281111111111 to 6282222222222.
 
 Claude asks permission to run `send_text_message`. Check the device and receiver in the request, then approve it.
 
-Claude replies with the message's ID and status `PENDING`. This is normal: the message is queued, not failed. The status usually changes to `SENT` within seconds.
+Claude replies with the message's ID and status `PENDING`. This is normal: the message is queued, not failed. Within seconds it changes to `SENT` or straight to `RECEIVED`, which means the message reached the phone.
 
 Open WhatsApp on the receiving phone. The message "Hello from Claude" arrives from your device's number.
 
