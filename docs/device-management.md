@@ -12,9 +12,13 @@ A device is one WhatsApp number connected to Whatspie. Every message you send go
 You need a connected device before you can send messages. Follow these steps once per WhatsApp number.
 
 1. **Get your API token.** See [Authentication](./authentication.md).
-2. **Add a device.** In the [Whatspie dashboard](https://app.whatspie.com), add a new device. Reseller accounts can also use [Create device](./devices/create.md) from code.
+2. **Add a device.** In the [Whatspie dashboard](https://app.whatspie.com), open **Devices** in the sidebar and click **Add Device**. Enter a **Device Name**, choose a package, and click **Create Device**.
+
+   Packages come in **Free** and **Paid** plans with different features. Compare them on the [pricing page](https://whatspie.com/#pricing) before you choose.
+
+   Reseller accounts can also use [Create device](./devices/create.md) from code.
 3. **Find the device ID.** Call [List devices](./devices/list.md). Note the device's `id`. A new device has `paired_status: "UNPAIRED"`, which means it is not connected to WhatsApp yet.
-4. **Scan the QR code.** The simplest way is to scan the QR code shown in the dashboard. Use the API instead if you build your own pairing screen, for example for your customers: call [Get QR code](./devices/qr.md) with that `id` and show the image. Either way, scan it on your phone: WhatsApp → **Linked devices** → **Link a device**, within about 20 seconds.
+4. **Scan the QR code.** The simplest way: in **Devices**, click **Connect** next to your device to show its QR code. Use the API instead if you build your own pairing screen, for example for your customers: call [Get QR code](./devices/qr.md) with that `id` and show the image. Either way, scan it on your phone: WhatsApp → **Linked devices** → **Link a device**, within about 20 seconds.
 5. **Check that it is connected.** Call [Get device](./devices/get.md) every few seconds until `paired_status` is `PAIRED`. The device's `phone` field now holds its WhatsApp number.
 
 Use that `phone` number as `device` when you [send messages](./messaging/send-text.md).
