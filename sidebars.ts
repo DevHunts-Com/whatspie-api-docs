@@ -39,7 +39,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '👥 Group Management',
+      label: 'Group Management',
       items: [
         'groups/send-group-messages',
         'groups/list-groups',
@@ -51,7 +51,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '📞 Contacts',
+      label: 'Contacts',
       items: [
         'contacts/check-contacts',
       ],

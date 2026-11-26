@@ -1,271 +1,395 @@
 ---
-sidebar_position: 3
+title: Device management
+description: Create, list, get, update, and delete WhatsApp devices, and get the QR code to connect them.
 ---
 
-# 📱 Device Management
+# Device management
 
-Manage your WhatsApp devices with the Whatspie API. Create, monitor, and control your WhatsApp Business connections with comprehensive device lifecycle management.
+A device is one WhatsApp number connected to Whatspie. Every message you send goes through a device. These endpoints create, list, update, and delete devices, and return the QR code that connects a device to WhatsApp.
 
-<div style={{background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", padding: "1.5rem", borderRadius: "8px", color: "white", margin: "1.5rem 0"}}>
-  <h3 style={{color: "white", margin: "0 0 1rem 0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>🔗 Device Connection</h3>
-  <p style={{margin: "0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>Complete device management including creation, QR code generation, connection monitoring, and package management for your WhatsApp Business integration.</p>
-</div>
-
-## 🌐 Base URL
+## Base URL
 
 ```
 https://api.whatspie.com
 ```
 
-## 🔐 Authentication
+## Authentication
 
-All device management endpoints require Bearer token authentication:
+All device endpoints need your API token:
 
-```bash
-Authorization: Bearer <YOUR_API_TOKEN>
+```
+Authorization: Bearer YOUR_API_TOKEN
 ```
 
-## 📋 Device Operations Overview
+See [Authentication](./authentication.md).
+
+## Device operations overview
 
 | Operation | Method | Endpoint | Description |
-|-----------|--------|----------|-------------|
-| Create Device | `POST` | `/devices` | Create a new WhatsApp device |
-| List Devices | `GET` | `/devices` | Get all your devices |
-| Get Device Info | `GET` | `/devices/{id}` | Get specific device details |
-| Get QR Code | `GET` | `/devices/{id}/qr` | Get QR code for device connection |
+|---|---|---|---|
+| Create device | `POST` | `/devices` | Create a new device on a package. Reseller accounts only. |
+| List devices | `GET` | `/devices` | All devices on your account. |
+| Get device | `GET` | `/devices/{id}` | One device. |
+| Get QR code | `GET` | `/devices/{id}/qr` | QR code to connect the device to WhatsApp. |
+| Update device | `PUT` | `/devices/{id}` | Change the phone number, status, or webhook URL. See the warning before using it. |
+| Delete device | `DELETE` | `/devices/{id}` | Delete a device. |
 
-## 🆕 Create Device
+`{id}` is the numeric device `id` from List devices, not the phone number.
 
-Create a new WhatsApp device with a specific package plan.
+## Create device
 
-### Endpoint
+Create a new device on a package plan. The package price is deducted from your balance.
+
 ```
 POST https://api.whatspie.com/devices
 ```
 
-### Request Parameters
-
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `package` | string | ✅ | Package plan (e.g., "STARTUP240K") |
-| `name` | string | ✅ | Display name for the device |
+|---|---|---|---|
+| `package` | string | Yes | Package code, for example `STARTUP240K`. See [Package types](#package-types). |
+| `name` | string | Yes | Display name for the device. |
 
-### Request Example
+Requirements:
+
+- Your account must be a reseller account. Other accounts create devices in the [Whatspie dashboard](https://app.whatspie.com).
+- Your balance must cover the package price.
+- You can have only one device on the `BETA` package.
+
+### Request example
 
 ```bash
 curl -L -X POST 'https://api.whatspie.com/devices' \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json; charset=utf-8' \
-  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
   --data-raw '{
     "package": "STARTUP240K",
     "name": "Customer Service"
   }'
 ```
 
-### Success Response
+### Success response
 
-```json
-TBA
-```
-
-### Error Response
+HTTP `201`. The new device has no phone number and is `UNPAIRED` until you connect it with the [QR code](#get-qr-code):
 
 ```json
 {
-  "code": 400,
-  "message": "Invalid package type"
+  "status": 200,
+  "message": "Device created successfully",
+  "data": {
+    "id": 2077,
+    "phone": null,
+    "webhook_url": null,
+    "status": "ACTIVE",
+    "version": "default",
+    "paired_status": "UNPAIRED",
+    "device_name_mobile": "Customer Service",
+    "created_at": "2026-11-26T03:00:00Z",
+    "updated_at": "2026-11-26T03:00:00Z",
+    "server": { "name": "ASIA (IDN1)", "status": "ACTIVE" },
+    "package": { "code": "STARTUP240K", "name": "Startup" },
+    "subscription": { "quote_available": "-1", "quote_used": "0" }
+  }
 }
 ```
 
-## 📋 List Devices
+The response also includes the other device fields; see [Device fields](#device-fields).
 
-Get all devices associated with your account.
+### Error response
 
-### Endpoint
+Every failure returns the same message. The cause is not shown: the account is not a reseller, the package code does not exist, the balance is too low, or the `BETA` limit is reached.
+
+```json
+{
+  "status": 400,
+  "message": "Failed to create device",
+  "data": null
+}
+```
+
+## List devices
+
 ```
 GET https://api.whatspie.com/devices
 ```
 
-### Request Example
+### Request example
 
 ```bash
 curl -L -X GET 'https://api.whatspie.com/devices' \
   -H 'Accept: application/json; charset=utf-8' \
-  -H 'Authorization: Bearer <TOKEN>'
+  -H 'Authorization: Bearer YOUR_API_TOKEN'
 ```
 
-### Success Response
+### Success response
+
+Fields trimmed; see [Device fields](#device-fields) for the full list.
 
 ```json
 {
-    "status": 200,
-    "message": "OK",
-    "data": [
-        {
-            "id": 2076,
-            "phone": "6289510154496",
-            "webhook_url": "https://your-webhook-url.com",
-            "status": "ACTIVE",
-            "version": "multidevice",
-            "paired_status": "UNPAIRED",
-            "created_at": "2022-03-15T00:32:13Z",
-            "updated_at": "2025-08-14T23:26:01Z",
-            "server": {
-                "name": "EUR (DEU1)",
-                "status": "ACTIVE"
-            },
-            "package": {
-                "code": "STARTUP240K",
-                "name": "Startup"
-            },
-            "subscription": {
-                "quote_available": "-1",
-                "quote_used": "522"
-            }
-        }
-    ]
+  "status": 200,
+  "message": "OK",
+  "data": [
+    {
+      "id": 2076,
+      "phone": "6289510154496",
+      "webhook_url": "https://your-webhook-url.com",
+      "status": "ACTIVE",
+      "version": "multidevice",
+      "paired_status": "UNPAIRED",
+      "created_at": "2022-03-15T00:32:13Z",
+      "updated_at": "2025-08-14T23:26:01Z",
+      "server": {
+        "name": "EUR (DEU1)",
+        "status": "ACTIVE"
+      },
+      "package": {
+        "code": "STARTUP240K",
+        "name": "Startup"
+      },
+      "subscription": {
+        "quote_available": "-1",
+        "quote_used": "522"
+      }
+    }
+  ]
 }
 ```
 
-### Device Status Values
+### Device fields
 
-| Status | Description |
-|--------|-------------|
-| `UNPAIRED` | Device not connected to WhatsApp |
-| `PAIRED` | Device successfully connected |
-| `EXPIRED` | QR code expired, need to reconnect |
-| `SUSPENDED` | Device temporarily suspended |
+| Field | Type | Description |
+|---|---|---|
+| `id` | integer | Device ID. Use it in `/devices/{id}`. |
+| `phone` | string or null | The device's WhatsApp number. `null` until the device is connected. Use it as `device` when sending messages. |
+| `webhook_url` | string or null | URL that receives [webhooks](./webhooks.md). |
+| `status` | string | Device status, `ACTIVE` by default. |
+| `version` | string | Device version label. |
+| `paired_status` | string | `PAIRED` (connected to WhatsApp) or `UNPAIRED`. See [Paired status values](#paired-status-values). |
+| `device_name_mobile` | string or null | Device name. |
+| `node_url` | string or null | Internal connection server URL. |
+| `image_url` | string or null | Profile picture URL. |
+| `notify_is_connected` | boolean | Notification setting for connect events. |
+| `notify_is_disconnected` | boolean | Notification setting for disconnect events. |
+| `notify_updates` | boolean | Notification setting for updates. |
+| `is_store_incoming_message` | boolean | Whether incoming messages are stored in Whatspie. |
+| `is_proxy_enable` | boolean | Whether the connection uses a proxy. |
+| `created_at`, `updated_at` | string | Timestamps, ISO 8601. |
+| `server` | object | Connection server: `name`, `status`. |
+| `package` | object | Package: `code`, `name`. |
+| `subscription` | object | Message quota: `quote_available` (`-1` means unlimited) and `quote_used`, both strings. |
 
-## 📱 Get Device Information
+### Paired status values
 
-Get detailed information about a specific device.
+| `paired_status` | Description |
+|---|---|
+| `UNPAIRED` | Not connected to WhatsApp. Scan the [QR code](#get-qr-code) to connect. |
+| `PAIRED` | Connected to WhatsApp and ready to send. |
 
-### Endpoint
+A device changes back to `UNPAIRED` when its WhatsApp session ends, for example when it is logged out from the phone.
+
+## Get device information
+
 ```
 GET https://api.whatspie.com/devices/{id}
 ```
 
-### Request Example
+### Request example
 
 ```bash
-curl -L -X GET 'https://api.whatspie.com/devices/6' \
+curl -L -X GET 'https://api.whatspie.com/devices/5' \
   -H 'Accept: application/json; charset=utf-8' \
-  -H 'Authorization: Bearer <TOKEN>'
+  -H 'Authorization: Bearer YOUR_API_TOKEN'
 ```
 
-### Success Response
+### Success response
+
+Fields trimmed; see [Device fields](#device-fields).
 
 ```json
 {
-    "status": 200,
-    "message": "OK",
-    "data": {
-        "id": 5,
-        "phone": "62895383079050",
-        "webhook_url": "https://your-webhook-url.com",
-        "status": "ACTIVE",
-        "version": "multidevice",
-        "paired_status": "PAIRED",
-        "created_at": "2020-02-26T07:06:47Z",
-        "updated_at": "2025-08-11T21:30:42Z",
-        "server": {
-            "name": "ASIA (IDN1)",
-            "status": "ACTIVE"
-        },
-        "package": {
-            "code": "STARTUP240K",
-            "name": "Startup"
-        },
-        "subscription": {
-            "quote_available": "-1",
-            "quote_used": "62755"
-        }
+  "status": 200,
+  "message": "OK",
+  "data": {
+    "id": 5,
+    "phone": "62895383079050",
+    "webhook_url": "https://your-webhook-url.com",
+    "status": "ACTIVE",
+    "version": "multidevice",
+    "paired_status": "PAIRED",
+    "created_at": "2020-02-26T07:06:47Z",
+    "updated_at": "2025-08-11T21:30:42Z",
+    "server": {
+      "name": "ASIA (IDN1)",
+      "status": "ACTIVE"
+    },
+    "package": {
+      "code": "STARTUP240K",
+      "name": "Startup"
+    },
+    "subscription": {
+      "quote_available": "-1",
+      "quote_used": "62755"
     }
+  }
 }
 ```
 
-### Error Response (Device Not Found)
+### Error responses
+
+| HTTP status | `message` | Cause |
+|---|---|---|
+| `400` | `Invalid device ID` | `{id}` is not a number. |
+| `404` | `Device not found` | No device with this ID. |
+| `403` | `Access denied` | The device belongs to another account. |
 
 ```json
 {
-  "code": 404,
-  "message": "Device not found"
+  "status": 404,
+  "message": "Device not found",
+  "data": null
 }
 ```
 
-## 📱 Get QR Code
+## Get QR code
 
-Generate or retrieve the QR code for device connection.
+Get the QR code that connects the device to WhatsApp. On your phone, open WhatsApp, go to **Linked devices**, tap **Link a device**, and scan the code.
 
-### Endpoint
 ```
 GET https://api.whatspie.com/devices/{id}/qr
 ```
 
-### Request Parameters
+Calling this endpoint starts a login session for the device.
+
+### Request parameters
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `response_type` | string | ✅ | `url` |
+|---|---|---|---|
+| `response_type` | string | Yes | `url`. Other values return `400`. |
 
-
-### Request Example
+### Request example
 
 ```bash
 curl -L -X GET 'https://api.whatspie.com/devices/5/qr?response_type=url' \
   -H 'Accept: application/json; charset=utf-8' \
-  -H 'Authorization: Bearer <TOKEN>'
+  -H 'Authorization: Bearer YOUR_API_TOKEN'
 ```
 
-### Success Response
+### Success response
+
+`data.qr` is the QR code as a PNG image in a base64 data URL, not a web link. Show it as an image, for example in an `<img src="...">` tag:
 
 ```json
 {
-    "status": 200,
-    "message": "OK",
-    "data": {
-        "qr": "data:image/png;base64,json-image"
-    }
+  "status": 200,
+  "message": "OK",
+  "data": {
+    "qr": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+  }
 }
 ```
 
-### Error Response (Device Already Connected)
+WhatsApp replaces the QR code after about 20 seconds. If it expires before you scan it, call the endpoint again.
+
+### Error responses
+
+| HTTP status | `message` | Cause |
+|---|---|---|
+| `400` | `Invalid response_type. Only 'url' is supported` | `response_type` is missing or not `url`. |
+| `400` | `Invalid device ID` | `{id}` is not a number. |
+| `404` | `Device not found` | No device with this ID. |
+| `403` | `Access denied` | The device belongs to another account. |
+| `500` | `Failed to get QR code` | The QR code could not be generated. Try again. |
+
+If the device is already connected (`paired_status` is `PAIRED`), there is no QR code to return. Check `paired_status` with [Get device](#get-device-information) before asking for a QR code.
+
+## Update device
+
+```
+PUT https://api.whatspie.com/devices/{id}
+```
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `phone` | string | No | Device phone number. |
+| `status` | string | No | Device status. |
+| `webhook_url` | string | No | URL that receives [webhooks](./webhooks.md). |
+
+:::warning[Update replaces the device record]
+This endpoint currently saves only the fields in your request and clears the rest of the device record, including fields you did not send. Change the webhook URL and other settings in the [Whatspie dashboard](https://app.whatspie.com) instead until this is fixed.
+:::
+
+### Request example
+
+```bash
+curl -L -X PUT 'https://api.whatspie.com/devices/5' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  --data-raw '{
+    "phone": "62895383079050",
+    "status": "ACTIVE",
+    "webhook_url": "https://your-webhook-url.com"
+  }'
+```
+
+### Responses
 
 ```json
 {
-  "code": 200,
-  "message": "Device connected"
+  "status": 200,
+  "message": "Device updated successfully",
+  "data": null
 }
 ```
 
-### Error Response (QR Code Generation Failed)
+Every failure returns `400` with `Failed to update device`, including a wrong or foreign device ID. A non-numeric `{id}` returns `400 Invalid device ID`.
+
+## Delete device
+
+```
+DELETE https://api.whatspie.com/devices/{id}
+```
+
+Deleting a device removes it from your account. It cannot be undone.
+
+### Request example
+
+```bash
+curl -L -X DELETE 'https://api.whatspie.com/devices/5' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN'
+```
+
+### Responses
 
 ```json
 {
-  "code": 500,
-  "message": "QR code generation failed"
+  "status": 200,
+  "message": "Device deleted successfully",
+  "data": null
 }
 ```
 
+Every failure returns `400` with `Failed to delete device`, including a wrong or foreign device ID. A non-numeric `{id}` returns `400 Invalid device ID`.
 
-## 📦 Package Types
+## Package types
 
-Available package codes for device creation:
+Package codes for [Create device](#create-device). The packages available to your account may differ; check the dashboard.
 
-| ID | Package Code | Name |
-|----|-------------|------|
+| ID | Package code | Name |
+|---|---|---|
 | 1 | `BETA` | Beta Tester |
 | 2 | `STARTER60K` | Starter |
 | 3 | `STARTUP240K` | Startup |
 | 4 | `BUSINESS` | Business |
 
-### Package Selection Examples
+Devices on the `BETA` package do not receive image, document, or audio files in [webhooks](./webhooks.md).
+
+### Package selection examples
 
 ```bash
 # Create device with Starter package
 curl -L -X POST 'https://api.whatspie.com/devices' \
-  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
   -H 'Content-Type: application/json' \
   --data-raw '{
     "package": "STARTER60K",
@@ -274,7 +398,7 @@ curl -L -X POST 'https://api.whatspie.com/devices' \
 
 # Create device with Business package
 curl -L -X POST 'https://api.whatspie.com/devices' \
-  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
   -H 'Content-Type: application/json' \
   --data-raw '{
     "package": "BUSINESS",
@@ -282,58 +406,42 @@ curl -L -X POST 'https://api.whatspie.com/devices' \
   }'
 ```
 
-## 🔧 Best Practices
+## Best practices
 
-### Device Creation
-1. **Meaningful Names**: Use descriptive names for easy identification
-2. **Package Selection**: Choose appropriate package based on usage needs
-3. **Monitoring**: Implement connection monitoring for critical devices
+### Device creation
 
-### QR Code Management
-1. **Secure Display**: Only show QR codes in secure environments
-2. **Expiry Handling**: Handle QR code expiration gracefully
-3. **Auto-refresh**: Implement automatic QR code refresh when expired
+1. **Meaningful names:** use descriptive names so devices are easy to tell apart.
+2. **Package selection:** choose a package that fits your message volume.
+3. **Monitoring:** watch the connection of critical devices, for example with the `device_disconnected` [webhook](./webhooks.md).
 
-### Connection Monitoring
-1. **Regular Checks**: Monitor device status every 3-5 seconds during connection
-2. **Timeout Handling**: Set reasonable timeouts for connection attempts
-3. **Error Recovery**: Implement retry logic for failed connections
+### QR code management
 
-## 🚨 Common Errors
+1. **Secure display:** show QR codes only to the person who owns the phone. Anyone who scans it controls the device.
+2. **Expiry handling:** the QR code expires after about 20 seconds; ask for a new one if needed.
+3. **Auto-refresh:** while waiting for a scan, request a new QR code when the old one expires.
 
-### Package Not Available
-```json
-{
-  "code": 400,
-  "message": "Invalid package type",
-  "error": "Package 'INVALID_PACKAGE' is not available"
-}
-```
+### Connection monitoring
 
-### Device Limit Reached
-```json
-{
-  "code": 403,
-  "message": "Device limit exceeded",
-  "error": "Maximum number of devices reached for your plan"
-}
-```
+1. **Regular checks:** during connection, check `paired_status` with Get device every 3–5 seconds until it is `PAIRED`.
+2. **Timeout handling:** stop after a reasonable time and show the user a fresh QR code.
+3. **Error recovery:** retry failed QR requests.
 
-### Device Not Found
-```json
-{
-  "code": 404,
-  "message": "Device not found",
-  "error": "Device with ID 999 does not exist"
-}
-```
+## Common errors
 
-## 🔗 Next Steps
+| HTTP status | `message` | Endpoint | Cause |
+|---|---|---|---|
+| `400` | `Failed to create device` | Create | Not a reseller, unknown package code, low balance, or `BETA` limit. |
+| `400` | `Invalid device ID` | `/devices/{id}` endpoints | `{id}` is not a number. |
+| `404` | `Device not found` | Get, Get QR code | No device with this ID. |
+| `403` | `Access denied` | Get, Get QR code | The device belongs to another account. |
+| `403` | `Missing Authorization header`, `Missing token in Authorization header`, `Invalid Authentication Token` | All | Token problem. See [Authentication](./authentication.md#errors). |
+| `500` | `Internal server error` | List | Devices could not be read. Try again. |
+
+## Next steps
 
 Once your device is connected:
-- [Understand message parameters](./params-structure) for proper formatting
-- [Send text messages](./messaging/send-text) to contacts
-- [Send media messages](./messaging/send-image) with images and files
-- [Manage groups](./groups/create-group) and group messaging
 
-Your WhatsApp Business device is now ready for automated messaging!
+- [Understand the request format](./messaging/send-text.md#request) for sending messages
+- [Send text messages](./messaging/send-text.md) to contacts
+- [Send media messages](./messaging/send-image.md) with images and files
+- [Manage groups](./groups/list-groups.md) and group messaging
