@@ -80,7 +80,7 @@ The `get_device_qr` tool returns the pairing QR code as an image.
 
 Do not ask Claude to redraw or re-encode the QR code. A redrawn code looks correct but does not scan.
 
-If the device is already connected, the tool replies `Connected` instead of returning a code.
+If the device is already connected, there is no code to scan and the request currently fails with an error. Check the device status first with `get_device`.
 
 ## Run without Docker
 

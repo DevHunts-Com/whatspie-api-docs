@@ -1,50 +1,49 @@
 ---
-sidebar_position: 6
+title: Add members
+description: Add participants to a WhatsApp group with POST /groups/{id}/members/add.
 ---
 
-# 👥 Add Members to Group
+# Add members
 
-Add new participants to WhatsApp groups using the Whatspie API with support for bulk member addition and invitation management.
+Add one or more phone numbers to a WhatsApp group. The group's device adds them.
 
-<div style={{background: "linear-gradient(135deg, #a2facf 0%, #64b3f4 100%)", padding: "1.5rem", borderRadius: "8px", color: "white", margin: "1.5rem 0"}}>
-  <h3 style={{color: "white", margin: "0 0 1rem 0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>🎯 Group Expansion</h3>
-  <p style={{margin: "0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>Easily add new members to WhatsApp groups with support for multiple participants, validation, and automatic invitation handling.</p>
-</div>
-
-## 🌐 Endpoint
+## Endpoint
 
 ```
-POST https://api.whatspie.com/api/groups/{group_id}/members/add
+POST https://api.whatspie.com/groups/{id}/members/add
 ```
 
-Where `{group_id}` is the numeric ID of the WhatsApp group.
+Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [Authentication](../authentication.md).
 
-## 🔐 Authentication
-
-Bearer token required in the `Authorization` header.
-
-## 📋 Request Parameters
+## Path parameters
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `participants` | array | ✅ | Array of phone numbers to add as participants |
+|---|---|---|---|
+| `id` | integer | Yes | The group's `id` from [List groups](./list-groups.md). Not the `jid`; see [Which ID to use](./list-groups.md#which-id-to-use). |
 
-### Phone Number Format
+## Request
 
-- **Format**: International format without leading zeros
-- **Example**: `"6287830605729"` (not `"087830605729"` or `"+6287830605729"`)
-- **Validation**: Must be valid WhatsApp numbers
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `participants` | array of strings | Yes | Phone numbers to add. At least one. |
 
-:::info Admin Permission Required
-You must be a group administrator to add new members to the group.
+### Phone number format
+
+- **Format:** international format, digits only, without `+` or a leading zero.
+- **Example:** `"6287830605729"`, not `"087830605729"` or `"+6287830605729"`.
+- **Why:** each number is sent to WhatsApp as `<number>@s.whatsapp.net` exactly as you wrote it, so `+`, spaces, or a leading `0` produce an invalid number.
+- **WhatsApp:** the number must be registered on WhatsApp.
+
+:::info[Admin permission required]
+The group's device must be a group administrator to add new members.
 :::
 
-## 🚀 Request Examples
+## Request examples
 
-### Add Single Member
+### Add a single member
 
 ```bash
-curl -L -X POST 'https://api.whatspie.com/api/groups/2/members/add' \
+curl -L -X POST 'https://api.whatspie.com/groups/2/members/add' \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer YOUR_API_TOKEN' \
@@ -55,10 +54,10 @@ curl -L -X POST 'https://api.whatspie.com/api/groups/2/members/add' \
   }'
 ```
 
-### Add Multiple Members
+### Add multiple members
 
 ```bash
-curl -L -X POST 'https://api.whatspie.com/api/groups/2/members/add' \
+curl -L -X POST 'https://api.whatspie.com/groups/2/members/add' \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer YOUR_API_TOKEN' \
@@ -72,10 +71,10 @@ curl -L -X POST 'https://api.whatspie.com/api/groups/2/members/add' \
   }'
 ```
 
-### Add Members from Different Countries
+### Add members from different countries
 
 ```bash
-curl -L -X POST 'https://api.whatspie.com/api/groups/2/members/add' \
+curl -L -X POST 'https://api.whatspie.com/groups/2/members/add' \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer YOUR_API_TOKEN' \
@@ -90,661 +89,277 @@ curl -L -X POST 'https://api.whatspie.com/api/groups/2/members/add' \
   }'
 ```
 
-## 📊 Response Format
-
-### Success Response
+## Response
 
 ```json
 {
-  "code": 200,
+  "status": 200,
   "message": "Members added successfully",
   "data": {
-    "group_id": "15378",
-    "group_name": "Project Team",
-    "added_members": [
-      {
-        "phone": "6287830605729",
-        "status": "added",
-        "name": "John Doe",
-        "added_at": "2024-12-20T15:30:00Z"
-      },
-      {
-        "phone": "6281234567890",
-        "status": "added",
-        "name": "Jane Smith",
-        "added_at": "2024-12-20T15:30:00Z"
-      }
-    ],
-    "failed_members": [],
-    "total_added": 2,
-    "total_failed": 0,
-    "new_participant_count": 12
-  }
-}
-```
-
-### Partial Success Response
-
-```json
-{
-  "code": 200,
-  "message": "Some members added successfully",
-  "data": {
-    "group_id": "15378",
-    "group_name": "Project Team",
-    "added_members": [
-      {
-        "phone": "6287830605729",
-        "status": "added",
-        "name": "John Doe",
-        "added_at": "2024-12-20T15:30:00Z"
-      }
-    ],
-    "failed_members": [
-      {
-        "phone": "6281234567890",
-        "status": "failed",
-        "error": "User not found on WhatsApp",
-        "error_code": "USER_NOT_FOUND"
-      },
-      {
-        "phone": "6289876543210", 
-        "status": "failed",
-        "error": "User has blocked your device",
-        "error_code": "USER_BLOCKED"
-      },
-      {
-        "phone": "6285544332211",
-        "status": "failed", 
-        "error": "User is already a group member",
-        "error_code": "ALREADY_MEMBER"
-      }
-    ],
-    "total_added": 1,
-    "total_failed": 3,
-    "new_participant_count": 11
-  }
-}
-```
-
-### Error Response - Unauthorized
-
-```json
-{
-  "code": 403,
-  "message": "Access denied",
-  "error": "You must be a group administrator to add members"
-}
-```
-
-### Error Response - Group Not Found
-
-```json
-{
-  "code": 404,
-  "message": "Group not found",
-  "error": "The specified group ID does not exist or you don't have access to it"
-}
-```
-
-### Error Response - Invalid Request
-
-```json
-{
-  "code": 400,
-  "message": "Validation failed",
-  "errors": {
-    "participants": [
-      "Participants array is required",
-      "At least one participant must be specified",
-      "Maximum 20 participants per request"
+    "group_id": 2,
+    "members_added": [
+      "6287830605729",
+      "6281234567890"
     ]
   }
 }
 ```
 
-### Error Response - Group Full
+| Field | Type | Description |
+|---|---|---|
+| `group_id` | number | The group `id` from the request path. |
+| `members_added` | array of strings | The `participants` you sent, returned as-is. |
+
+:::warning[Per-number results are not reported]
+`members_added` repeats your request. It does not say which numbers WhatsApp actually added. A number can still be left out, for example because it is not on WhatsApp, its privacy settings block being added, or it is already a member. Check the group in WhatsApp to confirm.
+:::
+
+## Errors
+
+| HTTP status | `message` | Cause |
+|---|---|---|
+| `400` | `Invalid group ID` | `id` is not a number, for example a `jid`. |
+| `400` | `Invalid request body: ...` | The body is not valid JSON, or `participants` is missing. |
+| `400` | `Members list cannot be empty` | `participants` is an empty array. |
+| `403` | `Missing Authorization header`, `Missing token in Authorization header`, `Invalid Authentication Token` | Token problem. See [Authentication](../authentication.md#errors). |
+| `500` | `Internal server error` | Any failure: the group was not found or belongs to another account, the device is not an admin or not connected, or WhatsApp rejected the request. |
 
 ```json
 {
-  "code": 400,
-  "message": "Group capacity exceeded",
-  "error": "WhatsApp group member limit reached (maximum 1024 members)"
+  "status": 400,
+  "message": "Members list cannot be empty"
 }
 ```
 
-## 🔍 Response Fields Explained
+```json
+{
+  "status": 500,
+  "message": "Internal server error"
+}
+```
 
-### Added Members Object
+The `500` response does not say which of these causes it was. Check that the group `id` is yours and that the device is connected and an admin.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `phone` | string | Member's phone number |
-| `status` | string | "added" - successfully added to group |
-| `name` | string | Member's display name (if available) |
-| `added_at` | string | Timestamp when member was added (ISO 8601) |
+## Usage examples
 
-### Failed Members Object
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `phone` | string | Member's phone number |
-| `status` | string | "failed" - addition failed |
-| `error` | string | Human-readable error message |
-| `error_code` | string | Error code for programmatic handling |
-
-### Common Error Codes
-
-| Error Code | Description |
-|------------|-------------|
-| `USER_NOT_FOUND` | Phone number not registered on WhatsApp |
-| `USER_BLOCKED` | User has blocked your device |
-| `ALREADY_MEMBER` | User is already a group member |
-| `PRIVACY_SETTINGS` | User's privacy settings prevent adding |
-| `GROUP_FULL` | Group has reached maximum member limit |
-| `RATE_LIMITED` | Too many addition requests |
-| `INVALID_NUMBER` | Phone number format is invalid |
-
-## 💡 Usage Examples
-
-### Add Members with Error Handling
+The examples use this helper:
 
 ```javascript
-async function addGroupMembers(groupId, phoneNumbers) {
-  try {
-    const response = await fetch(`https://api.whatspie.com/api/groups/${groupId}/members/add`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer YOUR_API_TOKEN'
-      },
-      body: JSON.stringify({
-        participants: phoneNumbers
-      })
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`${errorData.code}: ${errorData.message}`);
-    }
-    
-    const result = await response.json();
-    
-    console.log(`✅ Added ${result.data.total_added} members to "${result.data.group_name}"`);
-    
-    if (result.data.failed_members.length > 0) {
-      console.log(`❌ Failed to add ${result.data.total_failed} members:`);
-      result.data.failed_members.forEach(member => {
-        console.log(`  - ${member.phone}: ${member.error}`);
-      });
-    }
-    
-    result.data.added_members.forEach(member => {
-      console.log(`  + ${member.name || member.phone} added successfully`);
-    });
-    
-    return result.data;
-  } catch (error) {
-    console.error('Error adding members:', error.message);
-    throw error;
-  }
-}
+async function addGroupMembers(token, groupId, phoneNumbers) {
+  const response = await fetch(`https://api.whatspie.com/groups/${groupId}/members/add`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ participants: phoneNumbers }),
+  });
 
-// Usage
-const phoneNumbers = ['6287830605729', '6281234567890', '6289876543210'];
-addGroupMembers(2, phoneNumbers);
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(`${result.status}: ${result.message}`);
+  }
+  return result.data; // { group_id, members_added }
+}
 ```
 
-### Bulk Member Addition with Validation
+### Add members with error handling
+
+```javascript
+try {
+  const data = await addGroupMembers('YOUR_API_TOKEN', 2, ['6287830605729', '6281234567890', '6289876543210']);
+  console.log(`✅ Sent ${data.members_added.length} numbers to group ${data.group_id}`);
+  data.members_added.forEach((phone) => console.log(`  + ${phone}`));
+} catch (error) {
+  console.error('Error adding members:', error.message);
+}
+```
+
+### Bulk member addition with validation
+
+Clean and validate numbers first, then send them in batches:
 
 ```javascript
 function validatePhoneNumbers(phoneNumbers) {
   const validNumbers = [];
   const invalidNumbers = [];
-  
-  phoneNumbers.forEach(phone => {
-    // Remove any non-numeric characters
-    const cleanPhone = phone.replace(/[^\d]/g, '');
-    
-    // Check if it's a valid international format
-    if (cleanPhone.length >= 10 && cleanPhone.length <= 15) {
+
+  phoneNumbers.forEach((phone) => {
+    const cleanPhone = phone.replace(/[^\d]/g, ''); // digits only
+    if (cleanPhone.length >= 10 && cleanPhone.length <= 15 && !cleanPhone.startsWith('0')) {
       validNumbers.push(cleanPhone);
     } else {
       invalidNumbers.push(phone);
     }
   });
-  
+
   return { validNumbers, invalidNumbers };
 }
 
-async function bulkAddMembers(groupId, phoneNumbers) {
-  // Validate phone numbers first
+async function bulkAddMembers(token, groupId, phoneNumbers, batchSize = 20) {
   const { validNumbers, invalidNumbers } = validatePhoneNumbers(phoneNumbers);
-  
-  if (invalidNumbers.length > 0) {
-    console.warn(`Invalid phone numbers detected:`, invalidNumbers);
-  }
-  
-  if (validNumbers.length === 0) {
-    throw new Error('No valid phone numbers provided');
-  }
-  
-  // Split into batches of 20 (API limit)
-  const batchSize = 20;
+  if (invalidNumbers.length > 0) console.warn('Invalid phone numbers detected:', invalidNumbers);
+  if (validNumbers.length === 0) throw new Error('No valid phone numbers provided');
+
+  // The API has no batch limit; smaller batches make failures easier to retry
   const batches = [];
-  
   for (let i = 0; i < validNumbers.length; i += batchSize) {
     batches.push(validNumbers.slice(i, i + batchSize));
   }
-  
+
   const results = [];
-  
   for (let i = 0; i < batches.length; i++) {
     const batch = batches[i];
-    
+    console.log(`Processing batch ${i + 1}/${batches.length} (${batch.length} members)...`);
     try {
-      console.log(`Processing batch ${i + 1}/${batches.length} (${batch.length} members)...`);
-      
-      const result = await addGroupMembers(groupId, batch);
-      results.push(result);
-      
-      // Delay between batches to avoid rate limiting
-      if (i < batches.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
-      
+      await addGroupMembers(token, groupId, batch);
+      results.push({ batch, success: true });
     } catch (error) {
       console.error(`Batch ${i + 1} failed:`, error.message);
-      results.push({ error: error.message, batch: batch });
+      results.push({ batch, success: false, error: error.message });
     }
+    if (i < batches.length - 1) await new Promise((resolve) => setTimeout(resolve, 2000));
   }
-  
-  // Summarize results
-  const totalAdded = results.reduce((sum, result) => 
-    sum + (result.total_added || 0), 0
-  );
-  const totalFailed = results.reduce((sum, result) => 
-    sum + (result.total_failed || 0), 0
-  );
-  
-  console.log(`\n📊 Bulk Addition Summary:`);
-  console.log(`✅ Total Added: ${totalAdded}`);
-  console.log(`❌ Total Failed: ${totalFailed}`);
-  console.log(`📋 Invalid Numbers: ${invalidNumbers.length}`);
-  
+
+  const sent = results.filter((r) => r.success).reduce((sum, r) => sum + r.batch.length, 0);
+  const failed = results.filter((r) => !r.success).reduce((sum, r) => sum + r.batch.length, 0);
+
+  console.log('\n📊 Bulk Addition Summary:');
+  console.log(`✅ Sent: ${sent}`);
+  console.log(`❌ In failed batches: ${failed}`);
+  console.log(`📋 Invalid numbers: ${invalidNumbers.length}`);
+
   return results;
 }
 
-// Usage
-const membersList = [
+bulkAddMembers('YOUR_API_TOKEN', 2, [
   '6287830605729', '6281234567890', '6289876543210',
-  '+62855-4433-2211', '628-1122-334455', // These will be cleaned
-  'invalid-number', // This will be rejected
-  '6287766554433', '6281987654321'
-];
-
-bulkAddMembers(2, membersList);
+  '+62855-4433-2211', '628-1122-334455', // cleaned to digits
+  'invalid-number', // rejected
+  '6287766554433', '6281987654321',
+]);
 ```
 
-### Add Members from CSV File
+### Add members from a CSV file
 
 ```javascript
-async function addMembersFromCSV(groupId, csvData) {
-  // Parse CSV data
+async function addMembersFromCSV(token, groupId, csvData) {
   const lines = csvData.trim().split('\n');
   const headers = lines[0].toLowerCase().split(',');
-  
-  const phoneIndex = headers.findIndex(h => 
-    h.includes('phone') || h.includes('number') || h.includes('mobile')
-  );
-  const nameIndex = headers.findIndex(h => 
-    h.includes('name') || h.includes('nama')
-  );
-  
-  if (phoneIndex === -1) {
-    throw new Error('No phone number column found in CSV');
-  }
-  
+
+  const phoneIndex = headers.findIndex((h) => h.includes('phone') || h.includes('number') || h.includes('mobile'));
+  const nameIndex = headers.findIndex((h) => h.includes('name') || h.includes('nama'));
+  if (phoneIndex === -1) throw new Error('No phone number column found in CSV');
+
   const members = [];
-  
   for (let i = 1; i < lines.length; i++) {
     const row = lines[i].split(',');
     const phone = row[phoneIndex]?.trim();
     const name = nameIndex !== -1 ? row[nameIndex]?.trim() : '';
-    
-    if (phone) {
-      members.push({ phone, name });
-    }
+    if (phone) members.push({ phone, name });
   }
-  
   console.log(`📋 Found ${members.length} members in CSV`);
-  
-  // Extract phone numbers
-  const phoneNumbers = members.map(m => m.phone);
-  
-  // Add members
-  const result = await bulkAddMembers(groupId, phoneNumbers);
-  
-  // Create report
+
+  const results = await bulkAddMembers(token, groupId, members.map((m) => m.phone));
+
   const report = {
     csvMembers: members.length,
-    addedMembers: result.reduce((sum, r) => sum + (r.total_added || 0), 0),
-    failedMembers: result.reduce((sum, r) => sum + (r.total_failed || 0), 0),
-    details: result
+    sent: results.filter((r) => r.success).reduce((sum, r) => sum + r.batch.length, 0),
+    inFailedBatches: results.filter((r) => !r.success).reduce((sum, r) => sum + r.batch.length, 0),
+    details: results,
   };
-  
-  console.log(`\n📊 CSV Import Report:`);
-  console.log(`📋 CSV Records: ${report.csvMembers}`);
-  console.log(`✅ Added: ${report.addedMembers}`);
-  console.log(`❌ Failed: ${report.failedMembers}`);
-  
+
+  console.log('\n📊 CSV Import Report:');
+  console.log(`📋 CSV records: ${report.csvMembers}`);
+  console.log(`✅ Sent: ${report.sent}`);
+  console.log(`❌ In failed batches: ${report.inFailedBatches}`);
   return report;
 }
 
-// Usage with sample CSV
 const sampleCSV = `name,phone,email
 John Doe,6287830605729,john@example.com
 Jane Smith,6281234567890,jane@example.com
 Mike Wilson,6289876543210,mike@example.com`;
 
-addMembersFromCSV(2, sampleCSV);
+addMembersFromCSV('YOUR_API_TOKEN', 2, sampleCSV);
 ```
 
-### Smart Member Addition with Retry
+### Monitor member addition progress
 
 ```javascript
-class GroupMemberManager {
-  constructor(apiToken) {
-    this.apiToken = apiToken;
-    this.baseUrl = 'https://api.whatspie.com/api/groups';
-    this.retryAttempts = 3;
-    this.retryDelay = 5000; // 5 seconds
-  }
-  
-  async addMembers(groupId, phoneNumbers, attempt = 1) {
-    try {
-      const response = await fetch(`${this.baseUrl}/${groupId}/members/add`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${this.apiToken}`
-        },
-        body: JSON.stringify({
-          participants: phoneNumbers
-        })
-      });
-      
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(`${result.code}: ${result.message}`);
-      }
-      
-      return result.data;
-    } catch (error) {
-      if (attempt < this.retryAttempts && error.message.includes('rate limit')) {
-        console.log(`Rate limited. Retrying in ${this.retryDelay / 1000}s (attempt ${attempt + 1}/${this.retryAttempts})`);
-        await new Promise(resolve => setTimeout(resolve, this.retryDelay));
-        return this.addMembers(groupId, phoneNumbers, attempt + 1);
-      }
-      throw error;
-    }
-  }
-  
-  async addMembersWithRetry(groupId, phoneNumbers) {
-    const maxRetries = 3;
-    let attempt = 0;
-    let failedNumbers = phoneNumbers;
-    const results = [];
-    
-    while (attempt < maxRetries && failedNumbers.length > 0) {
-      attempt++;
-      console.log(`\nAttempt ${attempt}: Adding ${failedNumbers.length} members...`);
-      
-      try {
-        const result = await this.addMembers(groupId, failedNumbers);
-        results.push(result);
-        
-        // Only retry numbers that failed due to retryable errors
-        failedNumbers = result.failed_members
-          .filter(member => this.isRetryableError(member.error_code))
-          .map(member => member.phone);
-        
-        if (failedNumbers.length > 0) {
-          console.log(`${failedNumbers.length} members failed with retryable errors`);
-          await new Promise(resolve => setTimeout(resolve, 10000)); // Wait 10 seconds
-        }
-        
-      } catch (error) {
-        console.error(`Attempt ${attempt} failed:`, error.message);
-        if (attempt >= maxRetries) {
-          throw error;
-        }
-        await new Promise(resolve => setTimeout(resolve, 15000)); // Wait 15 seconds
-      }
-    }
-    
-    return this.consolidateResults(results);
-  }
-  
-  isRetryableError(errorCode) {
-    const retryableErrors = ['RATE_LIMITED', 'TEMPORARY_ERROR', 'NETWORK_ERROR'];
-    return retryableErrors.includes(errorCode);
-  }
-  
-  consolidateResults(results) {
-    const consolidated = {
-      total_added: 0,
-      total_failed: 0,
-      added_members: [],
-      failed_members: [],
-      attempts: results.length
-    };
-    
-    results.forEach(result => {
-      consolidated.total_added += result.total_added || 0;
-      consolidated.added_members.push(...(result.added_members || []));
-      consolidated.failed_members.push(...(result.failed_members || []));
-    });
-    
-    // Remove duplicates from failed members (keep only final failure)
-    const uniqueFailures = new Map();
-    consolidated.failed_members.forEach(member => {
-      uniqueFailures.set(member.phone, member);
-    });
-    consolidated.failed_members = Array.from(uniqueFailures.values());
-    consolidated.total_failed = consolidated.failed_members.length;
-    
-    return consolidated;
-  }
-}
-
-// Usage
-const memberManager = new GroupMemberManager('YOUR_API_TOKEN');
-
-const phoneNumbers = ['6287830605729', '6281234567890', '6289876543210'];
-memberManager.addMembersWithRetry(2, phoneNumbers)
-  .then(result => {
-    console.log('\n✅ Final Result:');
-    console.log(`Added: ${result.total_added}`);
-    console.log(`Failed: ${result.total_failed}`);
-    console.log(`Attempts: ${result.attempts}`);
-  })
-  .catch(error => {
-    console.error('Final error:', error.message);
-  });
-```
-
-### Monitor Member Addition Progress
-
-```javascript
-async function addMembersWithProgress(groupId, phoneNumbers, onProgress) {
-  const batchSize = 5; // Smaller batches for better progress tracking
+async function addMembersWithProgress(token, groupId, phoneNumbers, onProgress, batchSize = 5) {
   const batches = [];
-  
   for (let i = 0; i < phoneNumbers.length; i += batchSize) {
     batches.push(phoneNumbers.slice(i, i + batchSize));
   }
-  
-  const results = {
-    total_members: phoneNumbers.length,
-    processed: 0,
-    added: 0,
-    failed: 0,
-    added_members: [],
-    failed_members: [],
-    progress: 0
-  };
-  
+
+  const progress = { total: phoneNumbers.length, processed: 0, sent: 0, failed: 0, failedNumbers: [] };
+
   for (let i = 0; i < batches.length; i++) {
     const batch = batches[i];
-    
+    onProgress?.({ ...progress, percent: Math.round((i / batches.length) * 100), status: `Batch ${i + 1}/${batches.length}` });
+
     try {
-      // Update progress
-      results.progress = Math.round((i / batches.length) * 100);
-      if (onProgress) {
-        onProgress({
-          ...results,
-          currentBatch: i + 1,
-          totalBatches: batches.length,
-          status: `Processing batch ${i + 1}/${batches.length}...`
-        });
-      }
-      
-      const response = await fetch(`https://api.whatspie.com/api/groups/${groupId}/members/add`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer YOUR_API_TOKEN'
-        },
-        body: JSON.stringify({
-          participants: batch
-        })
-      });
-      
-      const batchResult = await response.json();
-      
-      if (response.ok) {
-        results.added += batchResult.data.total_added || 0;
-        results.failed += batchResult.data.total_failed || 0;
-        results.processed += batch.length;
-        
-        if (batchResult.data.added_members) {
-          results.added_members.push(...batchResult.data.added_members);
-        }
-        if (batchResult.data.failed_members) {
-          results.failed_members.push(...batchResult.data.failed_members);
-        }
-      } else {
-        // Entire batch failed
-        results.failed += batch.length;
-        results.processed += batch.length;
-        
-        batch.forEach(phone => {
-          results.failed_members.push({
-            phone: phone,
-            status: 'failed',
-            error: batchResult.message || 'Batch processing failed',
-            error_code: 'BATCH_FAILED'
-          });
-        });
-      }
-      
-      // Delay between batches
-      if (i < batches.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
-      
+      await addGroupMembers(token, groupId, batch);
+      progress.sent += batch.length;
     } catch (error) {
-      console.error(`Batch ${i + 1} error:`, error.message);
-      
-      // Mark entire batch as failed
-      results.failed += batch.length;
-      results.processed += batch.length;
-      
-      batch.forEach(phone => {
-        results.failed_members.push({
-          phone: phone,
-          status: 'failed',
-          error: error.message,
-          error_code: 'NETWORK_ERROR'
-        });
-      });
+      progress.failed += batch.length;
+      progress.failedNumbers.push(...batch.map((phone) => ({ phone, error: error.message })));
     }
+    progress.processed += batch.length;
+
+    if (i < batches.length - 1) await new Promise((resolve) => setTimeout(resolve, 2000));
   }
-  
-  // Final progress update
-  results.progress = 100;
-  if (onProgress) {
-    onProgress({
-      ...results,
-      status: 'Completed'
-    });
-  }
-  
-  return results;
+
+  onProgress?.({ ...progress, percent: 100, status: 'Completed' });
+  return progress;
 }
 
-// Usage with progress callback
 const phoneNumbers = Array.from({ length: 50 }, (_, i) => `628${String(i).padStart(9, '0')}`);
 
-addMembersWithProgress(2, phoneNumbers, (progress) => {
+addMembersWithProgress('YOUR_API_TOKEN', 2, phoneNumbers, (p) => {
   console.clear();
-  console.log(`📊 Adding Members Progress: ${progress.progress}%`);
-  console.log(`Status: ${progress.status}`);
-  console.log(`Processed: ${progress.processed}/${progress.total_members}`);
-  console.log(`✅ Added: ${progress.added}`);
-  console.log(`❌ Failed: ${progress.failed}`);
-  
-  if (progress.currentBatch) {
-    console.log(`Batch: ${progress.currentBatch}/${progress.totalBatches}`);
-  }
-  
-  // Simple progress bar
-  const barLength = 30;
-  const filledLength = Math.round((progress.progress / 100) * barLength);
-  const bar = '█'.repeat(filledLength) + '░'.repeat(barLength - filledLength);
-  console.log(`[${bar}] ${progress.progress}%`);
+  console.log(`📊 Adding members: ${p.percent}%  (${p.status})`);
+  console.log(`Processed: ${p.processed}/${p.total}  ✅ ${p.sent}  ❌ ${p.failed}`);
+  const filled = Math.round((p.percent / 100) * 30);
+  console.log(`[${'█'.repeat(filled)}${'░'.repeat(30 - filled)}] ${p.percent}%`);
 });
 ```
 
-## ⚠️ Limitations and Considerations
+## Limitations and considerations
 
-### WhatsApp Restrictions
+### WhatsApp restrictions
 
-- **Group member limit**: Maximum 1024 members per group
-- **Privacy settings**: Users can block being added to groups
-- **WhatsApp registration**: Phone numbers must be registered on WhatsApp
-- **Admin requirement**: Only group admins can add members
+- **Group member limit:** maximum 1024 members per group.
+- **Privacy settings:** users can block being added to groups.
+- **WhatsApp registration:** phone numbers must be registered on WhatsApp.
+- **Admin requirement:** only group admins can add members.
 
-### API Limitations
+### API behavior
 
-- **Batch size**: Maximum 20 participants per request
-- **Rate limiting**: Maximum 10 requests per minute per group
-- **Daily limit**: Maximum 500 member additions per group per day
-- **Phone format**: International format required (no leading + or 00)
+- **No batch or rate limit:** the API sets no maximum number of participants per request and no rate limit. WhatsApp may still restrict accounts that add many people quickly.
+- **No per-number result:** the response does not say which numbers were added.
+- **Phone format:** international format, digits only (no `+`, `00`, or leading `0`).
 
-### Error Handling
+### Error handling
 
-- **Partial failures**: Some members may be added while others fail
-- **Retry logic**: Implement retry for rate-limited requests
-- **Validation**: Always validate phone numbers before sending
-- **Logging**: Log failed additions for manual review
+- **Partial results:** WhatsApp may add some numbers and skip others, and the response does not show which.
+- **Retries:** retry a batch only after a `500`, and check the device connection first.
+- **Validation:** always clean and validate phone numbers before sending.
+- **Logging:** log the numbers you sent so you can review them later in WhatsApp.
 
-### Best Practices
+### Best practices
 
-- **Batch processing**: Split large member lists into smaller batches
-- **Progress tracking**: Implement progress callbacks for bulk operations
-- **Error reporting**: Provide detailed feedback on failures
-- **User consent**: Ensure users consent to being added to groups
+- **Batch processing:** split large member lists into smaller batches.
+- **Progress tracking:** use progress callbacks for bulk operations.
+- **Error reporting:** keep a list of numbers in failed batches.
+- **User consent:** make sure people agree to being added to groups.
 
-## 🔗 Related Endpoints
+## Related
 
-- [Get Group By ID](./get-group) - Check current group members
-- [Get Groups List](./list-groups) - Find groups to add members to
-- [Update Group Information](./update-group) - Modify group settings
-- [Send Group Messages](./send-group-messages) - Welcome new members
-- [Create WhatsApp Groups](./create-group) - Create groups with initial members
+- [Get group](./get-group.md): check the stored group details (it does not list members)
+- [List groups](./list-groups.md): find groups to add members to
+- [Update group](./update-group.md): change the group's name, description, or picture
+- [Send group messages](./send-group-messages.md): welcome new members
+- [Refresh groups](./refresh-groups.md): re-sync the stored group list from WhatsApp

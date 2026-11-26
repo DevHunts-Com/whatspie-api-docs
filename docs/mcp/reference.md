@@ -145,12 +145,11 @@ Re-sync a device's group list from WhatsApp.
 
 #### `send_group_message`
 
-Send text, an image, or a file to a group.
+Send text, an image, or a file to a group. The message is always sent from the device that owns the group (its `device_id` in `list_groups`), so there is no `device` parameter.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `group_id` | number | Yes | Group ID. |
-| `device` | string | Yes | Sender device number. |
 | `type` | `chat`, `image`, or `file` | No | Message type. Default `chat`. |
 | `message` | string | For `chat` | Message text. |
 | `file_url` | string | For `image` and `file` | Public URL of the media. |
@@ -205,7 +204,7 @@ Get one device.
 
 #### `get_device_qr`
 
-Get the QR code to pair a device. Returns an image, or `Connected` if the device is already paired. The code expires after about 20 seconds. See [Pair a device with a QR code](./guides.md#pair-a-device-with-a-qr-code).
+Get the QR code to pair a device. Returns an image. If the device is already paired, the request currently fails with an error. The code expires after about 20 seconds. See [Pair a device with a QR code](./guides.md#pair-a-device-with-a-qr-code).
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
