@@ -186,12 +186,14 @@ Send "Hello from Claude" from device 6281111111111 to 6282222222222.
 
 Claude asks permission to run `send_text_message`. Check the device and receiver in the request, then approve it.
 
+Claude replies with the message's ID and status `PENDING`. This is normal: the message is queued, not failed. The status usually changes to `SENT` within seconds.
+
 Open WhatsApp on the receiving phone. The message "Hello from Claude" arrives from your device's number.
 
 **Nothing arrived?**
 
 - Check that the device is connected: ask Claude "Show the status of my WhatsApp devices" and check that your device's `paired_status` is `PAIRED`, or check it in the dashboard.
-- Ask Claude for the message status. A status of `ERROR` comes with a reason; see [Status values](../messaging/get-message.md#status-values).
+- Ask Claude: "What is the status of the message you just sent?" Claude runs `get_message` with the message ID from its reply. A status of `ERROR` comes with a reason; see [Status values](../messaging/get-message.md#status-values).
 
 You have connected Claude to WhatsApp through Whatspie.
 

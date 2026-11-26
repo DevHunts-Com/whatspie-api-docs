@@ -27,8 +27,8 @@ All fields are optional; send the ones you want to change. Empty strings are ign
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `subject` | string | No | New group name. WhatsApp's limit is 25 characters; the API does not check it. |
-| `description` | string | No | New group description. WhatsApp's limit is 500 characters; the API does not check it. |
+| `subject` | string | No | New group name. The API does not check the length. |
+| `description` | string | No | New group description. The API does not check the length. |
 | `profile_url` | string | No | Public URL of the new group picture. Whatspie downloads it, with a 10-second timeout. |
 
 The change is made by the device the group belongs to.

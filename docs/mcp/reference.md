@@ -35,7 +35,7 @@ Environment variables:
 |---|---|---|
 | `PORT` | `4000` | HTTP port. |
 | `WHATSPIE_API_BASE_URL` | `https://api.whatspie.com` | Whatspie API to call. Host and port only; a path is ignored. |
-| `LOG_LEVEL` | `info` | Log level. |
+| `LOG_LEVEL` | `info` | Not used by the server yet. Setting it has no effect. |
 
 ## Tools
 
@@ -45,6 +45,7 @@ Conventions for all tools:
 - `device` is the phone number of one of your paired devices. It is the sender.
 - IDs such as `group_id`, `device_id`, and `id` are the numeric IDs used by the Whatspie API, not phone numbers. `list_groups` and `get_group` return `id` as a string, for example `"18"`. The tools accept it as a number or as that string.
 - File URLs must be public, direct links that the Whatspie servers can download.
+- Send tools return the queued message, with its `id` and `status: PENDING`. Sending happens in the background; check the status later with [`get_message`](#get_message).
 
 ### Messages
 
@@ -92,6 +93,8 @@ React to a message with an emoji.
 | `message_id` | string | Yes | WhatsApp message ID (`wa_id`) to react to. |
 | `emoji` | string | No | Emoji. Default `""`, which removes the reaction. |
 | `is_group` | boolean | No | `true` if `msisdn` is a group. Default `false`. |
+
+Returns `{"id": "..."}`, the WhatsApp ID of the reaction. It does not confirm that the reaction is shown.
 
 #### `get_message`
 
@@ -168,6 +171,8 @@ Add members to a group. The device must be a group admin.
 | `group_id` | number | Yes | Group ID. |
 | `participants` | string[] | Yes | Phone numbers to add. |
 
+Returns `{"group_id": 18, "members_added": [...]}`. `members_added` repeats your input, even for numbers that are not on WhatsApp. It does not confirm who joined; check the group in WhatsApp.
+
 #### `update_group`
 
 Change a group's details. The device must be a group admin.
@@ -175,8 +180,8 @@ Change a group's details. The device must be a group admin.
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `group_id` | number | Yes | Group ID. |
-| `subject` | string | No | Group name. WhatsApp's limit is 25 characters; the server does not check it. |
-| `description` | string | No | Group description. WhatsApp's limit is 500 characters; the server does not check it. |
+| `subject` | string | No | Group name. The server does not check the length. |
+| `description` | string | No | Group description. The server does not check the length. |
 | `profile_url` | string | No | URL of the new group picture. |
 
 ### Contacts
@@ -189,6 +194,8 @@ Check whether phone numbers are registered on WhatsApp.
 |---|---|---|---|
 | `device` | string | Yes | Device number used for the check. |
 | `phones` | string[] | Yes | Phone numbers to check. |
+
+Returns one entry per number, in the same order: `[{"phone": "6281234567890", "is_on_whatsapp": true}]`.
 
 ### Devices
 
@@ -274,14 +281,14 @@ Tool errors are returned as MCP tool results with `isError: true`:
 |---|---|
 | `Whatspie API error (<status>): <message>` | The Whatspie API returned an error. `<status>` is its HTTP status, `<message>` its error message. |
 | `Unexpected error: <message>` | Anything else, for example the API could not be reached (`fetch failed`). |
+| `MCP error -32602: Input validation error: ...` | A required parameter is missing, or a number parameter is not a number. The tool did not run. Text parameters are not type-checked: other values are converted to text and sent. |
 
-A missing parameter or a parameter of the wrong type is rejected before the tool runs. It returns an MCP protocol error instead of a tool result:
+A validation error lists each bad parameter on its own line, after `at`:
 
 ```
-MCP error -32602: Input validation error: Invalid arguments for tool send_text_message: ... at receiver
+MCP error -32602: Input validation error: Invalid arguments for tool send_text_message: Invalid input: expected nonoptional, received undefined at receiver
+Invalid input: expected string, received undefined at message
 ```
-
-The end of the message names the parameter.
 
 HTTP errors from the server itself:
 
