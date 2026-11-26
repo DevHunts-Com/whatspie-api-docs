@@ -71,7 +71,7 @@ curl -X GET 'https://api.whatspie.com/messages/12345' \
 | `from_number` | string | Sender phone number, international format. |
 | `to_number` | string | Recipient phone number or group ID. |
 | `type` | string | Message type, for example `chat`, `image`, `file`, `location`. |
-| `msg_type` | string | Direction: `outgoing` or `incoming`. |
+| `msg_type` | string | Direction: `outgoing` for messages you sent, `ingoing` (spelled this way in the API) for messages you received. |
 | `body` | string | Text, caption, or file name of the message. Empty for a location. |
 | `status` | string | Delivery status. See [Status values](#status-values). |
 | `wa_id` | string or null | WhatsApp's own message ID. `null` while the message is `PENDING`; filled in once WhatsApp accepts it. Used to [react to a message](./send-reaction.md). |
