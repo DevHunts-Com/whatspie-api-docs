@@ -23,7 +23,7 @@ Set the webhook URL in your device settings:
 
 When you save, the device connection reloads its configuration, so the new settings apply right away.
 
-The device's current `webhook_url` is shown by [Get device](./device-management.md#get-device-information).
+The device's current `webhook_url` is shown by [Get device](./devices/get.md).
 
 ### Request format
 
