@@ -19,7 +19,7 @@ Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [A
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `device` | string | Yes | Phone number of your sending device, as registered in Whatspie. |
+| `device` | string | Yes | Phone number of your sending device: the `phone` field from [List devices](../devices/list.md), not the numeric device `id`. |
 | `receiver` | string | Yes | Recipient's phone number. Up to 35 characters. |
 | `type` | string | Yes | `chat` for a text message. |
 | `params` | object | Yes | Message content. |
@@ -135,6 +135,8 @@ Errors return the HTTP status in `status` and a description in `message`:
 }
 ```
 
+The API's error message leaves `video` out of the allowed list, but `video` is allowed.
+
 | HTTP status | `message` | Cause |
 |---|---|---|
 | `400` | `Invalid message params: ...` | `params` contains a key that is not allowed, or a nested value has the wrong shape. |
@@ -172,7 +174,7 @@ Invalid formats:
 
 ## Text formatting
 
-WhatsApp formatting works in `message`:
+WhatsApp formatting works in `params.text`:
 
 | Style | Syntax | Example |
 |---|---|---|

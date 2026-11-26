@@ -19,7 +19,7 @@ Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [A
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `device` | string | Yes | Phone number of your sending device, as registered in Whatspie. |
+| `device` | string | Yes | Phone number of your sending device: the `phone` field from [List devices](../devices/list.md), not the numeric device `id`. |
 | `msisdn` | string | Yes | The chat the message is in: the other person's phone number for a personal chat, or the group's `jid` when `is_group` is `true`. |
 | `message_id` | string | Yes | The WhatsApp message ID (`wa_id`) of the message to react to. |
 | `emoji` | string | No | The emoji, for example `👍`. An empty string `""` removes your reaction. |

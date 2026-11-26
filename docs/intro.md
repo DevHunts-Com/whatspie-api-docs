@@ -9,6 +9,10 @@ The Whatspie API lets your application send and manage WhatsApp messages through
 
 With it you can send text, images, files, and locations, work with groups, check whether numbers use WhatsApp, and manage your connected devices.
 
+:::info[Prefer not to write code?]
+Connect Claude to Whatspie and send WhatsApp messages by asking in plain language. See the [MCP Quickstart](./mcp/quickstart.md).
+:::
+
 ## Base URL
 
 ```
@@ -27,7 +31,12 @@ See [Authentication](./authentication.md) for where to find your token.
 
 ## Send your first message
 
-You need your API token and a device, which is a WhatsApp number connected in the [Whatspie dashboard](https://app.whatspie.com). Replace the token, the device number, and the receiver number below. Write numbers in international format without `+`.
+You need two things:
+
+1. **An API token.** See [Authentication](./authentication.md).
+2. **A connected device**, which is a WhatsApp number linked to Whatspie. If you don't have one yet, follow [Connect your first device](./device-management.md#connect-your-first-device).
+
+Then replace the token, the device number, and the receiver number below. Write numbers in international format without `+`, for example `6281234567890` (Indonesia: replace the first `0` with `62`).
 
 ```bash
 curl -X POST 'https://api.whatspie.com/messages' \

@@ -77,7 +77,7 @@ Fields trimmed; see [Device fields](#device-fields) for the full list.
 | `created_at`, `updated_at` | string | Timestamps, ISO 8601. |
 | `server` | object | Connection server: `name`, `status`. |
 | `package` | object | Package: `code`, `name`. |
-| `subscription` | object | Message quota: `quote_available` (`-1` means unlimited) and `quote_used`, both strings. |
+| `subscription` | object | Message quota: `quote_available` (`-1` means unlimited) and `quote_used`, both strings. The API spells these fields `quote`; they mean quota. |
 
 ## Paired status values
 

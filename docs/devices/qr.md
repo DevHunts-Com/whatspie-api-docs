@@ -13,13 +13,17 @@ GET https://api.whatspie.com/devices/{id}/qr
 
 Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [Authentication](../authentication.md).
 
-Calling this endpoint starts a login session for the device.
+`{id}` is the numeric device `id` from [List devices](./list.md), not the phone number. The phone number goes in the `device` field when you send messages.
+
+Calling this endpoint starts a login session for the device: Whatspie starts a new WhatsApp connection and waits for a phone to scan the code.
 
 ## Request parameters
 
+`response_type` must always be `url`. Despite the name, the response is not a link: it is the QR image itself, encoded as text (a base64 data URL).
+
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `response_type` | string | Yes | `url`. Other values return `400`. |
+| `response_type` | string | Yes | Always `url`. Other values return `400`. |
 
 ## Request example
 
@@ -31,7 +35,7 @@ curl -L -X GET 'https://api.whatspie.com/devices/5/qr?response_type=url' \
 
 ## Success response
 
-`data.qr` is the QR code as a PNG image in a base64 data URL, not a web link. Show it as an image, for example in an `<img src="...">` tag:
+`data.qr` is the QR code as a PNG image in a base64 data URL: the image encoded as text, starting with `data:image/png;base64,`. It is not a web link. Show it as an image, for example in an `<img src="...">` tag:
 
 ```json
 {

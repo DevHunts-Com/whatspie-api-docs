@@ -20,7 +20,7 @@ Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [A
 
 Requirements:
 
-- Your account must be a reseller account. Other accounts create devices in the [Whatspie dashboard](https://app.whatspie.com).
+- Your account must be a reseller account, an account that sells Whatspie devices to its own customers. If you are not sure, add devices in the [Whatspie dashboard](https://app.whatspie.com) instead.
 - Your balance must cover the package price.
 - You can have only one device on the `BETA` package.
 
@@ -39,7 +39,7 @@ curl -L -X POST 'https://api.whatspie.com/devices' \
 
 ## Success response
 
-HTTP `201`. The new device has no phone number and is `UNPAIRED` until you connect it with the [QR code](./qr.md):
+HTTP `201` (the `status` field in the body is still `200`). The new device has no phone number and is `UNPAIRED` until you connect it with the [QR code](./qr.md):
 
 ```json
 {

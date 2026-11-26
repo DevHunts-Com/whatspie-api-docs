@@ -7,6 +7,23 @@ description: Overview of the device endpoints, package types, best practices, an
 
 A device is one WhatsApp number connected to Whatspie. Every message you send goes through a device. These endpoints create, list, update, and delete devices, and return the QR code that connects a device to WhatsApp.
 
+## Connect your first device
+
+You need a connected device before you can send messages. Follow these steps once per WhatsApp number.
+
+1. **Get your API token.** See [Authentication](./authentication.md).
+2. **Add a device.** In the [Whatspie dashboard](https://app.whatspie.com), add a new device. Reseller accounts can also use [Create device](./devices/create.md) from code.
+3. **Find the device ID.** Call [List devices](./devices/list.md). Note the device's `id`. A new device has `paired_status: "UNPAIRED"`, which means it is not connected to WhatsApp yet.
+4. **Scan the QR code.** The simplest way is to scan the QR code shown in the dashboard. Use the API instead if you build your own pairing screen, for example for your customers: call [Get QR code](./devices/qr.md) with that `id` and show the image. Either way, scan it on your phone: WhatsApp → **Linked devices** → **Link a device**, within about 20 seconds.
+5. **Check that it is connected.** Call [Get device](./devices/get.md) every few seconds until `paired_status` is `PAIRED`. The device's `phone` field now holds its WhatsApp number.
+
+Use that `phone` number as `device` when you [send messages](./messaging/send-text.md).
+
+:::info[Two device identifiers]
+- `id` (a number, for example `5`) goes in the URL of device endpoints: `/devices/{id}`.
+- `phone` (for example `6281234567890`) goes in the `device` field when you send messages.
+:::
+
 ## Base URL
 
 ```
@@ -27,7 +44,7 @@ See [Authentication](./authentication.md).
 
 | Operation | Method | Endpoint | Description |
 |---|---|---|---|
-| [Create device](./devices/create.md) | `POST` | `/devices` | Create a new device on a package. Reseller accounts only. |
+| [Create device](./devices/create.md) | `POST` | `/devices` | Create a new device on a package. Reseller accounts only (accounts that resell Whatspie devices); others use the dashboard. |
 | [List devices](./devices/list.md) | `GET` | `/devices` | All devices on your account. |
 | [Get device](./devices/get.md) | `GET` | `/devices/{id}` | One device. |
 | [Get QR code](./devices/qr.md) | `GET` | `/devices/{id}/qr` | QR code to connect the device to WhatsApp. |

@@ -91,6 +91,8 @@ A valid token returns HTTP `200` with the devices on your account (fields trimme
 }
 ```
 
+`paired_status: "PAIRED"` means the device is connected to WhatsApp and can send messages. See [Paired status values](./devices/list.md#paired-status-values).
+
 An invalid token returns HTTP `403`:
 
 ```json

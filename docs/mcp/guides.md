@@ -49,7 +49,7 @@ The whatspie-mcp server must still be running. `npx` does not install or start i
    }
    ```
 
-   Put the token in `env`, as shown. On Windows, an argument with a space in it can be split in two, which breaks the header.
+   Put the token in `env`, as shown. On Windows, an argument with a space in it can be split in two, which breaks the header. Keep `Authorization:${AUTH_HEADER}` exactly as written, with no space after the colon: the bridge fills in `${AUTH_HEADER}` from `env`.
 
 3. Quit Claude Desktop completely: from the system tray on Windows, or with Cmd+Q on macOS. Closing the window is not enough. Then open it again.
 

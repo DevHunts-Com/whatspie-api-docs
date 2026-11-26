@@ -19,7 +19,7 @@ Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [A
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `device` | string | Yes | Phone number of your sending device, as registered in Whatspie. |
+| `device` | string | Yes | Phone number of your sending device: the `phone` field from [List devices](../devices/list.md), not the numeric device `id`. |
 | `receiver` | string | Yes | Recipient's phone number. Up to 35 characters. |
 | `type` | string | Yes | `file`. |
 | `params` | object | Yes | Message content. |

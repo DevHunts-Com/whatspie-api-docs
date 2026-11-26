@@ -13,6 +13,8 @@ PUT https://api.whatspie.com/devices/{id}
 
 Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [Authentication](../authentication.md).
 
+`{id}` is the numeric device `id` from [List devices](./list.md), not the phone number. The phone number goes in the `device` field when you send messages.
+
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `phone` | string | No | Device phone number. |
