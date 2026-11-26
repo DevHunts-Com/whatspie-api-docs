@@ -1,42 +1,38 @@
 ---
-sidebar_position: 1
+title: Check contacts
+description: Check whether phone numbers are registered on WhatsApp with POST /contacts/check.
 ---
 
-# 🔍 Check WhatsApp Contacts
+# Check contacts
 
-Verify if phone numbers are registered on WhatsApp before sending messages using the Whatspie API with bulk contact validation support.
+Check whether one or more phone numbers are registered on WhatsApp before you message them. The check runs through one of your connected devices.
 
-<div style={{background: "linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)", padding: "1.5rem", borderRadius: "8px", color: "white", margin: "1.5rem 0"}}>
-  <h3 style={{color: "white", margin: "0 0 1rem 0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>📱 Contact Verification</h3>
-  <p style={{margin: "0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>Validate phone numbers before messaging to ensure delivery success and avoid errors. Perfect for contact list cleanup and pre-send validation.</p>
-</div>
-
-## 🌐 Endpoint
+## Endpoint
 
 ```
 POST https://api.whatspie.com/contacts/check
 ```
 
-## 🔐 Authentication
+Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [Authentication](../authentication.md).
 
-Bearer token required in the `Authorization` header.
-
-## 📋 Request Parameters
+## Request
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `device` | string | ✅ | Your registered WhatsApp device number |
-| `phones` | array | ✅ | Array of phone numbers to verify (international format) |
+|---|---|---|---|
+| `device` | string | Yes | Phone number of the device that runs the check. It must be connected to WhatsApp. |
+| `phones` | array of strings | Yes | Phone numbers to check. At least one. |
 
-### Phone Number Format
+### Phone number format
 
-- **Format**: International format without leading zeros or + sign
-- **Examples**: `"6281776521626"`, `"1234567890"`, `"447123456789"`
-- **Invalid**: `"+6281776521626"`, `"081776521626"`, `"0081776521626"`
+- **Format:** international format, country code first, without `+` or a leading zero.
+- **Examples:** `"6281776521626"`, `"1234567890"`, `"447123456789"`.
+- **Invalid:** `"+6281776521626"`, `"081776521626"`, `"0081776521626"`.
 
-## 🚀 Request Examples
+The API does not reject badly formatted numbers. It checks each number exactly as you send it, so a wrongly formatted number simply comes back as `false`.
 
-### Single Contact Check
+## Request examples
+
+### Single contact check
 
 ```bash
 curl -L -X POST 'https://api.whatspie.com/contacts/check' \
@@ -51,7 +47,7 @@ curl -L -X POST 'https://api.whatspie.com/contacts/check' \
   }'
 ```
 
-### Multiple Contacts Check
+### Multiple contacts check
 
 ```bash
 curl -L -X POST 'https://api.whatspie.com/contacts/check' \
@@ -69,7 +65,7 @@ curl -L -X POST 'https://api.whatspie.com/contacts/check' \
   }'
 ```
 
-### International Numbers Check
+### International numbers check
 
 ```bash
 curl -L -X POST 'https://api.whatspie.com/contacts/check' \
@@ -81,7 +77,7 @@ curl -L -X POST 'https://api.whatspie.com/contacts/check' \
     "phones": [
       "6281776521626",
       "60123456789",
-      "65123456789", 
+      "65123456789",
       "91987654321",
       "1234567890",
       "447123456789"
@@ -89,65 +85,65 @@ curl -L -X POST 'https://api.whatspie.com/contacts/check' \
   }'
 ```
 
-## 📊 Response Format
-
-### Success Response
+## Response
 
 ```json
 {
-    "status": 200,
-    "message": "OK",
-    "data": [
-        {
-            "phone": "6281776521626",
-            "is_on_whatsapp": false
-        },
-        {
-            "phone": "6285603051722",
-            "is_on_whatsapp": true
-        },
-        {
-            "phone": "6281234567890",
-            "is_on_whatsapp": false
-        },
-        {
-            "phone": "6289876543210",
-            "is_on_whatsapp": false
-        }
-    ]
+  "status": 200,
+  "message": "OK",
+  "data": [
+    {
+      "phone": "6281776521626",
+      "is_on_whatsapp": false
+    },
+    {
+      "phone": "6285603051722",
+      "is_on_whatsapp": true
+    },
+    {
+      "phone": "6281234567890",
+      "is_on_whatsapp": false
+    },
+    {
+      "phone": "6289876543210",
+      "is_on_whatsapp": false
+    }
+  ]
 }
 ```
 
-### Error Response - Invalid Phone Format
+| Field | Type | Description |
+|---|---|---|
+| `phone` | string | The number, exactly as you sent it. |
+| `is_on_whatsapp` | boolean | `true` if the number has a WhatsApp account. |
+
+Results come back in the same order as `phones`.
+
+## Errors
+
+| HTTP status | `message` | Cause |
+|---|---|---|
+| `400` | `Invalid request body: ...` | The body is not valid JSON, or `device` or `phones` is missing. |
+| `400` | `Phones array cannot be empty` | `phones` is an empty array. |
+| `403` | `Missing Authorization header`, `Missing token in Authorization header`, `Invalid Authentication Token` | Token problem. See [Authentication](../authentication.md#errors). |
+| `403` | `Device not found or access denied` | `device` is not a device on your account. |
+| `500` | `Internal server error` | The check failed, for example because the device is not connected to WhatsApp. Check the device in [Device management](../device-management.md). |
 
 ```json
 {
-  "code": 400,
-  "message": "Invalid phone number format"
+  "status": 403,
+  "message": "Device not found or access denied"
 }
 ```
 
-### Error Response - Too Many Numbers
+## Notes
 
-```json
-{
-  "code": 400,
-  "message": "Too many phone numbers"
-}
-```
+- **Number of phones:** there is no fixed limit, but numbers are checked one after another, so long lists take longer. Split large lists into smaller batches.
+- **Connected device needed:** the check uses the device's WhatsApp connection. A disconnected device returns `500`.
 
-### Error Response - Device Not Connected
+## Related
 
-```json
-{
-  "code": 404,
-  "message": "Device not found"
-}
-```
-
-## 🔗 Related Endpoints
-
-- [Send Text Messages](../messaging/send-text) - Send messages to verified contacts
-- [Send Image Messages](../messaging/send-image) - Send media to validated numbers  
-- [Device Management](../device-management) - Manage your WhatsApp devices
-- [Group Management](../groups/create-group) - Add verified contacts to groups
+- [Send text messages](../messaging/send-text.md) to verified contacts
+- [Send image messages](../messaging/send-image.md) to verified numbers
+- [Device management](../device-management.md): manage and connect your devices
+- [Add members](../groups/add-members.md): add verified contacts to a group
