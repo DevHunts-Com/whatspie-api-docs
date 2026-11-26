@@ -9,22 +9,22 @@ In this tutorial you run the Whatspie MCP server on your computer, connect Claud
 
 ## What you'll build
 
-The [Model Context Protocol](https://modelcontextprotocol.io) (MCP) is a standard way to give an AI assistant tools it can use. The Whatspie MCP server gives Claude tools such as "list devices" and "send a text message":
+A small program, the Whatspie MCP server, runs on your computer. Claude talks to it, and it sends your WhatsApp messages through Whatspie. You start it once and keep it running while you use Claude. With Docker, Docker Desktop must stay open.
+
+You type a request in plain language, such as "send Hi to my colleague". Claude picks the right action (a *tool*), the server calls the Whatspie API with your API token, and Claude shows you the result.
 
 ```
 Claude  ──MCP──▶  whatspie-mcp (your computer)  ──REST──▶  api.whatspie.com
 ```
 
-You type a request in plain language. Claude picks a tool, the server calls the Whatspie API with your API token, and Claude shows you the result.
-
-You start the server once and keep it running. Claude Code connects to it directly. Claude Desktop connects through a small bridge program that it starts with `npx`.
+MCP, the [Model Context Protocol](https://modelcontextprotocol.io), is the standard that lets Claude use outside tools like this one. Claude Code connects to the server directly. Claude Desktop connects through a small bridge program that it starts with `npx`.
 
 ## Before you start
 
 You need:
 
 - **A Whatspie API token.** Find it in the dashboard under **Developers**, or at [app.whatspie.com/profile?tab=developer](https://app.whatspie.com/profile?tab=developer). See [Authentication](../authentication.md). Treat it like a password.
-- **A connected device**: a WhatsApp number paired with Whatspie, with status connected. If you don't have one, follow [Connect your first device](../device-management.md#connect-your-first-device).
+- **A connected device**: a WhatsApp number paired with Whatspie. Its `paired_status` is `PAIRED`, which means connected to WhatsApp. If you don't have one, follow [Connect your first device](../device-management.md#connect-your-first-device).
 - **Docker Desktop** ([download](https://www.docker.com/products/docker-desktop/)). Open it and wait until it shows that the engine is running. Check with `docker --version`. No Docker? See [Run without Docker](./guides.md#run-without-docker).
 - **Git** ([download](https://git-scm.com/downloads)), to download the server. Check with `git --version`.
 - **One AI app:**
@@ -43,11 +43,15 @@ cd whatspie-mcp
 docker compose up -d --build
 ```
 
+The first run downloads and builds the server, which can take a few minutes. Later starts are fast.
+
 Check that it is running:
 
 ```bash
 curl http://localhost:4000/health
 ```
+
+On Windows PowerShell, type `curl.exe` instead of `curl`. In PowerShell, `curl` runs a different command with a different output.
 
 You should see:
 
@@ -92,13 +96,19 @@ Now start Claude Code in a new terminal with `claude`. Tools load when a convers
 
 ### Option B: Claude Desktop
 
-1. Open the Claude Desktop config file. Create it if it does not exist.
+1. Open the Claude Desktop config file. Create it if it does not exist. If you create it in Notepad, set **Save as type** to **All files**, so the file is not saved as `claude_desktop_config.json.txt`.
 
    | System | Config file |
    |---|---|
    | Windows | `%APPDATA%\Claude\claude_desktop_config.json` |
    | Windows, Microsoft Store version | `%LOCALAPPDATA%\Packages\Claude_<id>\LocalCache\Roaming\Claude\claude_desktop_config.json`. If `%APPDATA%\Claude` does not exist, you have this version: open `%LOCALAPPDATA%\Packages` in File Explorer and look for the folder whose name starts with `Claude_`. |
    | macOS | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+
+   Quickest way on Windows: run this in PowerShell. Notepad opens the file, and offers to create it if it does not exist. For the Microsoft Store version, put the Store path from the table between the quotes instead.
+
+   ```powershell
+   notepad "$env:APPDATA\Claude\claude_desktop_config.json"
+   ```
 
 2. Put this in the file. If it already has an `mcpServers` section, add only the `whatspie` entry inside it, and put a comma between it and the entry before it. The file must stay valid JSON: no missing or extra commas.
 
@@ -124,11 +134,13 @@ Now start Claude Code in a new terminal with `claude`. Tools load when a convers
 
    Keep `Authorization:${AUTH_HEADER}` exactly as written, with no space after the colon. The bridge fills in `${AUTH_HEADER}` from the `env` section.
 
+   To check that the file is valid JSON, open it in an editor such as VS Code: it underlines mistakes like a missing comma.
+
 3. Quit Claude Desktop completely (on Windows: right-click its icon in the system tray, then **Quit**) and open it again.
 
 4. Open a new chat. The Whatspie tools are listed in the tools menu of the chat input.
 
-If Claude Desktop shows `spawn npx ENOENT`, it cannot find `npx`. Install Node.js and restart Claude Desktop. If the error stays on Windows, change the start of the entry so Windows runs `npx` through `cmd`:
+If Claude Desktop shows `spawn npx ENOENT`, it cannot find `npx`. Install Node.js and restart Claude Desktop. If the error stays on Windows, replace the whole `whatspie` entry with this one. It runs `npx` through `cmd`:
 
 ```json
 "whatspie": {
@@ -160,7 +172,7 @@ List my WhatsApp devices with their phone numbers and status.
 
 Claude asks permission to run the `list_devices` tool. Approve it.
 
-Claude replies with the devices on your account. Find the device that is connected and note its phone number. You use it as the sender in the next step.
+Claude replies with the devices on your account. Find the device whose `paired_status` is `PAIRED` (connected) and note its phone number. You use it as the sender in the next step.
 
 If the list is empty, or no device is connected, follow [Connect your first device](../device-management.md#connect-your-first-device) first.
 
@@ -178,7 +190,7 @@ Open WhatsApp on the receiving phone. The message "Hello from Claude" arrives fr
 
 **Nothing arrived?**
 
-- Check that the device is connected: ask Claude "Show the status of my WhatsApp devices" and look for `PAIRED` on your device, or check it in the dashboard.
+- Check that the device is connected: ask Claude "Show the status of my WhatsApp devices" and check that your device's `paired_status` is `PAIRED`, or check it in the dashboard.
 - Ask Claude for the message status. A status of `ERROR` comes with a reason; see [Status values](../messaging/get-message.md#status-values).
 
 You have connected Claude to WhatsApp through Whatspie.

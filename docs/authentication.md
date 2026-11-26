@@ -17,7 +17,7 @@ Every request to the Whatspie API must carry your API token in the `Authorizatio
 
 | Header | Value | Description |
 |---|---|---|
-| `Authorization` | `Bearer YOUR_API_TOKEN` | Your API token. Write `Bearer`, one space, then the token. |
+| `Authorization` | `Bearer YOUR_API_TOKEN` | Your API token. Write `Bearer`, one space, then the token. Always include `Bearer`: the [MCP server](./mcp/quickstart.md) rejects a token without it. |
 | `Content-Type` | `application/json` | Needed on requests with a JSON body. |
 | `Accept` | `application/json` | The API responds with JSON. |
 
@@ -121,8 +121,8 @@ Authentication errors return HTTP `403` with one of these messages:
 | `message` | Cause | Fix |
 |---|---|---|
 | `Missing Authorization header` | The request has no `Authorization` header. | Add `Authorization: Bearer YOUR_API_TOKEN`. |
-| `Missing token in Authorization header` | The header has no token after `Bearer `. | Check that the token is not empty, and that `Bearer` is followed by one space. |
-| `Invalid Authentication Token` | The token does not match an account. | Copy the token again from the dashboard. It may have been revoked or regenerated. |
+| `Missing token in Authorization header` | The header has no token after `Bearer `. Rarely seen: most HTTP clients drop the trailing space, and an empty token then returns `Invalid Authentication Token`. | Check that the token is not empty, and that `Bearer` is followed by one space. |
+| `Invalid Authentication Token` | The token does not match an account, or it is empty. | Copy the token again from the dashboard. It may have been revoked or regenerated. |
 | `Device not found or access denied` | The `device` number in the request is not a device on your account. | Use a device number listed by `GET /devices`. |
 | Quota or subscription message | Your package has no quota left for this request. | Check your package and subscription in the dashboard. |
 

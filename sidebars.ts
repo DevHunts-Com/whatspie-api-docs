@@ -17,6 +17,7 @@ const sidebars: SidebarsConfig = {
   // Ordered by the reader's workflow: token → device → send → groups → contacts → events → AI tooling
   apiSidebar: [
     'intro',
+    'quickstart',
     'authentication',
     {
       type: 'category',
@@ -42,6 +43,7 @@ const sidebars: SidebarsConfig = {
         'messaging/send-file',
         'messaging/send-location',
         'messaging/send-reaction',
+        'messaging/guide',
       ],
     },
     {

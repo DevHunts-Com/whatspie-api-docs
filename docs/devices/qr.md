@@ -19,7 +19,7 @@ Calling this endpoint starts a login session for the device: Whatspie starts a n
 
 ## Request parameters
 
-`response_type` must always be `url`. Despite the name, the response is not a link: it is the QR image itself, encoded as text (a base64 data URL).
+`response_type` must always be `url`. The name says `url`, but you do not get a link. You get the QR picture itself, as text.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
@@ -35,7 +35,7 @@ curl -L -X GET 'https://api.whatspie.com/devices/5/qr?response_type=url' \
 
 ## Success response
 
-`data.qr` is the QR code as a PNG image in a base64 data URL: the image encoded as text, starting with `data:image/png;base64,`. It is not a web link. Show it as an image, for example in an `<img src="...">` tag:
+`data.qr` is the QR picture as text: a base64 data URL that starts with `data:image/png;base64,`. Show it in an `<img src="...">` tag:
 
 ```json
 {

@@ -111,7 +111,9 @@ curl -L -X POST 'https://api.whatspie.com/groups/2/members/add' \
 | `members_added` | array of strings | The `participants` you sent, returned as-is. |
 
 :::warning[Per-number results are not reported]
-`members_added` repeats your request. It does not say which numbers WhatsApp actually added. A number can still be left out, for example because it is not on WhatsApp, its privacy settings block being added, or it is already a member. Check the group in WhatsApp to confirm.
+`members_added` repeats your request. It does not say which numbers WhatsApp actually added. A number can still be left out, for example because it is not on WhatsApp or its privacy settings block being added. Check the group in WhatsApp to confirm.
+
+A number that is already a member is different: the whole request then fails with `500`. See [Errors](#errors).
 :::
 
 ## Errors
@@ -122,7 +124,7 @@ curl -L -X POST 'https://api.whatspie.com/groups/2/members/add' \
 | `400` | `Invalid request body: ...` | The body is not valid JSON, or `participants` is missing. |
 | `400` | `Members list cannot be empty` | `participants` is an empty array. |
 | `403` | `Missing Authorization header`, `Missing token in Authorization header`, `Invalid Authentication Token` | Token problem. See [Authentication](../authentication.md#errors). |
-| `500` | `Internal server error` | Any failure: the group was not found or belongs to another account, the device is not an admin or not connected, or WhatsApp rejected the request. |
+| `500` | `Internal server error` | Any failure: the group was not found or belongs to another account, the device is not an admin or not connected, a number is already a member, or WhatsApp rejected the request. |
 
 ```json
 {

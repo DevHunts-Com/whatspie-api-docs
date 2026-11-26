@@ -26,9 +26,9 @@ Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [A
 
 - **Format:** international format, country code first, without `+` or a leading zero.
 - **Examples:** `"6281776521626"`, `"1234567890"`, `"447123456789"`.
-- **Invalid:** `"+6281776521626"`, `"081776521626"`, `"0081776521626"`.
+- **Avoid:** `"+6281776521626"`, `"081776521626"`, `"0081776521626"`.
 
-The API does not reject badly formatted numbers. It checks each number exactly as you send it, so a wrongly formatted number simply comes back as `false`.
+The API does not reject badly formatted numbers. WhatsApp normalises some of them during the check: `+6281776521626` and `081776521626` can still come back as `true`, and `phone` repeats the number as you sent it. Other formats come back as `false`. Send the international format, so the number you check is the number you later send to.
 
 ## Request examples
 

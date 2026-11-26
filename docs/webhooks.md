@@ -76,7 +76,7 @@ All incoming messages share these fields:
 | `message_id` | string | WhatsApp message ID. Use it as `message_id` in [Send reaction](./messaging/send-reaction.md). |
 | `from_user.name` | string | Sender's WhatsApp display name. |
 | `from_user.jid` | string | WhatsApp ID of the chat. May be in WhatsApp's newer `@lid` format instead of a phone number. |
-| `key` | object | WhatsApp's raw message key. |
+| `key` | object | WhatsApp's raw message key. When `key.remoteJid` is in the `@lid` format, the sender's number is in `key.remoteJidAlt` (`<number>@s.whatsapp.net`). |
 | `is_forwared` | boolean | Always `false`. Note the spelling: the field is named `is_forwared`. |
 | `is_broadcast` | boolean | Always `false`. |
 | `is_group` | boolean | `true` for a group message. |
@@ -94,12 +94,15 @@ All incoming messages share these fields:
   "message_id": "3219EDE2131",
   "from_user": {
     "name": "John Doe",
-    "jid": "62856123456@s.whatsapp.net"
+    "jid": "123456789012345@lid"
   },
   "key": {
-    "remoteJid": "62856123456@s.whatsapp.net",
+    "remoteJid": "123456789012345@lid",
+    "remoteJidAlt": "62856123456@s.whatsapp.net",
     "fromMe": false,
-    "id": "3219EDE2131"
+    "id": "3219EDE2131",
+    "participant": "",
+    "addressingMode": "lid"
   },
   "is_forwared": false,
   "is_broadcast": false,

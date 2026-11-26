@@ -41,9 +41,9 @@ Environment variables:
 
 Conventions for all tools:
 
-- Phone numbers are strings in international format without `+` or a leading zero, for example `6281234567890`. Bare numbers are accepted too.
+- Phone numbers are strings in international format without `+` or a leading zero, for example `6281234567890`. Bare numbers are accepted too. The server does not check or convert numbers: `+62…` or `08…` is passed on to WhatsApp exactly as written.
 - `device` is the phone number of one of your paired devices. It is the sender.
-- IDs such as `group_id`, `device_id`, and `id` are the numeric IDs used by the Whatspie API, not phone numbers.
+- IDs such as `group_id`, `device_id`, and `id` are the numeric IDs used by the Whatspie API, not phone numbers. `list_groups` and `get_group` return `id` as a string, for example `"18"`. The tools accept it as a number or as that string.
 - File URLs must be public, direct links that the Whatspie servers can download.
 
 ### Messages
@@ -103,14 +103,14 @@ Get one message, including its delivery status.
 
 #### `list_messages`
 
-List a device's messages, newest first. [Paginated](#pagination).
+List a device's messages, newest first by creation time. [Paginated](#pagination). Each message has `msg_type`: `outgoing` for messages you sent, `ingoing` for messages you received.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `device` | string | Yes | Device number. |
-| `from` | string | No | Start date, ISO 8601. |
-| `to` | string | No | End date, ISO 8601. |
-| `status` | string | No | Delivery status, for example `sent`, `delivered`, `failed`. |
+| `from` | string | No | Only messages from this sender number (exact match), for example `6281234567890`. |
+| `to` | string | No | Only messages to this recipient number (exact match). |
+| `status` | string | No | Delivery status in uppercase: `PENDING`, `SENT`, `RECEIVED`, `READ`, `PLAYED`, or `ERROR`. See [Status values](../messaging/get-message.md#status-values). Lowercase values match nothing. |
 | `limit` | number | No | Messages fetched from the API before paging. Default `200`. |
 | `page` | number | No | Page number, from 1. Default `1`. |
 | `page_size` | number | No | Messages per page. Default `20`. |
@@ -157,6 +157,8 @@ Send text, an image, or a file to a group. The message is always sent from the d
 | `file_name` | string | For `file` | File name with extension. |
 | `mimetype` | string | No | MIME type, for `file`. |
 
+The server does not enforce `message` for `chat` or `file_name` for `file`. Without them the request is still accepted, but a `chat` message with no text ends as `ERROR`. Always send them.
+
 #### `add_group_members`
 
 Add members to a group. The device must be a group admin.
@@ -173,8 +175,8 @@ Change a group's details. The device must be a group admin.
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `group_id` | number | Yes | Group ID. |
-| `subject` | string | No | Group name, up to 25 characters. |
-| `description` | string | No | Group description, up to 500 characters. |
+| `subject` | string | No | Group name. WhatsApp's limit is 25 characters; the server does not check it. |
+| `description` | string | No | Group description. WhatsApp's limit is 500 characters; the server does not check it. |
 | `profile_url` | string | No | URL of the new group picture. |
 
 ### Contacts
@@ -272,6 +274,14 @@ Tool errors are returned as MCP tool results with `isError: true`:
 |---|---|
 | `Whatspie API error (<status>): <message>` | The Whatspie API returned an error. `<status>` is its HTTP status, `<message>` its error message. |
 | `Unexpected error: <message>` | Anything else, for example the API could not be reached (`fetch failed`). |
+
+A missing parameter or a parameter of the wrong type is rejected before the tool runs. It returns an MCP protocol error instead of a tool result:
+
+```
+MCP error -32602: Input validation error: Invalid arguments for tool send_text_message: ... at receiver
+```
+
+The end of the message names the parameter.
 
 HTTP errors from the server itself:
 

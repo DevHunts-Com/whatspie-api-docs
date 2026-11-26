@@ -32,18 +32,6 @@ Write phone numbers in international format without `+`. See [Phone number forma
 
 `params` accepts only these keys: `text`, `caption`, `fileName`, `mimetype`, `location`, `image`, `document`, `video`. Any other key is rejected with `400`.
 
-### Legacy format
-
-The older format, without `params`, is still accepted for backward compatibility. It behaves differently from what the field names suggest:
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `file_url` | string | Yes | Direct, public URL of the file. |
-| `message` | string | Yes | Used as the **caption**, not as the file name. |
-| `file_caption` | string | No | If set, used as the caption instead of `message`. |
-
-In this format the file name is taken from the end of the URL (`.../report.pdf` → `report.pdf`) and the MIME type is guessed from the file extension. To choose the file name yourself, use `params`.
-
 ## Examples
 
 ### Basic file message
@@ -66,6 +54,8 @@ curl -X POST 'https://api.whatspie.com/messages' \
     }
   }'
 ```
+
+In these examples, `6281234567890` is your device (the `phone` from [List devices](../devices/list.md)) and `6289876543210` is the receiver. Replace both with your own numbers.
 
 ### Presentation with a caption
 
@@ -180,128 +170,21 @@ With the legacy format, `body` holds `message`, `file_url` holds the URL, `file_
 
 Problems with the file itself, such as a dead link, a private URL, or a file that is too large, do not cause an error response because the API accepts the request first and sends it in the background. The same goes for sending failures, such as a disconnected device or a number that is not on WhatsApp. They show up later as status `ERROR` with a `failed_reason`. Check them with [Get message](./get-message.md); see [Status values](./get-message.md#status-values).
 
-## Best practices
+## Legacy format
 
-The JavaScript examples on this page use this helper:
+The older format, without `params`, is still accepted for backward compatibility. It behaves differently from what the field names suggest:
 
-```javascript
-async function sendFileMessage(token, device, receiver, fileUrl, fileName, caption) {
-  const params = { document: { url: fileUrl }, fileName };
-  if (caption) params.caption = caption;
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `file_url` | string | Yes | Direct, public URL of the file. |
+| `message` | string | Yes | Used as the **caption**, not as the file name. |
+| `file_caption` | string | No | If set, used as the caption instead of `message`. |
 
-  const res = await fetch('https://api.whatspie.com/messages', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    body: JSON.stringify({ device, receiver, type: 'file', params }),
-  });
-  const body = await res.json();
-  if (!res.ok) {
-    const error = new Error(body.message);
-    error.status = res.status;
-    throw error;
-  }
-  return body;
-}
-```
+In this format the file name is taken from the end of the URL (`.../report.pdf` → `report.pdf`) and the MIME type is guessed from the file extension. To choose the file name yourself, use `params`.
 
-### 1. File URL validation
+## Code examples
 
-Check the URL before sending, because the API accepts any URL:
-
-```javascript
-function validateFileUrl(url) {
-  let pathname;
-  try {
-    const urlObj = new URL(url);
-    if (!['http:', 'https:'].includes(urlObj.protocol)) {
-      throw new Error('File URL must use HTTP or HTTPS protocol');
-    }
-    pathname = urlObj.pathname; // ignores ?query and #hash
-  } catch (error) {
-    throw new Error(`Invalid file URL: ${error.message}`);
-  }
-
-  const allowedExtensions = [
-    'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
-    'txt', 'csv', 'zip', 'rar', '7z', 'tar', 'gz',
-    'jpg', 'jpeg', 'png', 'gif', 'mp3', 'mp4', 'avi',
-  ];
-
-  const extension = pathname.split('.').pop().toLowerCase();
-  if (!allowedExtensions.includes(extension)) {
-    throw new Error(`File type .${extension} is not supported`);
-  }
-
-  return true;
-}
-```
-
-### 2. File descriptions
-
-Put a short description in the caption so the recipient knows what the file is before opening it:
-
-```javascript
-function formatFileCaption(fileName, description, fileSize = null) {
-  const extension = fileName.split('.').pop().toLowerCase();
-  const fileEmojis = {
-    pdf: '📄',
-    doc: '📝', docx: '📝',
-    xls: '📊', xlsx: '📊',
-    ppt: '📽️', pptx: '📽️',
-    zip: '📦', rar: '📦',
-    jpg: '🖼️', png: '🖼️',
-    mp3: '🎵', mp4: '🎬',
-  };
-
-  let caption = `${fileEmojis[extension] || '📎'} ${fileName}`;
-  if (fileSize) caption += ` (${fileSize})`;
-  if (description) caption += `\n\n${description}`;
-  return caption;
-}
-
-const caption = formatFileCaption('quarterly-report.pdf', 'Q3 financial results and market analysis', '3.2MB');
-// "📄 quarterly-report.pdf (3.2MB)\n\nQ3 financial results and market analysis"
-```
-
-### 3. Batch file sending
-
-```javascript
-async function sendMultipleFiles(token, device, receiver, files, delayMs = 2000) {
-  const results = [];
-
-  for (const file of files) {
-    try {
-      const result = await sendFileMessage(token, device, receiver, file.url, file.name, file.caption);
-      results.push({ file: file.name, success: true, messageId: result.data.id });
-    } catch (error) {
-      results.push({ file: file.name, success: false, error: error.message });
-    }
-    if (delayMs > 0) await new Promise((resolve) => setTimeout(resolve, delayMs)); // pause between files
-  }
-
-  return results;
-}
-
-const files = [
-  {
-    name: 'contract.pdf',
-    url: 'https://docs.example.com/contract.pdf',
-    caption: '📋 Service Contract\n\nPlease review and sign.',
-  },
-  {
-    name: 'invoice.pdf',
-    url: 'https://billing.example.com/invoice.pdf',
-    caption: '💳 Invoice #12345\n\nPayment due: Dec 30, 2024',
-  },
-];
-
-const results = await sendMultipleFiles('YOUR_API_TOKEN', '6281234567890', '6289876543210', files);
-console.log('Batch send results:', results);
-```
+JavaScript helpers, validation, batch sending, retries, and use cases for file messages are in the [Messaging guide](./guide.md).
 
 ## Limitations
 

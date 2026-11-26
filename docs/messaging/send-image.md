@@ -30,8 +30,6 @@ Write phone numbers in international format without `+`. See [Phone number forma
 
 `params` accepts only these keys: `text`, `caption`, `fileName`, `mimetype`, `location`, `image`, `document`, `video`. Any other key, such as `viewOnce`, is rejected with `400`.
 
-The older format, with the image URL in a top-level `file_url` field and the caption in a top-level `message` field, is still accepted for backward compatibility. New integrations should use `params`.
-
 ## Examples
 
 ### Basic image message
@@ -53,6 +51,8 @@ curl -X POST 'https://api.whatspie.com/messages' \
     }
   }'
 ```
+
+In these examples, `6281234567890` is your device (the `phone` from [List devices](../devices/list.md)) and `6289876543210` is the receiver. Replace both with your own numbers.
 
 ### Image with a formatted caption
 
@@ -158,7 +158,7 @@ A successful request returns HTTP `200` with the queued message. The fields are 
 }
 ```
 
-The API's error message leaves `video` out of the allowed list, but `video` is allowed.
+Note: this error message leaves out `video`. All allowed keys are listed under [Request](#request).
 
 | HTTP status | `message` | Cause |
 |---|---|---|
@@ -172,242 +172,13 @@ The API's error message leaves `video` out of the allowed list, but `video` is a
 
 Problems with the image itself, such as a dead link, a private URL, a file that is too large, or an unsupported format, do not cause an error response because the API accepts the request first and sends it in the background. The same goes for sending failures, such as a disconnected device or a number that is not on WhatsApp. They show up later as status `ERROR` with a `failed_reason`. Check them with [Get message](./get-message.md); see [Status values](./get-message.md#status-values).
 
-## Advanced examples
+## Legacy format
 
-The JavaScript examples on this page use this helper:
+The older format, with the image URL in a top-level `file_url` field and the caption in a top-level `message` field, is still accepted for backward compatibility. New integrations should use `params`.
 
-```javascript
-async function sendImageMessage(token, device, receiver, imageUrl, caption) {
-  const params = { image: { url: imageUrl } };
-  if (caption) params.caption = caption;
+## Code examples
 
-  const res = await fetch('https://api.whatspie.com/messages', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    body: JSON.stringify({ device, receiver, type: 'image', params }),
-  });
-  const body = await res.json();
-  if (!res.ok) {
-    const error = new Error(body.message);
-    error.status = res.status;
-    throw error;
-  }
-  return body;
-}
-```
-
-### Image with formatting in the caption
-
-```javascript
-async function sendProductImage(token, device, receiver) {
-  const caption = `🎉 *NEW PRODUCT ALERT* 🎉
-
-_Premium Wireless Headphones_
-
-✅ Noise Cancellation
-✅ 30-hour Battery Life
-✅ Fast Charging
-✅ Premium Sound Quality
-
-~$299~ *$199* (33% OFF)
-
-Use code: *SAVE100*
-Valid until: December 31st
-
-Order now: https://shop.example.com`;
-
-  return sendImageMessage(token, device, receiver, 'https://example.com/headphones.jpg', caption);
-}
-```
-
-### Batch image sending
-
-```javascript
-async function sendImageCatalog(token, device, receiver, products) {
-  const results = [];
-
-  for (const product of products) {
-    try {
-      const caption = `${product.name}\nPrice: $${product.price}\n${product.description}`;
-      const result = await sendImageMessage(token, device, receiver, product.imageUrl, caption);
-      results.push({ product: product.name, success: true, messageId: result.data.id });
-    } catch (error) {
-      results.push({ product: product.name, success: false, error: error.message });
-    }
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // pause between messages
-  }
-
-  return results;
-}
-
-const products = [
-  {
-    id: 'p001',
-    name: 'Wireless Headphones',
-    price: 199,
-    description: 'Premium quality with noise cancellation',
-    imageUrl: 'https://example.com/headphones.jpg',
-  },
-  {
-    id: 'p002',
-    name: 'Smart Watch',
-    price: 299,
-    description: 'Track your fitness and stay connected',
-    imageUrl: 'https://example.com/smartwatch.jpg',
-  },
-];
-
-const results = await sendImageCatalog('YOUR_API_TOKEN', '6281234567890', '6289876543210', products);
-console.log('Catalog sent:', results);
-```
-
-### Image URL validation
-
-Check the URL before sending, because the API accepts any URL:
-
-```javascript
-function isValidImageUrl(url) {
-  try {
-    const urlObj = new URL(url);
-    if (!['http:', 'https:'].includes(urlObj.protocol)) return false;
-
-    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-    return imageExtensions.some((ext) => urlObj.pathname.toLowerCase().endsWith(ext));
-  } catch {
-    return false;
-  }
-}
-
-async function sendValidatedImage(token, device, receiver, imageUrl, caption) {
-  if (!isValidImageUrl(imageUrl)) throw new Error('Invalid image URL format');
-  return sendImageMessage(token, device, receiver, imageUrl, caption);
-}
-```
-
-### Sending an image from your own server
-
-The API needs a public URL. To send a local file, upload it to your own storage or CDN first, then send its URL:
-
-```javascript
-// Pseudo-code: replace uploadImageToCDN with your storage provider's upload call
-async function uploadImageToCDN(filePath) {
-  const formData = new FormData();
-  formData.append('file', new Blob([await fs.promises.readFile(filePath)]));
-
-  const response = await fetch('https://your-cdn.com/upload', { method: 'POST', body: formData });
-  const { url } = await response.json();
-  return url; // public URL
-}
-
-async function sendLocalImage(token, device, receiver, localFilePath, caption) {
-  const publicUrl = await uploadImageToCDN(localFilePath);
-  return sendImageMessage(token, device, receiver, publicUrl, caption);
-}
-```
-
-## Best practices
-
-### 1. Image size
-
-Check the size before sending, so oversized images fail early:
-
-```javascript
-async function getImageSize(url) {
-  try {
-    const response = await fetch(url, { method: 'HEAD' });
-    const contentLength = response.headers.get('content-length');
-    return contentLength ? parseInt(contentLength, 10) : null;
-  } catch {
-    return null;
-  }
-}
-
-async function sendOptimizedImage(token, device, receiver, imageUrl, caption) {
-  const size = await getImageSize(imageUrl);
-  const maxSize = 16 * 1024 * 1024; // 16 MB, WhatsApp's image limit
-
-  if (size && size > maxSize) {
-    throw new Error(`Image too large: ${size} bytes. Maximum allowed: ${maxSize} bytes`);
-  }
-  return sendImageMessage(token, device, receiver, imageUrl, caption);
-}
-```
-
-### 2. CDN usage
-
-Host images on a reliable CDN, so WhatsApp can always download them:
-
-```javascript
-const CDN_BASE_URL = 'https://your-cdn.com/images/';
-
-async function sendCDNImage(token, device, receiver, fileName, caption) {
-  return sendImageMessage(token, device, receiver, `${CDN_BASE_URL}${fileName}`, caption);
-}
-```
-
-### 3. Error handling and retries
-
-Retry only errors that can succeed on a second try:
-
-```javascript
-async function sendImageWithRetry(token, device, receiver, imageUrl, caption, maxRetries = 3) {
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      return await sendImageMessage(token, device, receiver, imageUrl, caption);
-    } catch (error) {
-      // 400 and 403 will not succeed on retry
-      if (error.status === 400 || error.status === 403) throw error;
-      if (attempt === maxRetries) throw error;
-
-      await new Promise((resolve) => setTimeout(resolve, 2 ** attempt * 1000));
-    }
-  }
-}
-```
-
-## Use cases
-
-### E-commerce product images
-
-```javascript
-async function sendProductUpdate(token, device, customerPhone, product) {
-  const caption = `🛍️ *${product.name}*
-
-💰 Price: $${product.price}
-📦 Stock: ${product.stock > 0 ? 'Available' : 'Out of Stock'}
-⭐ Rating: ${product.rating}/5
-
-${product.description}
-
-🛒 Order: ${product.orderUrl}`;
-
-  return sendImageMessage(token, device, customerPhone, product.imageUrl, caption);
-}
-```
-
-### Event invitations
-
-```javascript
-async function sendEventInvitation(token, device, guestPhone, event) {
-  const caption = `🎉 You're Invited! 🎉
-
-*${event.title}*
-
-📅 Date: ${event.date}
-⏰ Time: ${event.time}
-📍 Venue: ${event.venue}
-
-${event.description}
-
-RSVP: ${event.rsvpUrl}`;
-
-  return sendImageMessage(token, device, guestPhone, event.bannerUrl, caption);
-}
-```
+JavaScript helpers, validation, batch sending, retries, and use cases for image messages are in the [Messaging guide](./guide.md).
 
 ## Limitations
 

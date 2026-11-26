@@ -5,6 +5,10 @@ description: Create a new WhatsApp device on a package with POST /devices. Resel
 
 # Create device
 
+:::warning[Most accounts can't use this endpoint]
+It is for reseller accounts only. Just getting started? Add your device in the dashboard instead: see [Connect your first device](../device-management.md#connect-your-first-device).
+:::
+
 Create a new device on a package plan. The package price is deducted from your balance.
 
 ```

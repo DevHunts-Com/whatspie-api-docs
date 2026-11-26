@@ -38,6 +38,8 @@ There is no `device` or `receiver` field. The message is sent from the device th
 
 The older format, with the text in a top-level `message` field and no `params`, is still accepted for text messages.
 
+The API does not check that a `chat` message has text. A request with neither `params.text` nor `message` still returns `200`, and the message later ends as `ERROR`. Always send `params.text`.
+
 ## Message types
 
 | Content | `type` | `params` | Details |

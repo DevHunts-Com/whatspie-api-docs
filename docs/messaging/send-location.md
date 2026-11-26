@@ -46,7 +46,7 @@ Coordinates use WGS84, the same system as GPS.
 | Example (San Francisco) | `37.7749` | `-122.4194` |
 | Example (Jakarta) | `-6.2088` | `106.8456` |
 
-The API does not check the range. Validate coordinates yourself; see [Coordinate validation](#1-coordinate-validation).
+The API does not check the range. Validate coordinates yourself; see [Coordinate validation](./guide.md#location-coordinate-validation).
 
 ## Examples
 
@@ -69,6 +69,8 @@ curl -X POST 'https://api.whatspie.com/messages' \
     }
   }'
 ```
+
+In these examples, `6281234567890` is your device (the `phone` from [List devices](../devices/list.md)) and `6289876543210` is the receiver. Replace both with your own numbers.
 
 ### Location with a name
 
@@ -188,210 +190,9 @@ Coordinates outside the valid range are not rejected. Check them before sending.
 
 Sending failures, such as a disconnected device or a number that is not on WhatsApp, do not cause an error response either: the API accepts the message first and sends it in the background. They show up later as status `ERROR` with a `failed_reason`. Check them with [Get message](./get-message.md); see [Status values](./get-message.md#status-values).
 
-## Advanced examples
+## Code examples
 
-The JavaScript examples on this page use this helper, plus `sendTextMessage` from [Send text](./send-text.md#example) and `sendImageMessage` from [Send image](./send-image.md#advanced-examples):
-
-```javascript
-async function sendLocationMessage(token, device, receiver, latitude, longitude) {
-  const res = await fetch('https://api.whatspie.com/messages', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    body: JSON.stringify({
-      device,
-      receiver,
-      type: 'location',
-      params: { location: { degreesLatitude: latitude, degreesLongitude: longitude } },
-    }),
-  });
-  const body = await res.json();
-  if (!res.ok) {
-    const error = new Error(body.message);
-    error.status = res.status;
-    throw error;
-  }
-  return body;
-}
-
-// Location pin followed by a text message with its name
-async function sendNamedLocation(token, device, receiver, latitude, longitude, name) {
-  const location = await sendLocationMessage(token, device, receiver, latitude, longitude);
-  const label = name ? await sendTextMessage(token, device, receiver, name) : null;
-  return { location, label };
-}
-```
-
-### Location with address lookup
-
-```javascript
-// Reverse geocoding: get an address from coordinates, then send it with the pin
-async function sendLocationWithAddress(token, device, receiver, latitude, longitude) {
-  let name = null;
-  try {
-    const address = await reverseGeocode(latitude, longitude);
-    name = `📍 ${address.name}\n${address.street}, ${address.city}`;
-  } catch {
-    // Address lookup failed: send the pin without a name
-  }
-  return sendNamedLocation(token, device, receiver, latitude, longitude, name);
-}
-
-// Mock reverse geocoding function
-async function reverseGeocode(lat, lng) {
-  // In a real implementation, use Google Maps, OpenStreetMap, etc.
-  return {
-    name: 'Business Center',
-    street: 'Jl. Sudirman No. 123',
-    city: 'Jakarta',
-  };
-}
-```
-
-### Batch location sharing
-
-```javascript
-async function sendMultipleLocations(token, device, receiver, locations) {
-  const results = [];
-
-  for (const location of locations) {
-    try {
-      const result = await sendNamedLocation(
-        token, device, receiver, location.latitude, location.longitude, location.name,
-      );
-      results.push({ location: location.name, success: true, messageId: result.location.data.id });
-    } catch (error) {
-      results.push({ location: location.name, success: false, error: error.message });
-    }
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // pause between locations
-  }
-
-  return results;
-}
-
-const touristSpots = [
-  { name: '🗿 Monas Jakarta', latitude: -6.1751, longitude: 106.865 },
-  { name: '🏛️ National Museum', latitude: -6.1717, longitude: 106.8219 },
-  { name: '🌊 Ancol Beach', latitude: -6.126, longitude: 106.8421 },
-];
-
-await sendMultipleLocations('YOUR_API_TOKEN', '6281234567890', '6289876543210', touristSpots);
-```
-
-### Location with a custom map preview
-
-```javascript
-// Static map image URL for a location
-function generateMapPreview(latitude, longitude, zoom = 15) {
-  return `https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=${zoom}&size=400x300&maptype=roadmap&markers=color:red%7C${latitude},${longitude}&key=YOUR_MAPS_API_KEY`;
-}
-
-async function sendLocationWithPreview(token, device, receiver, latitude, longitude, locationName) {
-  // 1. The location pin and its name
-  const locationResult = await sendNamedLocation(token, device, receiver, latitude, longitude, locationName);
-
-  // 2. A map image (optional)
-  const mapUrl = generateMapPreview(latitude, longitude);
-  const imageResult = await sendImageMessage(token, device, receiver, mapUrl, '🗺️ Map Preview');
-
-  return { location: locationResult, preview: imageResult };
-}
-```
-
-## Best practices
-
-### 1. Coordinate validation
-
-```javascript
-function validateCoordinates(latitude, longitude) {
-  const lat = parseFloat(latitude);
-  const lng = parseFloat(longitude);
-
-  if (isNaN(lat) || lat < -90 || lat > 90) {
-    throw new Error('Invalid latitude. Must be between -90 and 90');
-  }
-  if (isNaN(lng) || lng < -180 || lng > 180) {
-    throw new Error('Invalid longitude. Must be between -180 and 180');
-  }
-
-  return { latitude: lat, longitude: lng }; // numbers, ready for params.location
-}
-```
-
-### 2. Location name formatting
-
-Format the text you send after the pin:
-
-```javascript
-function formatLocationName(name, address = null, category = null) {
-  const categoryEmojis = {
-    restaurant: '🍽️',
-    hotel: '🏨',
-    office: '🏢',
-    hospital: '🏥',
-    school: '🏫',
-    shopping: '🛍️',
-    gas_station: '⛽',
-    bank: '🏦',
-  };
-
-  let formattedName = `${categoryEmojis[category] || '📍'} ${name}`;
-  if (address) formattedName += `\n${address}`;
-  return formattedName;
-}
-
-const locationName = formatLocationName('Central Park Mall', 'Jl. Letjen S. Parman, Jakarta Barat', 'shopping');
-// "🛍️ Central Park Mall\nJl. Letjen S. Parman, Jakarta Barat"
-```
-
-### 3. Distance calculation
-
-```javascript
-function calculateDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371; // Earth's radius in kilometers
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return Math.round(R * c * 100) / 100; // kilometers, 2 decimals
-}
-
-const distance = calculateDistance(-6.2088, 106.8456, -6.1751, 106.865);
-console.log(`Distance: ${distance} km`);
-```
-
-## Common locations
-
-### Famous landmarks
-
-```javascript
-const landmarks = {
-  // Indonesia
-  monas: { lat: -6.1751, lng: 106.865, name: '🗿 Monas - National Monument' },
-  borobudur: { lat: -7.6079, lng: 110.2038, name: '🏛️ Borobudur Temple' },
-
-  // International
-  eiffel_tower: { lat: 48.8584, lng: 2.2945, name: '🗼 Eiffel Tower, Paris' },
-  statue_liberty: { lat: 40.6892, lng: -74.0445, name: '🗽 Statue of Liberty, NYC' },
-  big_ben: { lat: 51.4994, lng: -0.1245, name: '🕰️ Big Ben, London' },
-};
-
-await sendNamedLocation(
-  'YOUR_API_TOKEN',
-  '6281234567890',
-  '6289876543210',
-  landmarks.monas.lat,
-  landmarks.monas.lng,
-  landmarks.monas.name,
-);
-```
+JavaScript helpers, validation, batch sending, retries, and use cases for location messages are in the [Messaging guide](./guide.md).
 
 ## Limitations
 
