@@ -1,4 +1,5 @@
 ---
+displayed_sidebar: apiSidebar
 title: Send template message (deprecated)
 description: Deprecated. Template and button messages cannot be sent through the current Whatspie API.
 ---

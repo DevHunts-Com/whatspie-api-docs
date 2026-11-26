@@ -1,4 +1,5 @@
 ---
+displayed_sidebar: apiSidebar
 title: Send list message (deprecated)
 description: Deprecated. Interactive list messages cannot be sent through the current Whatspie API.
 ---

@@ -6,8 +6,15 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Whatspie API Documentation',
-  tagline: 'Powerful WhatsApp API for developers',
+  tagline: 'Send and manage WhatsApp messages from your application',
   favicon: 'img/favicon.ico',
+
+  stylesheets: [
+    {
+      href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
+      type: 'text/css',
+    },
+  ],
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -54,21 +61,40 @@ const config: Config = {
     ],
   ],
 
+  themes: [
+    [
+      '@easyops-cn/docusaurus-search-local',
+      {
+        // Local search: the index is built at build time, no external service
+        hashed: true,
+        indexBlog: false,
+        indexPages: false,
+        docsRouteBasePath: '/docs',
+        highlightSearchTermsOnTargetPage: true,
+        explicitSearchResultPath: true,
+        searchBarShortcutHint: true,
+      },
+    ],
+  ],
+
   themeConfig: {
     // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/social-card.png',
     navbar: {
-      title: 'Whatspie API',
-      // logo: {
-      //   alt: 'Whatspie Logo',
-      //   src: 'img/logo.svg',
-      // },
+      title: 'Whatspie',
+      logo: {
+        alt: 'Whatspie logo',
+        src: 'img/logo-icon.png',
+      },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'apiSidebar',
+          type: 'search',
           position: 'left',
-          label: 'API Documentation',
+        },
+        {
+          href: 'https://app.whatspie.com',
+          label: 'Dashboard',
+          position: 'right',
         },
         {
           href: 'https://github.com/DevHunts-Com/whatspie-api-docs',
@@ -83,13 +109,13 @@ const config: Config = {
       ],
     },
     footer: {
-      style: 'dark',
+      style: 'light',
       links: [
         {
           title: 'Docs',
           items: [
             {
-              label: 'Tutorial',
+              label: 'Introduction',
               to: '/docs/intro',
             },
           ],
@@ -108,7 +134,7 @@ const config: Config = {
     },
     prism: {
       theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
+      darkTheme: prismThemes.oneDark,
     },
   } satisfies Preset.ThemeConfig,
 };
