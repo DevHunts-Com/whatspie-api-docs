@@ -1,81 +1,52 @@
 ---
 title: Quickstart
-description: Run the Whatspie MCP server and send your first WhatsApp message from Claude Code or Claude Desktop.
+description: Connect Claude Code or Claude Desktop to the Whatspie MCP server and send your first WhatsApp message by asking Claude.
 ---
 
 # MCP Quickstart
 
-In this tutorial you run the Whatspie MCP server on your computer, connect Claude Code or Claude Desktop to it, and send a WhatsApp message by asking Claude. It takes about 10 minutes.
+In this tutorial you connect Claude Code or Claude Desktop to the Whatspie MCP server and send a WhatsApp message by asking Claude. It takes about 5 minutes.
 
 ## What you'll build
 
-A small program, the Whatspie MCP server, runs on your computer. Claude talks to it, and it sends your WhatsApp messages through Whatspie. You start it once and keep it running while you use Claude. With Docker, Docker Desktop must stay open.
+Whatspie runs the MCP server for you. You connect Claude to it with your Whatspie API token. Nothing to install or keep running on your side, except the small bridge that Claude Desktop needs.
 
-You type a request in plain language, such as "send Hi to my colleague". Claude picks the right action (a *tool*), the server calls the Whatspie API with your API token, and Claude shows you the result.
+You type a request in plain language, such as "send Hi to my colleague". Claude picks the right action (a *tool*), the MCP server calls the Whatspie API with your API token, and Claude shows you the result.
 
 ```
-Claude  ──MCP──▶  whatspie-mcp (your computer)  ──REST──▶  api.whatspie.com
+Claude  ──MCP──▶  Whatspie MCP server  ──▶  Whatspie API
 ```
 
 MCP, the [Model Context Protocol](https://modelcontextprotocol.io), is the standard that lets Claude use outside tools like this one. Claude Code connects to the server directly. Claude Desktop connects through a small bridge program that it starts with `npx`.
+
+:::info[MCP server URL]
+On this page, the address of the Whatspie MCP server is written as `MCP_SERVER_URL`. Replace it with the MCP server URL published by Whatspie.
+:::
 
 ## Before you start
 
 You need:
 
-- **A Whatspie API token.** Find it in the dashboard under **Developers**, or at [app.whatspie.com/profile?tab=developer](https://app.whatspie.com/profile?tab=developer). See [Authentication](../authentication.md). Treat it like a password.
+- **A Whatspie API token.** Find it in the dashboard under **Profile → Developer**, or at [app.whatspie.com/profile?tab=developer](https://app.whatspie.com/profile?tab=developer). See [Authentication](../authentication.md). Treat it like a password.
 - **A connected device**: a WhatsApp number paired with Whatspie. Its `paired_status` is `PAIRED`, which means connected to WhatsApp. If you don't have one, follow [Connect your first device](../device-management.md#connect-your-first-device).
-- **Docker Desktop** ([download](https://www.docker.com/products/docker-desktop/)). Open it and wait until it shows that the engine is running. Check with `docker --version`. No Docker? See [Run without Docker](./guides.md#run-without-docker).
-- **Git** ([download](https://git-scm.com/downloads)), to download the server. Check with `git --version`.
 - **One AI app:**
   - **Claude Code.** Check with `claude --version`.
   - **Claude Desktop** ([download](https://claude.ai/download)), plus **Node.js** ([download](https://nodejs.org/)) for the bridge. Check with `npx -v`.
 
 Keep two numbers at hand: your device's phone number (the sender) and a number you can check on a phone (the receiver).
 
-## Step 1: Start the server
+## Step 1: Connect your AI app
 
-Open a terminal (on Windows: PowerShell) and run these commands one by one:
+Your token is not stored on the MCP server. Your AI app sends it with every request, in the `Authorization` header you set up here.
 
-```bash
-git clone https://github.com/DevHunts-Com/whatspie-mcp.git
-cd whatspie-mcp
-docker compose up -d --build
-```
-
-The first run downloads and builds the server, which can take a few minutes. Later starts are fast.
-
-Check that it is running:
-
-```bash
-curl http://localhost:4000/health
-```
-
-On Windows PowerShell, type `curl.exe` instead of `curl`. In PowerShell, `curl` runs a different command with a different output.
-
-You should see:
-
-```json
-{"status":"ok"}
-```
-
-**Didn't work?**
-
-- `Cannot connect to the Docker daemon` or a similar error: Docker Desktop is not running. Open it, wait for the engine to start, and run the command again.
-- `port is already allocated`: another program uses port 4000. Stop it, or see [Configuration](./reference.md#configuration) to change the port.
-
-The token is not set on the server. Each AI app sends it with every request, which you set up in the next step.
-
-## Step 2: Connect your AI app
-
-Follow the option for the app you use. In both, replace `YOUR_API_TOKEN` with your token and keep the word `Bearer` before it.
+Follow the option for the app you use. In both, replace `MCP_SERVER_URL` with the server URL and `YOUR_API_TOKEN` with your token, and keep the word `Bearer` before the token.
 
 ### Option A: Claude Code
 
 Run this in your terminal (not inside Claude), as one line:
 
 ```bash
-claude mcp add --transport http --scope user whatspie http://localhost:4000/mcp --header "Authorization: Bearer YOUR_API_TOKEN"
+claude mcp add --transport http --scope user whatspie MCP_SERVER_URL --header "Authorization: Bearer YOUR_API_TOKEN"
 ```
 
 `--scope user` makes the server available in every folder, not only the current one.
@@ -89,7 +60,7 @@ claude mcp list
 You should see a line like this:
 
 ```
-whatspie: http://localhost:4000/mcp (HTTP) - ✔ Connected
+whatspie: MCP_SERVER_URL (HTTP) - ✔ Connected
 ```
 
 Now start Claude Code in a new terminal with `claude`. Tools load when a conversation starts, so a conversation that was already open will not see them.
@@ -120,7 +91,7 @@ Now start Claude Code in a new terminal with `claude`. Tools load when a convers
          "args": [
            "-y",
            "mcp-remote",
-           "http://localhost:4000/mcp",
+           "MCP_SERVER_URL",
            "--header",
            "Authorization:${AUTH_HEADER}"
          ],
@@ -150,7 +121,7 @@ If Claude Desktop shows `spawn npx ENOENT`, it cannot find `npx`. Install Node.j
     "npx",
     "-y",
     "mcp-remote",
-    "http://localhost:4000/mcp",
+    "MCP_SERVER_URL",
     "--header",
     "Authorization:${AUTH_HEADER}"
   ],
@@ -162,7 +133,7 @@ If Claude Desktop shows `spawn npx ENOENT`, it cannot find `npx`. Install Node.j
 
 **Didn't work?** See [Troubleshooting](./guides.md#troubleshooting): it lists each error message and its fix.
 
-## Step 3: List your devices
+## Step 2: List your devices
 
 In a new conversation (Claude Code or Claude Desktop), type:
 
@@ -176,7 +147,7 @@ Claude replies with the devices on your account. Find the device whose `paired_s
 
 If the list is empty, or no device is connected, follow [Connect your first device](../device-management.md#connect-your-first-device) first.
 
-## Step 4: Send a test message
+## Step 3: Send a test message
 
 Type the following, with your device number as the sender and the number you can check as the receiver. Write numbers in international format without `+`, for example `6281234567890`:
 
@@ -200,4 +171,4 @@ You have connected Claude to WhatsApp through Whatspie.
 ## Next steps
 
 - [Guides](./guides.md): connect VS Code, pair a device with a QR code, fix connection problems.
-- [Reference](./reference.md): every tool and its parameters, configuration, and error messages.
+- [Reference](./reference.md): every tool and its parameters, and error messages.

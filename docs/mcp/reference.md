@@ -1,13 +1,15 @@
 ---
 title: Reference
-description: Authentication, endpoints, configuration, tools, pagination, and errors of the Whatspie MCP server.
+description: Authentication, endpoint, tools, pagination, and errors of the Whatspie MCP server.
 ---
 
 # MCP Reference
 
 ## Authentication
 
-Every request to `/mcp` must include your Whatspie API token:
+The Whatspie MCP server is hosted by Whatspie. On this page its URL is written as `MCP_SERVER_URL`.
+
+Every request must include your Whatspie API token, from **Profile → Developer** in the dashboard:
 
 ```
 Authorization: Bearer YOUR_API_TOKEN
@@ -18,24 +20,13 @@ Authorization: Bearer YOUR_API_TOKEN
 - The server does not store tokens. It forwards the token to the Whatspie API on each request.
 - The server does not support OAuth.
 
-## Endpoints
+## Endpoint
 
-| Method and path | Auth | Description |
+| Method and URL | Auth | Description |
 |---|---|---|
-| `GET /health` | No | Returns `{"status":"ok"}`. |
-| `POST /mcp` | Yes | MCP endpoint, Streamable HTTP transport, stateless (no sessions). |
+| `POST MCP_SERVER_URL` | Yes | MCP endpoint, Streamable HTTP transport, stateless (no sessions). |
 
-Requests to `/mcp` must send `Accept: application/json, text/event-stream`, or the server returns `406`. Responses use server-sent events format.
-
-## Configuration
-
-Environment variables:
-
-| Variable | Default | Description |
-|---|---|---|
-| `PORT` | `4000` | HTTP port. |
-| `WHATSPIE_API_BASE_URL` | `https://api.whatspie.com` | Whatspie API to call. Host and port only; a path is ignored. |
-| `LOG_LEVEL` | `info` | Not used by the server yet. Setting it has no effect. |
+Requests must send `Accept: application/json, text/event-stream`, or the server returns `406`. Responses use server-sent events format.
 
 ## Tools
 
@@ -280,7 +271,7 @@ Tool errors are returned as MCP tool results with `isError: true`:
 | Message | Meaning |
 |---|---|
 | `Whatspie API error (<status>): <message>` | The Whatspie API returned an error. `<status>` is its HTTP status, `<message>` its error message. |
-| `Unexpected error: <message>` | Anything else, for example the API could not be reached (`fetch failed`). |
+| `Unexpected error: <message>` | Anything else, for example the MCP server could not reach the Whatspie API (`fetch failed`). |
 | `MCP error -32602: Input validation error: ...` | A required parameter is missing or has the wrong type. The tool did not run. Exceptions: phone-number parameters (`device`, `receiver`, `msisdn`, `from`, `to`, `phones`, `participants`) accept a number or a string, and IDs (`group_id`, `device_id`, `id`) accept a number or a numeric string. |
 
 A validation error lists each bad parameter on its own line, after `at`:
