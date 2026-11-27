@@ -9,7 +9,7 @@ In this tutorial you connect Claude Code or Claude Desktop to the Whatspie MCP s
 
 ## What you'll build
 
-Whatspie runs the MCP server for you. You connect Claude to it with your Whatspie API token. Nothing to install or keep running on your side, except the small bridge that Claude Desktop needs.
+Whatspie runs the MCP server for you at `https://mcp.whatspie.com/mcp`. You connect Claude to it with your Whatspie API token. Nothing to install or keep running on your side, except the small bridge that Claude Desktop needs.
 
 You type a request in plain language, such as "send Hi to my colleague". Claude picks the right action (a *tool*), the MCP server calls the Whatspie API with your API token, and Claude shows you the result.
 
@@ -18,10 +18,6 @@ Claude  ──MCP──▶  Whatspie MCP server  ──▶  Whatspie API
 ```
 
 MCP, the [Model Context Protocol](https://modelcontextprotocol.io), is the standard that lets Claude use outside tools like this one. Claude Code connects to the server directly. Claude Desktop connects through a small bridge program that it starts with `npx`.
-
-:::info[MCP server URL]
-On this page, the address of the Whatspie MCP server is written as `MCP_SERVER_URL`. Replace it with the MCP server URL published by Whatspie.
-:::
 
 ## Before you start
 
@@ -39,14 +35,14 @@ Keep two numbers at hand: your device's phone number (the sender) and a number y
 
 Your token is not stored on the MCP server. Your AI app sends it with every request, in the `Authorization` header you set up here.
 
-Follow the option for the app you use. In both, replace `MCP_SERVER_URL` with the server URL and `YOUR_API_TOKEN` with your token, and keep the word `Bearer` before the token.
+Follow the option for the app you use. In both, replace `YOUR_API_TOKEN` with your token, and keep the word `Bearer` before the token.
 
 ### Option A: Claude Code
 
 Run this in your terminal (not inside Claude), as one line:
 
 ```bash
-claude mcp add --transport http --scope user whatspie MCP_SERVER_URL --header "Authorization: Bearer YOUR_API_TOKEN"
+claude mcp add --transport http --scope user whatspie https://mcp.whatspie.com/mcp --header "Authorization: Bearer YOUR_API_TOKEN"
 ```
 
 `--scope user` makes the server available in every folder, not only the current one.
@@ -60,7 +56,7 @@ claude mcp list
 You should see a line like this:
 
 ```
-whatspie: MCP_SERVER_URL (HTTP) - ✔ Connected
+whatspie: https://mcp.whatspie.com/mcp (HTTP) - ✔ Connected
 ```
 
 Now start Claude Code in a new terminal with `claude`. Tools load when a conversation starts, so a conversation that was already open will not see them.
@@ -91,7 +87,7 @@ Now start Claude Code in a new terminal with `claude`. Tools load when a convers
          "args": [
            "-y",
            "mcp-remote",
-           "MCP_SERVER_URL",
+           "https://mcp.whatspie.com/mcp",
            "--header",
            "Authorization:${AUTH_HEADER}"
          ],
@@ -121,7 +117,7 @@ If Claude Desktop shows `spawn npx ENOENT`, it cannot find `npx`. Install Node.j
     "npx",
     "-y",
     "mcp-remote",
-    "MCP_SERVER_URL",
+    "https://mcp.whatspie.com/mcp",
     "--header",
     "Authorization:${AUTH_HEADER}"
   ],

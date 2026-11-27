@@ -7,7 +7,7 @@ description: Authentication, endpoint, tools, pagination, and errors of the What
 
 ## Authentication
 
-The Whatspie MCP server is hosted by Whatspie. On this page its URL is written as `MCP_SERVER_URL`.
+The Whatspie MCP server is hosted by Whatspie at `https://mcp.whatspie.com/mcp`.
 
 Every request must include your Whatspie API token, from **Profile → Developer** in the dashboard:
 
@@ -24,7 +24,7 @@ Authorization: Bearer YOUR_API_TOKEN
 
 | Method and URL | Auth | Description |
 |---|---|---|
-| `POST MCP_SERVER_URL` | Yes | MCP endpoint, Streamable HTTP transport, stateless (no sessions). |
+| `POST https://mcp.whatspie.com/mcp` | Yes | MCP endpoint, Streamable HTTP transport, stateless (no sessions). |
 
 Requests must send `Accept: application/json, text/event-stream`, or the server returns `406`. Responses use server-sent events format.
 

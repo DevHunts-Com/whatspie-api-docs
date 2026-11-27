@@ -5,7 +5,7 @@ description: Connect Claude Desktop and other MCP clients to the Whatspie MCP se
 
 # MCP Guides
 
-Each guide solves one task. `MCP_SERVER_URL` stands for the Whatspie MCP server URL; see the [Quickstart](./quickstart.md).
+Each guide solves one task. The Whatspie MCP server URL is `https://mcp.whatspie.com/mcp`; see the [Quickstart](./quickstart.md).
 
 ## Connect Claude Desktop
 
@@ -37,7 +37,7 @@ Claude Desktop ──▶ mcp-remote (started by npx) ──HTTPS──▶ Whatsp
          "args": [
            "-y",
            "mcp-remote",
-           "MCP_SERVER_URL",
+           "https://mcp.whatspie.com/mcp",
            "--header",
            "Authorization:${AUTH_HEADER}"
          ],
@@ -61,7 +61,7 @@ Any client that supports MCP over HTTP can connect directly. Add a server of typ
 
 | Setting | Value |
 |---|---|
-| URL | `MCP_SERVER_URL` |
+| URL | `https://mcp.whatspie.com/mcp` |
 | Header name | `Authorization` |
 | Header value | `Bearer YOUR_API_TOKEN` |
 
