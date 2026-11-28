@@ -1,127 +1,100 @@
 ---
-sidebar_position: 2
+title: Send group messages
+description: Send text, images, files, videos, and locations to a WhatsApp group with POST /groups/{id}/send.
 ---
 
-# 👥 Send Messages to Groups
+# Send group messages
 
-Send text, images, files, and other message types to WhatsApp groups using the Whatspie API with all the same features available for individual messaging.
+Send a message to a WhatsApp group. The message content uses the same `params` as messages to a phone number.
 
-<div style={{background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", padding: "1.5rem", borderRadius: "8px", color: "white", margin: "1.5rem 0"}}>
-  <h3 style={{color: "white", margin: "0 0 1rem 0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>🎯 Group Messaging</h3>
-  <p style={{margin: "0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>Send messages to WhatsApp groups using the same message format as individual messages. Perfect for broadcasting announcements, sharing files, and engaging with group members.</p>
-</div>
-
-## 🌐 Endpoint
+## Endpoint
 
 ```
-POST https://api.whatspie.com/groups/{group_id}/send
+POST https://api.whatspie.com/groups/{id}/send
 ```
 
-Where `{group_id}` is the numeric ID of the WhatsApp group.
+Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [Authentication](../authentication.md).
 
-## 🔐 Authentication
-
-Bearer token required with proper JSON content headers.
-
-## 📋 Request Parameters
-
-The request parameters are **identical** to individual messaging, with the key difference being the endpoint URL:
+## Path parameters
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `device` | string | ✅ | Your registered WhatsApp device number |
-| `type` | string | ✅ | Message type: `"text"`, `"image"`, `"file"`, `"location"`, `"template"`, `"list"` |
-| `params` | object | ✅ | Message parameters (varies by message type) |
-| `simulate_typing` | integer | ❌ | Show typing indicator: `1` (yes) or `0` (no) |
+|---|---|---|---|
+| `id` | integer | Yes | The group's `id` from [List groups](./list-groups.md), for example `495`. Not the `jid`; see [Which ID to use](./list-groups.md#which-id-to-use). |
 
-:::info Group ID
-The group ID can be obtained from the group creation response or by listing your groups. It's the numeric identifier for the WhatsApp group.
+:::info[Group ID]
+Get the group ID from [List groups](./list-groups.md). It is the numeric `id` of the group.
 :::
 
-## 📝 Message Types
+## Request
 
-All message types supported for individual messaging are available for groups:
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `type` | string | Yes | `chat`, `image`, `file`, or `location`. See [Message types](#message-types). |
+| `params` | object | Yes | Message content. Same keys as for messages to a phone number. |
 
-<div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem", margin: "1.5rem 0"}}>
-  <div style={{background: "#f8f9ff", border: "1px solid #e1e5e9", borderRadius: "8px", padding: "1rem"}}>
-    <h4 style={{color: "#4f46e5", marginTop: 0}}>📝 Text Messages</h4>
-    <ul style={{margin: 0, fontSize: "0.9rem"}}>
-      <li>Plain text</li>
-      <li>Formatted text (*bold*, _italic_)</li>
-      <li>Emojis and symbols</li>
-      <li>Line breaks</li>
-    </ul>
-  </div>
-  
-  <div style={{background: "#fdf2f8", border: "1px solid #fce7f3", borderRadius: "8px", padding: "1rem"}}>
-    <h4 style={{color: "#be185d", marginTop: 0}}>🖼️ Media Messages</h4>
-    <ul style={{margin: 0, fontSize: "0.9rem"}}>
-      <li>Images with captions</li>
-      <li>Documents and files</li>
-      <li>Audio files</li>
-      <li>Video files</li>
-    </ul>
-  </div>
-  
-  <div style={{background: "#f0fdf4", border: "1px solid #dcfce7", borderRadius: "8px", padding: "1rem"}}>
-    <h4 style={{color: "#059669", marginTop: 0}}>🎯 Interactive</h4>
-    <ul style={{margin: 0, fontSize: "0.9rem"}}>
-      <li>Location sharing</li>
-      <li>Template messages</li>
-      <li>List messages</li>
-      <li>Contact cards</li>
-    </ul>
-  </div>
-</div>
+`params` accepts only these keys: `text`, `caption`, `fileName`, `mimetype`, `location`, `image`, `document`, `video`. Any other key is rejected with `400`.
 
-## 🚀 Request Examples
+There is no `device` or `receiver` field. The message is sent from the device that the group belongs to: each group `id` is tied to one device. A `device` field in the body is ignored.
 
-### Text Message to Group
+The older format, with the text in a top-level `message` field and no `params`, is still accepted for text messages.
+
+The API does not check that a `chat` message has text. A request with neither `params.text` nor `message` still returns `200`, and the message later ends as `ERROR`. Always send `params.text`.
+
+## Message types
+
+| Content | `type` | `params` | Details |
+|---|---|---|---|
+| Text | `chat` | `text` | [Send text](../messaging/send-text.md) |
+| Image | `image` | `image.url`, optional `caption` | [Send image](../messaging/send-image.md) |
+| File | `file` | `document.url`, optional `fileName`, `mimetype`, `caption` | [Send file](../messaging/send-file.md) |
+| Video | `file` | `video.url`, optional `mimetype`, `caption` | [Send video](../messaging/send-video.md) |
+| Location | `location` | `location.degreesLatitude`, `location.degreesLongitude` | [Send location](../messaging/send-location.md) |
+
+Text supports WhatsApp formatting (`*bold*`, `_italic_`), emoji, and line breaks (`\n`).
+
+## Request examples
+
+### Text message to a group
 
 ```bash
-curl -X POST "https://api.whatspie.com/groups/495/send" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/groups/495/send' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
-    "device": "6281234567890",
     "type": "chat",
     "params": {
       "text": "🎉 *Team Update* 🎉\n\nGreat news everyone! Our project milestone has been completed successfully.\n\n✅ All features tested\n✅ Documentation updated\n✅ Ready for deployment\n\nThanks for your hard work! 👏"
-    },
-    "simulate_typing": 1
+    }
   }'
 ```
 
-### Image Message to Group
+### Image message to a group
 
 ```bash
-curl -X POST "https://api.whatspie.com/groups/495/send" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/groups/495/send' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
-    "device": "6281234567890",
     "type": "image",
     "params": {
       "image": {
         "url": "https://example.com/team-photo.jpg"
       },
       "caption": "📸 Team lunch today! Great job everyone on completing the sprint goals. 🍽️✨"
-    },
-    "simulate_typing": 1
+    }
   }'
 ```
 
-### File Message to Group
+### File message to a group
 
 ```bash
-curl -X POST "https://api.whatspie.com/groups/495/send" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/groups/495/send' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
-    "device": "6281234567890",
     "type": "file",
     "params": {
       "document": {
@@ -129,323 +102,238 @@ curl -X POST "https://api.whatspie.com/groups/495/send" \
       },
       "fileName": "Project_Report_Q4_2024.pdf",
       "mimetype": "application/pdf"
-    },
-    "simulate_typing": 1
+    }
   }'
 ```
 
-### Location Message to Group
+### Location message to a group
 
 ```bash
-curl -X POST "https://api.whatspie.com/groups/495/send" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/groups/495/send' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
-    "device": "6281234567890",
     "type": "location",
     "params": {
       "location": {
         "degreesLatitude": -6.2088,
         "degreesLongitude": 106.8456
       }
-    },
-    "simulate_typing": 1
+    }
   }'
 ```
 
-### Template Message to Group
+## Response
 
-```bash
-curl -X POST "https://api.whatspie.com/groups/495/send" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
-  -d '{
-    "device": "6281234567890",
-    "type": "template",
-    "params": {
-      "templateName": "team_meeting_reminder",
-      "templateParams": [
-        "Project Review",
-        "Tomorrow",
-        "2:00 PM",
-        "Conference Room A"
-      ]
-    },
-    "simulate_typing": 1
-  }'
-```
+A successful request returns HTTP `200` with the queued message. The fields are the same as for [text messages](../messaging/send-text.md#response-fields), with these differences:
 
-### List Message to Group
-
-```bash
-curl -X POST "https://api.whatspie.com/groups/495/send" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
-  -d '{
-    "device": "6281234567890",
-    "type": "list",
-    "params": {
-      "body": "📋 *Project Tasks* 📋\n\nPlease select a task to view details:",
-      "buttonText": "View Tasks",
-      "sections": [
-        {
-          "title": "High Priority",
-          "rows": [
-            {
-              "id": "task_1",
-              "title": "API Documentation",
-              "description": "Complete API documentation review"
-            },
-            {
-              "id": "task_2", 
-              "title": "Testing Phase",
-              "description": "Execute comprehensive testing"
-            }
-          ]
-        },
-        {
-          "title": "Medium Priority",
-          "rows": [
-            {
-              "id": "task_3",
-              "title": "UI Polish",
-              "description": "Final UI improvements"
-            }
-          ]
-        }
-      ]
-    },
-    "simulate_typing": 1
-  }'
-```
-
-## 📊 Response Format
-
-### Success Response
+- `is_group` is `true`.
+- `to_number` is the group's JID without `@g.us`.
+- `from_number` is the phone number of the group's device.
 
 ```json
 {
-  "code": 200,
-  "message": "Message sent successfully",
+  "status": 200,
+  "message": "OK",
   "data": {
-    "id": "msg_group_12345",
-    "status": "pending",
+    "id": 36259790,
+    "device_id": 5,
+    "from_number": "6281234567890",
+    "to_number": "120363022368688477",
     "type": "chat",
-    "device": "6281234567890",
-    "receiver": "120363022368688477@g.us",
-    "message": "Team Update: Project milestone completed!",
-    "simulate_typing": 1,
-    "timestamp": "2024-12-20T10:30:00Z"
+    "msg_type": "outgoing",
+    "body": "Team Update: Project milestone completed!",
+    "status": "PENDING",
+    "wa_id": null,
+    "retry": 0,
+    "failed_reason": null,
+    "file_url": null,
+    "file_name": null,
+    "file_caption": null,
+    "file_size": null,
+    "file_mime": null,
+    "params": { "text": "Team Update: Project milestone completed!" },
+    "is_group": true,
+    "created_at": "2024-12-20T10:30:00Z",
+    "updated_at": "2024-12-20T10:30:00Z"
   }
 }
 ```
 
-### Error Response - Group Not Found
+The message is sent in the background. Check it later with [Get message](../messaging/get-message.md); see [Status values](../messaging/get-message.md#status-values). A group message that WhatsApp accepts is set to `SENT`.
+
+## Errors
+
+| HTTP status | `message` | Cause |
+|---|---|---|
+| `400` | `Invalid group ID` | `id` is not a number, for example a `jid`. |
+| `400` | `Invalid request body: ...` | The body is not valid JSON, or `type` is missing. |
+| `400` | `Invalid message type. Must be one of: ...` | `type` is not supported, for example `text` instead of `chat`. |
+| `400` | `Invalid message params: ...` | `params` contains a key that is not allowed. |
+| `403` | `Missing Authorization header`, `Missing token in Authorization header`, `Invalid Authentication Token` | Token problem. See [Authentication](../authentication.md#errors). |
+| `403` | Quota or subscription message | Your package has no messages left. |
+| `500` | `group not found or access denied: ...` | No group with this `id`, or it belongs to another account. |
+| `500` | Error description | Other internal error, for example the message could not be saved. |
 
 ```json
 {
-  "code": 404,
-  "message": "Group not found",
-  "error": "The specified group ID does not exist or you don't have access to it"
+  "status": 500,
+  "message": "group not found or access denied: failed to get group: record not found"
 }
 ```
 
-### Error Response - Not a Group Member
+Sending failures, such as a disconnected device or a device that is no longer in the group, do not cause an error response: the API accepts the message first. They show up later as status `ERROR` with a `failed_reason`.
 
-```json
-{
-  "code": 403,
-  "message": "Access denied",
-  "error": "Your device is not a member of this group"
-}
-```
+## Best practices
 
-## 🎯 Group-Specific Features
-
-### Mention Group Members
-
-```bash
-curl -X POST "https://api.whatspie.com/groups/495/send" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "device": "6281234567890",
-    "type": "chat",
-    "params": {
-      "text": "Hey @6289876543210 and @6281122334455, can you review the latest changes? 🔍",
-      "mentions": ["6289876543210", "6281122334455"]
-    }
-  }'
-```
-
-### Reply to Group Message
-
-```bash
-curl -X POST "https://api.whatspie.com/groups/495/send" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "device": "6281234567890",
-    "type": "chat",
-    "params": {
-      "text": "Great point! Let me add some details to that.",
-      "quotedMessageId": "msg_group_12344"
-    }
-  }'
-```
-
-## 💡 Best Practices
-
-### 1. Group Message Etiquette
+The JavaScript examples use this helper:
 
 ```javascript
-// Good: Clear, structured group messages
-const groupMessage = {
-  device: "6281234567890",
-  type: "text",
+async function sendGroupMessage(token, groupId, type, params) {
+  const res = await fetch(`https://api.whatspie.com/groups/${groupId}/send`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({ type, params }),
+  });
+  const body = await res.json();
+  if (!res.ok) throw new Error(body.message);
+  return body;
+}
+```
+
+### 1. Group message etiquette
+
+Keep group messages clear and structured:
+
+```javascript
+const announcement = {
+  type: 'chat',
   params: {
-    text: "📢 *ANNOUNCEMENT* 📢\n\n" +
-          "Subject: Weekly Standup\n" +
-          "📅 When: Monday 10:00 AM\n" +
-          "📍 Where: Conference Room B\n" +
-          "⏱️ Duration: 30 minutes\n\n" +
-          "Please bring your progress updates! 📊"
+    text:
+      '📢 *ANNOUNCEMENT* 📢\n\n' +
+      'Subject: Weekly Standup\n' +
+      '📅 When: Monday 10:00 AM\n' +
+      '📍 Where: Conference Room B\n' +
+      '⏱️ Duration: 30 minutes\n\n' +
+      'Please bring your progress updates! 📊',
   },
-  simulate_typing: 1
 };
+
+await sendGroupMessage('YOUR_API_TOKEN', 495, announcement.type, announcement.params);
 ```
 
-### 2. Batch Group Messaging
+### 2. Batch group messaging
 
 ```javascript
-async function sendToMultipleGroups(message, groupIds) {
+async function sendToMultipleGroups(token, message, groupIds) {
   const results = [];
-  
+
   for (const groupId of groupIds) {
     try {
-      const response = await fetch(`https://api.whatspie.com/groups/${groupId}/send`, {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer YOUR_API_TOKEN',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(message)
-      });
-      
-      const result = await response.json();
+      const result = await sendGroupMessage(token, groupId, message.type, message.params);
       results.push({ groupId, success: true, messageId: result.data.id });
-      
-      // Delay between messages to avoid rate limiting
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
     } catch (error) {
       results.push({ groupId, success: false, error: error.message });
     }
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // pause between groups
   }
-  
+
   return results;
 }
 
-// Usage
-const announcement = {
-  device: "6281234567890",
-  type: "text",
-  params: {
-    text: "🎉 Company Update: We've reached 10,000 users! Thank you all for your hard work! 🚀"
-  }
+const update = {
+  type: 'chat',
+  params: { text: "🎉 Company Update: We've reached 10,000 users! Thank you all for your hard work! 🚀" },
 };
 
-const groupIds = [495, 496, 497];
-const results = await sendToMultipleGroups(announcement, groupIds);
+const results = await sendToMultipleGroups('YOUR_API_TOKEN', update, [495, 496, 497]);
 ```
 
-### 3. Group Message Scheduling
+### 3. Group message scheduling
+
+The API sends immediately. To schedule, wait in your own app and send at the right time:
 
 ```javascript
-function scheduleGroupMessage(groupId, message, scheduleTime) {
+function scheduleGroupMessage(token, groupId, message, scheduleTime) {
   const delay = scheduleTime.getTime() - Date.now();
-  
-  if (delay <= 0) {
-    throw new Error('Schedule time must be in the future');
-  }
-  
+  if (delay <= 0) throw new Error('Schedule time must be in the future');
+
   setTimeout(async () => {
     try {
-      const response = await fetch(`https://api.whatspie.com/groups/${groupId}/send`, {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer YOUR_API_TOKEN',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(message)
-      });
-      
-      console.log('Scheduled message sent:', await response.json());
+      const result = await sendGroupMessage(token, groupId, message.type, message.params);
+      console.log('Scheduled message queued:', result.data.id);
     } catch (error) {
-      console.error('Failed to send scheduled message:', error);
+      console.error('Failed to send scheduled message:', error.message);
     }
   }, delay);
 }
 
-// Schedule a reminder for tomorrow at 9 AM
+// Tomorrow at 9 AM
 const tomorrow9AM = new Date();
 tomorrow9AM.setDate(tomorrow9AM.getDate() + 1);
 tomorrow9AM.setHours(9, 0, 0, 0);
 
-const reminder = {
-  device: "6281234567890",
-  type: "text",
-  params: {
-    text: "⏰ Reminder: Daily standup in 1 hour! 👥"
-  }
-};
-
-scheduleGroupMessage(495, reminder, tomorrow9AM);
+scheduleGroupMessage(
+  'YOUR_API_TOKEN',
+  495,
+  { type: 'chat', params: { text: '⏰ Reminder: Daily standup in 1 hour! 👥' } },
+  tomorrow9AM,
+);
 ```
 
-## ⚠️ Limitations
+## Limitations
 
-- **Group membership**: Your device must be a member of the group to send messages
-- **Message size**: Same limits apply as individual messaging (16MB for images, 100MB for files)
-- **Rate limiting**: Groups may have stricter rate limits to prevent spam
-- **Admin restrictions**: Some groups may restrict messaging to admins only
-- **Delivery tracking**: Group message delivery status may be limited compared to individual messages
+- **Group membership:** the group's device must still be a member of the group.
+- **Message size:** the same WhatsApp limits as individual messages (16 MB for images, 100 MB for files).
+- **Sending rate:** WhatsApp may block numbers that send too much to groups. Space out your messages.
+- **Admin restrictions:** some groups allow only admins to send messages.
+- **Delivery tracking:** group messages are marked `SENT` once WhatsApp accepts them; per-member delivery is not tracked.
+- **Not supported:** mentions, replies to a message, template and list messages to groups.
 
-## 🔍 Getting Group Information
+## Getting group information
 
-Before sending messages, you may want to get group details:
+Before sending, you can check the group with [Get group](./get-group.md):
 
 ```bash
-curl -X GET "https://api.whatspie.com/groups/495" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Accept: application/json"
+curl -X GET 'https://api.whatspie.com/groups/495' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json'
 ```
 
 Response:
+
 ```json
 {
-  "code": 200,
+  "status": 200,
+  "message": "OK",
   "data": {
-    "id": 495,
-    "name": "Project Team",
+    "id": "495",
+    "device_id": "5",
+    "jid": "120363022368688477@g.us",
+    "title": "Project Team",
     "description": "Development team coordination",
-    "participant_count": 8,
-    "created_at": "2024-11-15T09:00:00Z",
-    "is_admin": false,
-    "can_send_messages": true
+    "image_url": null,
+    "muted": false,
+    "spam": false,
+    "group_created_at": "2024-11-15T09:00:00Z",
+    "created_at": "2024-11-15T09:05:00Z",
+    "updated_at": "2024-12-20T14:30:00Z"
   }
 }
 ```
 
-## 🔗 Related Endpoints
+## Related
 
-- [Create WhatsApp Groups](./create-group) - Create new groups
-- [Send Text Messages](../messaging/send-text) - Text message format details
-- [Send Image Messages](../messaging/send-image) - Image message parameters
-- [Send File Messages](../messaging/send-file) - File message specifications
-- [Send Location Messages](../messaging/send-location) - Location sharing
-- [Send Template Messages](../messaging/send-template) - Template message format
-- [Send List Messages](../messaging/send-list) - Interactive list messages
+- [List groups](./list-groups.md): find a group's `id`
+- [Send text](../messaging/send-text.md): text message format
+- [Send image](../messaging/send-image.md): image message parameters
+- [Send file](../messaging/send-file.md): file message parameters
+- [Send video](../messaging/send-video.md): video message parameters
+- [Send location](../messaging/send-location.md): location sharing
+- [Send template](../messaging/send-template.md): deprecated template messages
+- [Send list](../messaging/send-list.md): deprecated list messages

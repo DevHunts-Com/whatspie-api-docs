@@ -1,43 +1,35 @@
 ---
-sidebar_position: 7
+title: Refresh groups
+description: Re-sync a device's WhatsApp group list from the live connection into Whatspie with POST /groups/refresh.
 ---
 
-# 🔄 Refresh Groups
+# Refresh groups
 
-Force-sync your device's WhatsApp group list from the live connection into Whatspie, using the Whatspie API.
+Fetch a device's current group list from its live WhatsApp connection and save it in Whatspie. [List groups](./list-groups.md) and [Get group](./get-group.md) read this stored list, so refresh it after you join, leave, or change a group.
 
-<div style={{background: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)", padding: "1.5rem", borderRadius: "8px", color: "white", margin: "1.5rem 0"}}>
-  <h3 style={{color: "white", margin: "0 0 1rem 0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>🔄 Stay In Sync</h3>
-  <p style={{margin: "0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>Pull the latest group list directly from WhatsApp and sync it into Whatspie — useful right after joining a new group, or whenever your stored group list looks stale.</p>
-</div>
-
-## 🌐 Endpoint
+## Endpoint
 
 ```
 POST https://api.whatspie.com/groups/refresh
 ```
 
-## 🔐 Authentication
+Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [Authentication](../authentication.md).
 
-Bearer token required in the `Authorization` header.
-
-## 📋 Query Parameters
+## Query parameters
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `device` | string | ✅ | Your registered WhatsApp device number |
+|---|---|---|---|
+| `device` | string | Yes | Phone number of the device whose groups to refresh. |
 
-## 🚀 Request Example
+## Request example
 
 ```bash
-curl -X POST "https://api.whatspie.com/groups/refresh?device=6281234567890" \
-  -H "Authorization: Bearer ***" \
-  -H "Accept: application/json"
+curl -X POST 'https://api.whatspie.com/groups/refresh?device=6281234567890' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json'
 ```
 
-## 📊 Response Format
-
-### Success Response
+## Response
 
 ```json
 {
@@ -74,13 +66,21 @@ curl -X POST "https://api.whatspie.com/groups/refresh?device=6281234567890" \
 }
 ```
 
-### Response Fields
+### Response fields
 
-Same shape as [List Groups](./list-groups) — see that page for a full field reference. `updated_at` will reflect the time of this refresh call for every group that was successfully synced.
+Same shape as [List groups](./list-groups.md#group-object-fields); see that page for each field. `data` holds only the groups synced by this call. `updated_at` is the time of this refresh for every synced group.
 
-## Error Responses
+## Errors
 
-### Missing Device Parameter
+| HTTP status | `message` | Cause |
+|---|---|---|
+| `400` | `Device parameter is required` | The `device` query parameter is missing. |
+| `403` | `Device not found or access denied` | `device` is not a device on your account. |
+| `403` | `failed to fetch group list from whatspie node: ...` containing `Disconnected` or `Connection issue` | The device is not connected to WhatsApp, or Whatspie could not reach it. |
+| `403` | `Missing Authorization header`, `Missing token in Authorization header`, `Invalid Authentication Token` | Token problem. See [Authentication](../authentication.md#errors). |
+| `500` | Error description | Any other error while fetching the groups. Try again later. |
+
+### Missing device parameter
 
 ```json
 {
@@ -89,7 +89,7 @@ Same shape as [List Groups](./list-groups) — see that page for a full field re
 }
 ```
 
-### Device Not Found or Access Denied
+### Device not found or access denied
 
 ```json
 {
@@ -98,7 +98,7 @@ Same shape as [List Groups](./list-groups) — see that page for a full field re
 }
 ```
 
-### Device Disconnected
+### Device disconnected
 
 ```json
 {
@@ -107,21 +107,25 @@ Same shape as [List Groups](./list-groups) — see that page for a full field re
 }
 ```
 
-Your device must be connected (paired and online) for the refresh to succeed, since the group list is fetched live from the active WhatsApp connection.
+The device must be connected (paired and online), because the group list is fetched live from its WhatsApp connection.
 
-## 💡 How It Works
+## How it works
 
-1. Whatspie fetches the current, live group list directly from your device's active WhatsApp connection.
-2. Each group is **upserted** into your stored group list — matched by group JID, so existing groups are updated in place and newly joined groups are added.
-3. Groups you've left on WhatsApp are **not automatically removed** from your stored list by this endpoint.
-4. The response returns the freshly synced groups, reflecting their latest title, description, image, and mute/spam status.
+1. Whatspie fetches the current group list from the device's live WhatsApp connection.
+2. Each group is **upserted** into the stored list, matched by device and group JID: existing groups are updated in place, newly joined groups are added.
+3. Groups you have left on WhatsApp are **not removed** from the stored list.
+4. Title, picture, mute, and spam status are updated from WhatsApp. The stored `description` is cleared to `null` on every refresh; see the warning below.
 
-:::tip When to use this
-Call this endpoint after creating or joining a new group, or periodically if you rely on [List Groups](./list-groups) for up-to-date group metadata and don't want to wait for the next automatic sync.
+:::warning[Descriptions are cleared]
+A refresh currently sets `description` to `null` for every synced group, even if the group has a description on WhatsApp.
 :::
 
-## 🔗 Related Endpoints
+:::tip[When to use this]
+Call this endpoint after joining a new group, or periodically if you rely on [List groups](./list-groups.md) for up-to-date group data and don't want to wait for the next automatic sync.
+:::
 
-- [Get Groups List](./list-groups) — Retrieve your currently stored group list (no live fetch)
-- [Get Group By ID](./get-group) — Get detailed information about a specific group
-- [Send Group Messages](./send-group-messages) — Send messages to groups
+## Related
+
+- [List groups](./list-groups.md): the stored group list (no live fetch)
+- [Get group](./get-group.md): details of one stored group
+- [Send group messages](./send-group-messages.md): send messages to groups

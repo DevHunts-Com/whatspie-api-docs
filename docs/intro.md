@@ -1,178 +1,73 @@
 ---
-sidebar_position: 1
+title: Introduction
+description: What the Whatspie API is, its base URL, authentication, response format, and what you can do with it.
 ---
 
-# 🚀 Introduction
+# Introduction
 
-Welcome to the **Whatspie** - The most powerful and developer-friendly WhatsApp Business API that enables seamless integration of WhatsApp messaging capabilities into your applications.
+The Whatspie API lets your application send and manage WhatsApp messages through WhatsApp numbers you have connected to Whatspie. It is a REST API: you send JSON over HTTPS and get JSON back.
 
-<div style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '2rem', borderRadius: '12px', color: 'white', margin: '2rem 0'}}>
-  <h2 style={{color: 'white', marginTop: '0'}}>✨ What makes Whatspie V2 Special?</h2>
-  <p style={{fontSize: '1.1rem', marginBottom: '0'}}>Enterprise-grade WhatsApp API with advanced features, real-time webhooks, and multi-device support designed for businesses of all sizes.</p>
-</div>
+With it you can send text, images, files, and locations, work with groups, check whether numbers use WhatsApp, and manage your connected devices.
 
-## 🎯 Core Features
+:::info[New here?]
+Follow the [Quickstart](./quickstart.md): get a token, connect a WhatsApp number, and send your first message in about 5 minutes.
+:::
 
-<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', margin: '2rem 0'}}>
-  <div style={{background: '#f8f9ff', border: '1px solid #e1e5e9', borderRadius: '8px', padding: '1.5rem'}}>
-    <h3 style={{color: '#4f46e5', marginTop: '0'}}>📬 Rich Messaging</h3>
-    <ul style={{margin: '0'}}>
-      <li>Text messages with formatting</li>
-      <li>Images with captions</li>
-      <li>Documents and files</li>
-      <li>Location sharing</li>
-      <li style={{textDecoration: 'line-through'}}>Interactive buttons & lists (deprecated)</li>
-      <li style={{textDecoration: 'line-through'}}>Template messages (deprecated)</li>
-    </ul>
-  </div>
-  
-  <div style={{background: '#f0fdf4', border: '1px solid #dcfce7', borderRadius: '8px', padding: '1.5rem'}}>
-    <h3 style={{color: '#059669', marginTop: '0'}}>📱 Multi-Device Support</h3>
-    <ul style={{margin: '0'}}>
-      <li>QR code authentication</li>
-      <li>Device status monitoring</li>
-      <li>Session management</li>
-      <li>Auto-reconnection</li>
-      <li>Device switching</li>
-    </ul>
-  </div>
-  
-  {/* <div style={{background: '#fef3c7', border: '1px solid #fed7aa', borderRadius: '8px', padding: '1.5rem'}}>
-    <h3 style={{color: '#d97706', marginTop: '0'}}>🔗 Real-time Webhooks</h3>
-    <ul style={{margin: '0'}}>
-      <li>Message delivery status</li>
-      <li>Incoming message events</li>
-      <li>Connection status updates</li>
-      <li>Error notifications</li>
-      <li>Custom event handling</li>
-    </ul>
-  </div> */}
-  
-  <div style={{background: '#fdf2f8', border: '1px solid #fce7f3', borderRadius: '8px', padding: '1.5rem'}}>
-    <h3 style={{color: '#be185d', marginTop: '0'}}>🔐 Enterprise Security</h3>
-    <ul style={{margin: '0'}}>
-      <li>Bearer token authentication</li>
-      <li>Rate limiting protection</li>
-      <li>Secure webhook endpoints</li>
-      <li>Data encryption</li>
-      <li>Compliance ready</li>
-    </ul>
-  </div>
-</div>
+:::info[Prefer not to write code?]
+Connect Claude to Whatspie and send WhatsApp messages by asking in plain language. See the [MCP Quickstart](./mcp/quickstart.md).
+:::
 
-## 🌐 Base URL
+## Base URL
 
 ```
 https://api.whatspie.com
 ```
 
-## 🚀 Quick Start
+## Authentication
 
-Get started with Whatspie API in just a few steps:
+Send your API token in the `Authorization` header of every request:
 
-### 1. Authentication
-
-All API requests require a Bearer token in the Authorization header:
-
-```bash
-curl -H 'Authorization: Bearer YOUR_API_TOKEN' \
-     -H 'Content-Type: application/json' \
-     -H 'Accept: application/json'
+```
+Authorization: Bearer YOUR_API_TOKEN
 ```
 
-### 2. Send Your First Message
+See [Authentication](./authentication.md) for where to find your token.
 
-```bash
-curl -X POST 'https://api.whatspie.com/messages' \
-  -H 'Authorization: Bearer YOUR_API_TOKEN' \
-  -H 'Content-Type: application/json' \
-  -H 'Accept: application/json' \
-  -d '{
-    "device": "62895383079050",
-    "receiver": "6285603051722",
-    "type": "chat",
-    "params": {
-      "text": "Hi!"
-    },
-    "simulate_typing": 1
-}'
-```
+## Response format
 
-### 3. Handle Responses
+Every response is a JSON object with the same top-level fields:
+
+| Field | Type | Description |
+|---|---|---|
+| `status` | number | HTTP status code, repeated in the body. |
+| `message` | string | `OK` on success, or a description of the error. |
+| `data` | object, array, or null | The result. `null` or left out on errors. |
+
+An error looks like this:
 
 ```json
 {
-    "status": 200,
-    "message": "OK",
-    "data": {
-        "id": 36259782,
-        "from_number": "62895383079050",
-        "to_number": "6285603051722",
-        "type": "chat",
-        "msg_type": "outgoing",
-        "body": "Hi!",
-        "status": "PENDING",
-        "wa_id": null,
-        "retry": 0,
-        "failed_reason": null,
-        "file_url": null,
-        "file_name": null,
-        "file_caption": null,
-        "file_size": null,
-        "file_mime": null,
-        "params": {
-            "text": "Hi!"
-        },
-        "is_group": false,
-        "created_at": "2025-08-22T03:36:02.179279985Z",
-        "updated_at": "2025-08-22T03:36:02.179280065Z"
-    }
+  "status": 403,
+  "message": "Invalid Authentication Token"
 }
 ```
 
-## API Features
+## What you can do
 
-### 📬 Messaging
-- Send text messages
-- Send images with captions
-- Send documents and files
-- Send location coordinates
+| Area | Pages |
+|---|---|
+| Messaging | [Send text](./messaging/send-text.md), [image](./messaging/send-image.md), [file](./messaging/send-file.md), [video](./messaging/send-video.md), [location](./messaging/send-location.md), [reaction](./messaging/send-reaction.md); [get a message](./messaging/get-message.md); [code examples](./messaging/guide.md) |
+| Groups | [List](./groups/list-groups.md), [get](./groups/get-group.md), [refresh](./groups/refresh-groups.md), [send messages](./groups/send-group-messages.md), [add members](./groups/add-members.md), [update](./groups/update-group.md) |
+| Contacts | [Check whether numbers use WhatsApp](./contacts/check-contacts.md) |
+| Devices | [Manage devices](./device-management.md) |
+| Webhooks | [Receive events from Whatspie](./webhooks.md): Whatspie sends incoming messages and status changes to a URL on your server |
+| AI assistants | [Connect Claude to Whatspie with MCP](./mcp/quickstart.md) |
 
-### 👥 Group Management
-- Add/remove participants
-- Update group information
+Deprecated: [interactive buttons and lists](./messaging/send-list.md) and [template messages](./messaging/send-template.md). These pages remain for existing integrations.
 
-### 🔐 Authentication & Security
-- JWT token-based authentication
-- Basic authentication for initial setup
-- Secure device connection management
+## Rate limits
 
-### 📱 Device Management
-- QR code generation for WhatsApp Web
-- Device status monitoring
-- Logout and session management
-- Contact verification
+WhatsApp limits how many messages a number can send. Sending too many messages too quickly can get the number blocked.
 
-## Response Format
-
-All API responses follow a consistent format:
-
-```json
-{
-  'code': 200,
-  'message': 'OK',
-  'data': {
-    // Response data here
-  }
-}
-```
-
-## Rate Limits
-
-Please be mindful of WhatsApp's rate limits to avoid being blocked:
-{/* - **Individual messages**: Up to 1000 messages per day for new business accounts */}
-- **Group messages**: Depends on group size and message frequency
-- **QR code requests**: Limited to prevent abuse
-
-
-Let's get started with your WhatsApp integration! 🚀
+- **Group messages:** the safe rate depends on group size and how often you send.
+- **QR code requests:** limited to prevent abuse.

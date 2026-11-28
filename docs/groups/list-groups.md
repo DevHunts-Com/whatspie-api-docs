@@ -1,33 +1,31 @@
 ---
-sidebar_position: 3
+title: List groups
+description: List the WhatsApp groups of your devices with GET /groups, and get each group's id and jid.
 ---
 
-# 📋 Get Groups List
+# List groups
 
-Retrieve a list of all WhatsApp groups associated with your device using the Whatspie API.
+List the WhatsApp groups your devices are members of. Use it to find a group's `id` and `jid` for the other group endpoints.
 
-<div style={{background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)", padding: "1.5rem", borderRadius: "8px", color: "white", margin: "1.5rem 0"}}>
-  <h3 style={{color: "white", margin: "0 0 1rem 0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>📱 Group Management</h3>
-  <p style={{margin: "0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>Get comprehensive information about all WhatsApp groups your device is a member of, including group details, member counts, and permissions.</p>
-</div>
+The list comes from the groups Whatspie has stored for your devices, not from a live WhatsApp query. After you join, leave, or rename a group, update the stored list with [Refresh groups](./refresh-groups.md).
 
-## 🌐 Endpoint
+## Endpoint
 
 ```
 GET https://api.whatspie.com/groups
 ```
 
-## 🔐 Authentication
+Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [Authentication](../authentication.md).
 
-Bearer token required in the `Authorization` header.
+## Query parameters
 
-## 📋 Request Parameters
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `device` | string | No | Phone number of one of your devices. Returns only that device's groups. Without it, the groups of all your devices are returned together. |
 
-This endpoint does not require any request parameters. Simply make a GET request with proper authentication.
+## Request examples
 
-## 🚀 Request Example
-
-### Basic Groups List Request
+### All groups
 
 ```bash
 curl -L -X GET 'https://api.whatspie.com/groups' \
@@ -35,7 +33,15 @@ curl -L -X GET 'https://api.whatspie.com/groups' \
   -H 'Authorization: Bearer YOUR_API_TOKEN'
 ```
 
-### With Custom Headers
+### Groups of one device
+
+```bash
+curl -L -X GET 'https://api.whatspie.com/groups?device=6281234567890' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN'
+```
+
+### With custom headers
 
 ```bash
 curl -L -X GET 'https://api.whatspie.com/groups' \
@@ -44,14 +50,12 @@ curl -L -X GET 'https://api.whatspie.com/groups' \
   -H 'User-Agent: MyApp/1.0'
 ```
 
-## 📊 Response Format
-
-### Success Response
+## Response
 
 ```json
 {
-  "code": 200,
-  "message": "Groups retrieved successfully",
+  "status": 200,
+  "message": "OK",
   "data": [
     {
       "id": "15378",
@@ -122,191 +126,168 @@ curl -L -X GET 'https://api.whatspie.com/groups' \
 }
 ```
 
-### Error Response - Unauthorized
+If your devices have no stored groups, `data` is an empty list.
 
-```json
-{
-  "code": 401,
-  "message": "Unauthorized",
-  "error": "Invalid or missing authentication token"
-}
-```
+## Response fields
 
-### Error Response - Device Not Found
-
-```json
-{
-  "code": 404,
-  "message": "Device not found",
-  "error": "The specified device is not registered or not connected"
-}
-```
-
-## 🔍 Response Fields Explained
-
-### Group Object Fields
+### Group object fields
 
 | Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Unique group identifier |
-| `device_id` | string | ID of the device associated with this group |
-| `jid` | string | WhatsApp Group JID (Jabber ID) identifier |
-| `title` | string | Group name/title |
-| `description` | string/null | Group description (can be null) |
-| `image_url` | string/null | Group profile picture URL (can be null) |
-| `muted` | boolean | Whether the group is muted for your device |
-| `spam` | boolean | Whether the group is marked as spam |
-| `group_created_at` | string | When the group was created on WhatsApp (ISO 8601) |
-| `created_at` | string | When the group was first synced to your device (ISO 8601) |
-| `updated_at` | string | Last update timestamp (ISO 8601) |
+|---|---|---|
+| `id` | string | Whatspie's ID for the group. |
+| `device_id` | string | ID of the device that is in this group. |
+| `jid` | string | WhatsApp's group identifier, ending in `@g.us`. |
+| `title` | string | Group name. |
+| `description` | string or null | Group description. Currently set to `null` by every [Refresh groups](./refresh-groups.md) run. |
+| `image_url` | string or null | Group picture URL. |
+| `muted` | boolean | Whether the group is muted on your device. |
+| `spam` | boolean | Whether the group is marked as spam. |
+| `group_created_at` | string | When the group was created on WhatsApp, ISO 8601. |
+| `created_at` | string | When Whatspie first stored the group for your device, ISO 8601. |
+| `updated_at` | string | When the stored group information last changed, ISO 8601. |
 
-### Field Descriptions
+### Which ID to use
 
-**JID (Jabber ID)**: The WhatsApp-specific identifier for groups, always ends with `@g.us` for groups.
+| Use | Field | Example |
+|---|---|---|
+| `/groups/{id}` endpoints: [Get group](./get-group.md), [Send group messages](./send-group-messages.md), [Add members](./add-members.md), [Update group](./update-group.md) | `id`, as a number in the path | `/groups/15378` |
+| `msisdn` in [Send reaction](../messaging/send-reaction.md) with `is_group: true` | `jid` | `120363022368688477@g.us` |
 
-**Timestamps**:
-- `group_created_at`: Original WhatsApp group creation time
-- `created_at`: When your device first joined/synced the group  
-- `updated_at`: Last time group information was updated locally
+The same WhatsApp group appears once per device. If two of your devices are in the same group, you get two entries with the same `jid` and different `id` and `device_id`.
 
-**Status Fields**:
-- `muted`: Group notifications are disabled
-- `spam`: Group is marked as spam/unwanted
+### Field descriptions
 
-## 💡 Usage Examples
+**JID:** WhatsApp's identifier for the group. Group JIDs always end with `@g.us`.
 
-### Filter Groups by Status
+**Timestamps:**
 
-```javascript
-async function getFilteredGroups() {
-  try {
-    const response = await fetch('https://api.whatspie.com/groups', {
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer YOUR_API_TOKEN'
-      }
-    });
-    
-    const result = await response.json();
-    const groups = result.data;
-    
-    // Filter unmuted groups (active groups)
-    const activeGroups = groups.filter(group => !group.muted);
-    
-    // Filter groups created in the last 30 days
-    const recentGroups = groups.filter(group => {
-      const groupDate = new Date(group.group_created_at);
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-      return groupDate > thirtyDaysAgo;
-    });
-    
-    console.log(`Active groups (unmuted): ${activeGroups.length}`);
-    activeGroups.forEach(group => {
-      console.log(`- ${group.title} (ID: ${group.id})`);
-    });
-    
-    console.log(`\nRecent groups (last 30 days): ${recentGroups.length}`);
-    recentGroups.forEach(group => {
-      const createdDate = new Date(group.group_created_at).toLocaleDateString();
-      console.log(`- ${group.title} (Created: ${createdDate})`);
-    });
-    
-    return { activeGroups, recentGroups };
-  } catch (error) {
-    console.error('Error fetching groups:', error);
-  }
+- `group_created_at`: when the group was created on WhatsApp.
+- `created_at`: when your device's group was first stored in Whatspie.
+- `updated_at`: when the stored group information last changed.
+
+**Status fields:**
+
+- `muted`: notifications for the group are turned off.
+- `spam`: the group is marked as spam or unwanted.
+
+## Errors
+
+| HTTP status | `message` | Cause |
+|---|---|---|
+| `403` | `Missing Authorization header`, `Missing token in Authorization header`, `Invalid Authentication Token` | Token problem. See [Authentication](../authentication.md#errors). |
+| `403` | `Device not found or access denied` | `device` is not a device on your account. |
+| `403` | `No devices found for user` | Your account has no devices. |
+| `500` | `Internal server error` | The groups of the given `device` could not be read. Try again later. |
+| `401` | `User not authenticated` | Internal authentication error. A missing or wrong token normally returns `403` first. |
+
+```json
+{
+  "status": 403,
+  "message": "Device not found or access denied"
 }
 ```
 
-### Get Recently Updated Groups
+## Usage examples
+
+The examples use this helper:
 
 ```javascript
-async function getRecentlyUpdatedGroups(hoursAgo = 24) {
-  try {
-    const response = await fetch('https://api.whatspie.com/groups', {
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer YOUR_API_TOKEN'
-      }
-    });
-    
-    const result = await response.json();
-    const cutoffTime = new Date(Date.now() - (hoursAgo * 60 * 60 * 1000));
-    
-    // Filter groups updated recently
-    const recentlyUpdated = result.data.filter(group => {
-      return new Date(group.updated_at) > cutoffTime;
-    });
-    
-    // Sort by most recent update
-    recentlyUpdated.sort((a, b) => 
-      new Date(b.updated_at) - new Date(a.updated_at)
-    );
-    
-    console.log(`${recentlyUpdated.length} groups updated in last ${hoursAgo} hours:`);
-    recentlyUpdated.forEach(group => {
-      const lastUpdate = new Date(group.updated_at).toLocaleString();
-      const mutedStatus = group.muted ? ' (Muted)' : '';
-      console.log(`- ${group.title}: ${lastUpdate}${mutedStatus}`);
-    });
-    
-    return recentlyUpdated;
-  } catch (error) {
-    console.error('Error fetching recently updated groups:', error);
-  }
+async function listGroups(token, device) {
+  const url = new URL('https://api.whatspie.com/groups');
+  if (device) url.searchParams.set('device', device);
+
+  const res = await fetch(url, {
+    headers: { Accept: 'application/json', Authorization: `Bearer ${token}` },
+  });
+  const body = await res.json();
+  if (!res.ok) throw new Error(body.message);
+  return body.data; // array of groups
 }
 ```
 
-### Export Groups Data
+### Filter groups by status
 
 ```javascript
-async function exportGroupsData() {
-  try {
-    const response = await fetch('https://api.whatspie.com/groups', {
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer YOUR_API_TOKEN'
-      }
-    });
-    
-    const result = await response.json();
-    
-    // Prepare data for export
-    const exportData = result.data.map(group => ({
-      ID: group.id,
-      'Device ID': group.device_id,
-      JID: group.jid,
-      Title: group.title,
-      Description: group.description || 'No description',
-      'Has Image': group.image_url ? 'Yes' : 'No',
-      Muted: group.muted ? 'Yes' : 'No',
-      Spam: group.spam ? 'Yes' : 'No',
-      'Group Created': new Date(group.group_created_at).toLocaleDateString(),
-      'First Synced': new Date(group.created_at).toLocaleDateString(),
-      'Last Updated': new Date(group.updated_at).toLocaleDateString()
-    }));
-    
-    // Convert to CSV
-    const csvHeaders = Object.keys(exportData[0]).join(',');
-    const csvRows = exportData.map(row => 
-      Object.values(row).map(value => 
-        typeof value === 'string' && value.includes(',') ? `"${value}"` : value
-      ).join(',')
-    );
-    
-    const csvContent = [csvHeaders, ...csvRows].join('\n');
-    
-    console.log('Groups export ready:');
-    console.log(csvContent);
-    
-    return csvContent;
-  } catch (error) {
-    console.error('Error exporting groups:', error);
-  }
+async function getFilteredGroups(token) {
+  const groups = await listGroups(token);
+
+  // Unmuted groups
+  const activeGroups = groups.filter((group) => !group.muted);
+
+  // Groups created on WhatsApp in the last 30 days
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const recentGroups = groups.filter((group) => new Date(group.group_created_at) > thirtyDaysAgo);
+
+  console.log(`Active groups (unmuted): ${activeGroups.length}`);
+  activeGroups.forEach((group) => console.log(`- ${group.title} (ID: ${group.id})`));
+
+  console.log(`\nRecent groups (last 30 days): ${recentGroups.length}`);
+  recentGroups.forEach((group) => {
+    const createdDate = new Date(group.group_created_at).toLocaleDateString();
+    console.log(`- ${group.title} (Created: ${createdDate})`);
+  });
+
+  return { activeGroups, recentGroups };
 }
 ```
 
-### Monitor Group Changes
+### Get recently updated groups
+
+```javascript
+async function getRecentlyUpdatedGroups(token, hoursAgo = 24) {
+  const groups = await listGroups(token);
+  const cutoffTime = new Date(Date.now() - hoursAgo * 60 * 60 * 1000);
+
+  const recentlyUpdated = groups
+    .filter((group) => new Date(group.updated_at) > cutoffTime)
+    .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+
+  console.log(`${recentlyUpdated.length} groups updated in last ${hoursAgo} hours:`);
+  recentlyUpdated.forEach((group) => {
+    const lastUpdate = new Date(group.updated_at).toLocaleString();
+    console.log(`- ${group.title}: ${lastUpdate}${group.muted ? ' (Muted)' : ''}`);
+  });
+
+  return recentlyUpdated;
+}
+```
+
+### Export groups data
+
+```javascript
+async function exportGroupsData(token) {
+  const groups = await listGroups(token);
+  if (groups.length === 0) return '';
+
+  const exportData = groups.map((group) => ({
+    ID: group.id,
+    'Device ID': group.device_id,
+    JID: group.jid,
+    Title: group.title,
+    Description: group.description || 'No description',
+    'Has Image': group.image_url ? 'Yes' : 'No',
+    Muted: group.muted ? 'Yes' : 'No',
+    Spam: group.spam ? 'Yes' : 'No',
+    'Group Created': new Date(group.group_created_at).toLocaleDateString(),
+    'First Synced': new Date(group.created_at).toLocaleDateString(),
+    'Last Updated': new Date(group.updated_at).toLocaleDateString(),
+  }));
+
+  // Quote every value and escape quotes, so commas and quotes in titles are safe
+  const toCsv = (value) => `"${String(value).replace(/"/g, '""')}"`;
+  const csvHeaders = Object.keys(exportData[0]).map(toCsv).join(',');
+  const csvRows = exportData.map((row) => Object.values(row).map(toCsv).join(','));
+
+  const csvContent = [csvHeaders, ...csvRows].join('\n');
+  console.log('Groups export ready:');
+  console.log(csvContent);
+  return csvContent;
+}
+```
+
+### Monitor group changes
+
+The stored list only changes after a [refresh](./refresh-groups.md), so a monitor can only detect what a refresh brings in: new groups, changed titles, and groups that are gone. Descriptions are not compared, because a refresh currently clears them.
 
 ```javascript
 class GroupMonitor {
@@ -316,152 +297,97 @@ class GroupMonitor {
     this.previousGroups = new Map();
     this.isMonitoring = false;
   }
-  
+
   async fetchGroups() {
-    const response = await fetch('https://api.whatspie.com/groups', {
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${this.apiToken}`
-      }
-    });
-    
-    const result = await response.json();
-    return result.data.groups;
+    return listGroups(this.apiToken);
   }
-  
+
   detectChanges(currentGroups) {
     const changes = [];
-    
-    currentGroups.forEach(group => {
+
+    for (const group of currentGroups) {
       const previous = this.previousGroups.get(group.id);
-      
+
       if (!previous) {
-        changes.push({
-          type: 'new_group',
-          group: group,
-          message: `New group joined: ${group.subject}`
-        });
-      } else {
-        // Check for changes
-        if (group.subject !== previous.subject) {
-          changes.push({
-            type: 'name_changed',
-            group: group,
-            message: `Group name changed: ${previous.subject} → ${group.subject}`
-          });
-        }
-        
-        if (group.participant_count !== previous.participant_count) {
-          const diff = group.participant_count - previous.participant_count;
-          changes.push({
-            type: 'member_count_changed',
-            group: group,
-            message: `${group.subject}: ${diff > 0 ? '+' : ''}${diff} members`
-          });
-        }
-        
-        if (group.last_message && previous.last_message) {
-          if (group.last_message.timestamp !== previous.last_message.timestamp) {
-            changes.push({
-              type: 'new_message',
-              group: group,
-              message: `New message in ${group.subject}`
-            });
-          }
-        }
+        changes.push({ type: 'new_group', group, message: `New group: ${group.title}` });
+        continue;
       }
-    });
-    
-    // Check for removed groups
-    this.previousGroups.forEach((previous, id) => {
-      if (!currentGroups.find(g => g.id === id)) {
+      if (group.title !== previous.title) {
         changes.push({
-          type: 'group_left',
-          group: previous,
-          message: `Left group: ${previous.subject}`
+          type: 'name_changed',
+          group,
+          message: `Group name changed: ${previous.title} → ${group.title}`,
         });
       }
-    });
-    
+    }
+
+    for (const [id, previous] of this.previousGroups) {
+      if (!currentGroups.some((g) => g.id === id)) {
+        changes.push({ type: 'group_removed', group: previous, message: `Group no longer listed: ${previous.title}` });
+      }
+    }
+
     return changes;
   }
-  
+
+  remember(groups) {
+    this.previousGroups = new Map(groups.map((group) => [group.id, group]));
+  }
+
   async startMonitoring(onChanges = null) {
     this.isMonitoring = true;
-    
-    // Initial fetch
     const initialGroups = await this.fetchGroups();
-    initialGroups.forEach(group => {
-      this.previousGroups.set(group.id, group);
-    });
-    
+    this.remember(initialGroups);
     console.log(`Monitoring ${initialGroups.length} groups...`);
-    
+
     const monitor = async () => {
       if (!this.isMonitoring) return;
-      
       try {
         const currentGroups = await this.fetchGroups();
         const changes = this.detectChanges(currentGroups);
-        
         if (changes.length > 0) {
           console.log(`Detected ${changes.length} changes:`);
-          changes.forEach(change => {
-            console.log(`- ${change.message}`);
-          });
-          
-          if (onChanges) {
-            onChanges(changes);
-          }
+          changes.forEach((change) => console.log(`- ${change.message}`));
+          onChanges?.(changes);
         }
-        
-        // Update previous groups
-        this.previousGroups.clear();
-        currentGroups.forEach(group => {
-          this.previousGroups.set(group.id, group);
-        });
-        
+        this.remember(currentGroups);
       } catch (error) {
         console.error('Error monitoring groups:', error);
       }
-      
       setTimeout(monitor, this.checkInterval);
     };
-    
+
     setTimeout(monitor, this.checkInterval);
   }
-  
+
   stopMonitoring() {
     this.isMonitoring = false;
     console.log('Group monitoring stopped');
   }
 }
 
-// Usage
 const monitor = new GroupMonitor('YOUR_API_TOKEN', 30000);
 monitor.startMonitoring((changes) => {
-  // Custom handler for changes
-  changes.forEach(change => {
-    if (change.type === 'new_message') {
-      console.log(`🔔 ${change.message}`);
-    }
-  });
+  changes
+    .filter((change) => change.type === 'new_group')
+    .forEach((change) => console.log(`🔔 ${change.message}`));
 });
 
 // Stop monitoring after 10 minutes
 setTimeout(() => monitor.stopMonitoring(), 600000);
 ```
 
-## ⚠️ Rate Limiting
+## Polling guidance
 
-- **Recommended frequency**: Don't call this endpoint more than once every 30 seconds
-- **Burst limit**: Maximum 10 requests per minute
-- **Daily limit**: Up to 2,000 requests per day
+The API does not limit how often you call this endpoint. The list only changes after a refresh, so calling it often returns the same data:
 
-## 🔗 Related Endpoints
+- **Recommended frequency:** no more than once every 30 seconds.
+- **To see new or changed groups:** call [Refresh groups](./refresh-groups.md) first, then list.
 
-- [Get Group By ID](./get-group) - Get detailed information about a specific group
-- [Send Group Messages](./send-group-messages) - Send messages to groups
-- [Create WhatsApp Groups](./create-group) - Create new groups
-- [Update Group Information](./update-group) - Modify group settings
-- [Add Members to Group](./add-members) - Add participants to groups
+## Related
+
+- [Get group](./get-group.md): details of one group
+- [Send group messages](./send-group-messages.md): send messages to a group
+- [Refresh groups](./refresh-groups.md): update the stored group list from WhatsApp
+- [Update group](./update-group.md): change a group's name, description, or picture
+- [Add members](./add-members.md): add participants to a group

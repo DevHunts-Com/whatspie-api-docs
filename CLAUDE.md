@@ -17,23 +17,23 @@ This is a Docusaurus-based documentation site for the Whatspie API, a WhatsApp m
 ## Common Development Commands
 
 ### Package Manager
-Use npm (package-lock.json present):
-- `npm install` - Install dependencies
-- `npm start` - Start development server (alias for docusaurus start)
-- `npm run build` - Build static site
-- `npm run serve` - Serve built site locally
-- `npm run typecheck` - Run TypeScript type checking
+Use yarn (yarn.lock is the source of truth; do not use npm, it rewrites both lockfiles):
+- `yarn install` - Install dependencies
+- `yarn start` - Start development server (alias for docusaurus start)
+- `yarn build` - Build static site
+- `yarn serve` - Serve built site locally
+- `yarn typecheck` - Run TypeScript type checking
 
 ### Docusaurus Commands
-- `npm run docusaurus start` - Start dev server with hot reload
-- `npm run docusaurus build` - Generate static content
-- `npm run docusaurus clear` - Clear build cache
-- `npm run docusaurus swizzle` - Customize theme components
-- `npm run docusaurus deploy` - Deploy to GitHub Pages
+- `yarn docusaurus start` - Start dev server with hot reload
+- `yarn docusaurus build` - Generate static content
+- `yarn docusaurus clear` - Clear build cache
+- `yarn docusaurus swizzle` - Customize theme components
+- `yarn docusaurus deploy` - Deploy to GitHub Pages
 
 ### Deployment
-- SSH: `USE_SSH=true npm run deploy`
-- HTTPS: `GIT_USER=<username> npm run deploy`
+- SSH: `USE_SSH=true yarn deploy`
+- HTTPS: `GIT_USER=<username> yarn deploy`
 
 ## Key Files and Structure
 

@@ -1,585 +1,219 @@
 ---
-sidebar_position: 1
+title: Send text message
+description: Send a WhatsApp text message to a phone number with POST /messages.
 ---
 
-# 💬 Send Text Messages
+# Send text message
 
-Send rich text messages to WhatsApp contacts using the Whatspie API with advanced features like typing simulation, message formatting, and real-time delivery tracking.
+Send a text message from one of your devices to a phone number. The text supports WhatsApp formatting and emoji.
 
-<div style={{background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", padding: "1.5rem", borderRadius: "8px", color: "white", margin: "1.5rem 0"}}>
-  <h3 style={{color: "white", margin: "0 0 1rem 0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>✨ V2 Enhanced Features</h3>
-  <p style={{margin: "0", textShadow: "1px 1px 2px rgba(0,0,0,0.3)"}}>Support for typing simulation, WhatsApp text formatting, emoji support, and improved delivery tracking with comprehensive error handling.</p>
-</div>
-
-## 🌐 Endpoint
+## Endpoint
 
 ```
 POST https://api.whatspie.com/messages
 ```
 
-## 🔐 Authentication
+Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [Authentication](../authentication.md).
 
-Bearer token required in the `Authorization` header with proper content headers.
-
-## 📋 Request Parameters
+## Request
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `device` | string | ✅ | Your registered WhatsApp device number |
-| `receiver` | string | ✅ | Recipient's phone number (international format) |
-| `type` | string | ✅ | Message type: `"chat"` for text messages |
-| `params` | object | ✅ | Message parameters containing text content |
-| `params.text` | string | ✅ | Text message content (supports WhatsApp formatting) |
-| `simulate_typing` | integer | ❌ | Show typing indicator: `1` (yes) or `0` (no) |
+|---|---|---|---|
+| `device` | string | Yes | Phone number of your sending device: the `phone` field from [List devices](../devices/list.md), not the numeric device `id`. |
+| `receiver` | string | Yes | Recipient's phone number. Up to 35 characters. |
+| `type` | string | Yes | `chat` for a text message. |
+| `params` | object | Yes | Message content. |
+| `params.text` | string | Yes | The text to send. Supports [WhatsApp formatting](#text-formatting). |
 
-### Text Message with Formatting
+Write phone numbers in international format without `+`. See [Phone number format](#phone-number-format).
+
+`params` accepts only these keys: `text`, `caption`, `fileName`, `mimetype`, `location`, `image`, `document`, `video`. Any other key is rejected.
+
+### Example
 
 ```bash
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
     "device": "6281234567890",
     "receiver": "6289876543210",
     "type": "chat",
     "params": {
-      "text": "*Bold Text* _Italic Text_ ~Strikethrough~ `Monospace`\n\nNew paragraph with emojis! 🎉✨"
-    },
-    "simulate_typing": 1
+      "text": "*Bold* _italic_ ~strikethrough~ ```monospace```\n\nNew paragraph with emoji 🎉"
+    }
   }'
 ```
 
-## 📊 Response Format
+In these examples, `6281234567890` is your device (the `phone` from [List devices](../devices/list.md)) and `6289876543210` is the receiver. Replace both with your own numbers.
 
-### Success Response
+## Response
+
+A successful request returns HTTP `200` with the queued message:
 
 ```json
 {
-  "code": 200,
-  "message": "Message sent successfully",
+  "status": 200,
+  "message": "OK",
   "data": {
-    "id": "msg_chat_12345",
-    "status": "pending",
+    "id": 36259782,
+    "device_id": 12,
+    "from_number": "6281234567890",
+    "to_number": "6289876543210",
     "type": "chat",
-    "device": "6281234567890",
-    "receiver": "6289876543210",
-    "message": "Hello World!",
-    "simulate_typing": 1,
-    "timestamp": "2024-12-20T10:30:00Z"
+    "msg_type": "outgoing",
+    "body": "Hello World!",
+    "status": "PENDING",
+    "wa_id": null,
+    "retry": 0,
+    "failed_reason": null,
+    "file_url": null,
+    "file_name": null,
+    "file_caption": null,
+    "file_size": null,
+    "file_mime": null,
+    "params": { "text": "Hello World!" },
+    "is_group": false,
+    "created_at": "2025-08-22T03:36:02Z",
+    "updated_at": "2025-08-22T03:36:02Z"
   }
 }
 ```
 
-### Response Fields
+:::warning[200 OK does not mean delivered]
+The API queues the message and sends it in the background. If the device is disconnected or the number is not on WhatsApp, you still get `200`. The status changes to `ERROR` later. Check it with [Get message](./get-message.md#status-values).
+:::
+
+### Response fields
 
 | Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Unique message identifier |
-| `status` | string | Message status (`pending`, `sent`, `delivered`, `failed`) |
-| `type` | string | Message type (`chat`) |
-| `device` | string | Sender device number |
-| `receiver` | string | Recipient's phone number |
-| `message` | string | Sent message content |
-| `simulate_typing` | integer | Typing simulation setting (1 or 0) |
-| `timestamp` | string | Message sent timestamp (ISO 8601) |
+|---|---|---|
+| `id` | number | Message ID. Use it with [Get message](./get-message.md) to check the message later. |
+| `device_id` | number | ID of the sending device. |
+| `from_number` | string | Sender device number. |
+| `to_number` | string | Recipient's phone number. |
+| `type` | string | `chat`. |
+| `msg_type` | string | `outgoing` for messages you send. |
+| `body` | string | The text that was sent. |
+| `status` | string | Delivery status. `PENDING` right after the request: the message is queued, not yet delivered. It changes as delivery progresses; see [Status values](./get-message.md#status-values). |
+| `wa_id` | string or null | WhatsApp's own message ID. `null` while the message is `PENDING`; filled in after WhatsApp accepts it. |
+| `retry` | number | Number of send retries. |
+| `failed_reason` | string or null | Why sending failed, if it did. |
+| `file_url`, `file_name`, `file_caption`, `file_size`, `file_mime` | null | Not used for text messages. |
+| `params` | object | Stored message parameters: `{ "text": "..." }`. |
+| `is_group` | boolean | `false` for messages to a phone number. |
+| `created_at`, `updated_at` | string | Timestamps, ISO 8601. |
 
-## Error Responses
+## Errors
 
-### Invalid Phone Number
-
-```json
-{
-  "code": 400,
-  "message": "Invalid phone number format",
-  "error": "Receiver phone number must be in international format without +"
-}
-```
-
-### Message Too Long
+Errors return the HTTP status in `status` and a description in `message`:
 
 ```json
 {
-  "code": 400,
-  "message": "Message too long",
-  "error": "Message exceeds maximum length of 4096 characters"
+  "status": 400,
+  "message": "Invalid message params: unknown parameter 'body'. Allowed parameters: text, caption, fileName, mimetype, location, image, document"
 }
 ```
 
-### Device Not Connected
+Note: this error message leaves out `video`. All allowed keys are listed under [Request](#request).
 
-```json
-{
-  "code": 400,
-  "message": "Device not connected",
-  "error": "WhatsApp device is offline or not connected. Please check device status."
-}
-```
+| HTTP status | `message` | Cause |
+|---|---|---|
+| `400` | `Invalid message params: ...` | `params` contains a key that is not allowed, or a nested value has the wrong shape. |
+| `400` | `Message text is required for chat type` | The request has neither `params` nor a legacy `message` field. |
+| `400` | `Invalid request body: ...` | The body is not valid JSON, or `device`, `receiver`, or `type` is missing. |
+| `400` | `Invalid message type. Must be one of: ...` | `type` is not a supported message type. |
+| `403` | `Missing Authorization header` | No `Authorization` header. |
+| `403` | `Missing token in Authorization header` | The header has no token after `Bearer `. |
+| `403` | `Invalid Authentication Token` | The token is wrong or revoked. |
+| `403` | `Device not found or access denied` | `device` is not a device on your account. |
+| `403` | Quota or subscription message | Your package has no messages left. |
+| `500` | Error description | Internal error, for example the message could not be saved. Try again later. |
 
-### Invalid Message Type
+Sending failures, such as a disconnected device or a number that is not on WhatsApp, do not cause an error response either: the API accepts the message first and sends it in the background. They show up later as status `ERROR` with a `failed_reason`. Check them with [Get message](./get-message.md); see [Status values](./get-message.md#status-values).
 
-```json
-{
-  "code": 400,
-  "message": "Invalid message type",
-  "error": "Message type 'chat' is required for text messages"
-}
-```
+## Phone number format
 
-## 📱 Phone Number Format
+Write `device` and `receiver` in international format: country code followed by the number, without `+`, spaces, or hyphens.
 
-The `device` and `receiver` parameters should be in international format without the plus (+) sign:
+| Country | Format | Example |
+|---|---|---|
+| USA | `1XXXXXXXXXX` | `11234567890` |
+| UK | `44XXXXXXXXXX` | `441234567890` |
+| India | `91XXXXXXXXXX` | `911234567890` |
+| Indonesia | `62XXXXXXXXXXX` | `6281234567890` |
+| Brazil | `55XXXXXXXXXXX` | `5511987654321` |
+| Germany | `49XXXXXXXXXX` | `491234567890` |
 
-<div style={{background: "#f8f9ff", border: "1px solid #e1e5e9", borderRadius: "8px", padding: "1rem", margin: "1rem 0"}}>
+Invalid formats:
 
-| Country | Format | Example | Valid |
-|---------|--------|---------|-------|
-| 🇺🇸 USA | 1XXXXXXXXXX | 11234567890 | ✅ |
-| 🇬🇧 UK | 44XXXXXXXXXX | 441234567890 | ✅ |
-| 🇮🇳 India | 91XXXXXXXXXX | 911234567890 | ✅ |
-| 🇮🇩 Indonesia | 62XXXXXXXXXXX | 6281234567890 | ✅ |
-| 🇧🇷 Brazil | 55XXXXXXXXXXX | 5511987654321 | ✅ |
-| 🇩🇪 Germany | 49XXXXXXXXXX | 491234567890 | ✅ |
+- `+6281234567890`: contains `+`
+- `081234567890`: missing country code
+- `6281-234-567-890`: contains hyphens
+- `62 81234567890`: contains spaces
 
-</div>
+## Text formatting
 
-### ❌ Invalid Formats
-- `+6281234567890` (contains +)
-- `081234567890` (missing country code)
-- `6281-234-567-890` (contains hyphens)
-- `62 81234567890` (contains spaces)
+WhatsApp formatting works in `params.text`:
 
-## ✨ Message Formatting
+| Style | Syntax | Example |
+|---|---|---|
+| Bold | `*text*` | `*Order confirmed*` |
+| Italic | `_text_` | `_optional_` |
+| Strikethrough | `~text~` | `~old price~` |
+| Monospace | ` ```text``` ` | ` ```ABC-123``` ` |
 
-### WhatsApp Text Formatting
+Use `\n` in JSON for a line break. Emoji and other Unicode characters are sent as-is.
 
-Whatspie API supports all WhatsApp text formatting options:
-
-<div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem", margin: "1.5rem 0"}}>
-  <div style={{background: "#fef3c7", border: "1px solid #fed7aa", borderRadius: "8px", padding: "1rem"}}>
-    <h4 style={{color: "#d97706", marginTop: "0"}}>**Bold Text**</h4>
-    <code>*Your text here*</code>
-    <small>Wraps text with asterisks</small>
-  </div>
-  
-  <div style={{background: "#f0fdf4", border: "1px solid #dcfce7", borderRadius: "8px", padding: "1rem"}}>
-    <h4 style={{color: "#059669", marginTop: "0"}}><em>Italic Text</em></h4>
-    <code>_Your text here_</code>
-    <small>Wraps text with underscores</small>
-  </div>
-  
-  <div style={{background: "#fdf2f8", border: "1px solid #fce7f3", borderRadius: "8px", padding: "1rem"}}>
-    <h4 style={{color: "#be185d", marginTop: "0"}}><del>Strikethrough</del></h4>
-    <code>~Your text here~</code>
-    <small>Wraps text with tildes</small>
-  </div>
-  
-  <div style={{background: "#f8f9ff", border: "1px solid #e1e5e9", borderRadius: "8px", padding: "1rem"}}>
-    <h4 style={{color: "#4f46e5", marginTop: "0"}}><code>Monospace</code></h4>
-    <code>\`Your text here\`</code>
-    <small>Wraps text with backticks</small>
-  </div>
-</div>
-
-### Formatting Examples
+### Formatting examples
 
 ```bash
-# Bold text example
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
+# Bold text
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
   -d '{
     "device": "6281234567890",
     "receiver": "6289876543210",
     "type": "chat",
-    "message": "This is *bold text* in WhatsApp",
-    "simulate_typing": 1
+    "params": { "text": "This is *bold text* in WhatsApp" }
   }'
 
 # Mixed formatting
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
   -d '{
-    "device": "6281234567890", 
+    "device": "6281234567890",
     "receiver": "6289876543210",
     "type": "chat",
-    "message": "*Bold* _italic_ ~strike~ \`code\` text combined!",
-    "simulate_typing": 1
+    "params": { "text": "*Bold* _italic_ ~strike~ text combined!" }
   }'
 ```
 
-### 😀 Emojis and Special Characters
+## Legacy format
 
-```javascript
-const messages = [
-  "Hello! 👋 How are you today?",
-  "Thanks for your order! ✅ We'll process it soon.",
-  "🎉 Congratulations on your achievement!",
-  "❗ Important: Please reply to this message.",
-  "🚨 *URGENT NOTICE* 🚨\n\nYour account will expire in 3 days.\n\n✅ Renew now: https://example.com\n💳 Questions? Reply to this message"
-];
+The older format, with the text in a top-level `message` field and no `params`, is still accepted for backward compatibility. New integrations should use `params`.
 
-// Send each message with proper V2 API
-const token = 'YOUR_API_TOKEN';
-const device = '6281234567890';
-const receiver = '6289876543210';
+## Code examples
 
-messages.forEach(async (msg, index) => {
-  try {
-    const result = await sendTextMessage(token, device, receiver, msg);
-    console.log(`Message ${index + 1} sent:`, result.data.id);
-    
-    // Small delay between messages
-    await new Promise(resolve => setTimeout(resolve, 1000));
-  } catch (error) {
-    console.error(`Failed to send message ${index + 1}:`, error.message);
-  }
-});
-```
+JavaScript helpers, validation, batch sending, retries, and use cases for text messages are in the [Messaging guide](./guide.md).
 
-## Best Practices
+## Limitations and guidelines
 
-### 1. Phone Number Validation
+- **Message length:** the API sets no limit. Keep messages readable on a phone.
+- **Sending rate:** about 1–2 messages per second is a common safe rate to avoid temporary blocks.
+- **Recipients:** must have an active WhatsApp account. Use [Check contacts](../contacts/check-contacts.md) to verify numbers first.
+- **Sending device:** must be connected to WhatsApp. A disconnected device cannot deliver messages. See [Device management](../device-management.md).
+- **WhatsApp policies:** follow WhatsApp's business messaging policies and terms.
+- **International numbers:** always include the country code.
 
-Always validate phone numbers before sending messages:
+## Related
 
-```javascript
-function isValidPhoneNumber(phoneNumber) {
-  // Validation for international format (country code + number)
-  const phoneRegex = /^[1-9]\d{10,14}$/;
-  return phoneRegex.test(phoneNumber);
-}
-
-function validateWhatspieRequest(device, receiver, message) {
-  // Validate device number
-  if (!isValidPhoneNumber(device)) {
-    throw new Error('Invalid device phone number format');
-  }
-  
-  // Validate receiver number
-  if (!isValidPhoneNumber(receiver)) {
-    throw new Error('Invalid receiver phone number format');
-  }
-  
-  // Validate message length
-  if (message.length > 4096) {
-    throw new Error('Message exceeds 4096 character limit');
-  }
-  
-  return true;
-}
-
-// Usage
-const device = '6281234567890';
-const receiver = '6289876543210';
-const message = 'Hello World!';
-
-try {
-  validateWhatspieRequest(device, receiver, message);
-  await sendTextMessage(token, device, receiver, message);
-} catch (error) {
-  console.error('Validation failed:', error.message);
-}
-```
-
-### 2. Message Length Limits
-
-Keep messages under 4096 characters:
-
-```javascript
-function validateMessage(message) {
-  const maxLength = 4096;
-  
-  if (message.length > maxLength) {
-    throw new Error(`Message too long. Maximum ${maxLength} characters allowed.`);
-  }
-  
-  return true;
-}
-```
-
-### 3. Rate Limiting
-
-Implement rate limiting to avoid being blocked:
-
-```javascript
-class MessageSender {
-  constructor(token, rateLimit = 1000) { // 1 message per second
-    this.token = token;
-    this.rateLimit = rateLimit;
-    this.lastSent = 0;
-  }
-
-  async sendMessage(phoneNumber, message) {
-    const now = Date.now();
-    const timeSinceLastSent = now - this.lastSent;
-    
-    if (timeSinceLastSent < this.rateLimit) {
-      await new Promise(resolve => 
-        setTimeout(resolve, this.rateLimit - timeSinceLastSent)
-      );
-    }
-    
-    const result = await sendTextMessage(this.token, phoneNumber, message);
-    this.lastSent = Date.now();
-    
-    return result;
-  }
-}
-```
-
-### 4. Error Handling
-
-Implement comprehensive error handling with V2 API structure:
-
-```javascript
-async function sendMessageWithRetry(token, device, receiver, message, maxRetries = 3) {
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      const result = await sendTextMessage(token, device, receiver, message);
-      return result;
-    } catch (error) {
-      console.log(`Attempt ${attempt} failed:`, error.message);
-      
-      // Don't retry on certain errors
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        throw new Error('Authentication failed. Please check your API token.');
-      }
-      
-      if (error.response?.status === 400 && error.response?.data?.error?.includes('phone')) {
-        throw new Error('Invalid phone number format. Please check device and receiver numbers.');
-      }
-      
-      if (attempt === maxRetries) {
-        throw error;
-      }
-      
-      // Wait before retry (exponential backoff)
-      const delay = Math.pow(2, attempt) * 1000;
-      await new Promise(resolve => setTimeout(resolve, delay));
-    }
-  }
-}
-
-// Advanced error handling class
-class WhatspieErrorHandler {
-  static handleError(error) {
-    if (error.response) {
-      const { status, data } = error.response;
-      
-      switch (status) {
-        case 400:
-          return `Bad Request: ${data.error || 'Invalid request format'}`;
-        case 401:
-          return 'Unauthorized: Please check your API token';
-        case 403:
-          return 'Forbidden: Insufficient permissions';
-        case 429:
-          return 'Rate Limited: Too many requests, please wait';
-        case 500:
-          return 'Server Error: Please try again later';
-        default:
-          return `HTTP ${status}: ${data.message || 'Unknown error'}`;
-      }
-    } else {
-      return `Network Error: ${error.message}`;
-    }
-  }
-}
-
-// Usage with error handling
-try {
-  const result = await sendMessageWithRetry(
-    'YOUR_API_TOKEN',
-    '6281234567890',
-    '6289876543210',
-    'Hello with error handling!'
-  );
-  console.log('Message sent successfully:', result.data.id);
-} catch (error) {
-  const errorMessage = WhatspieErrorHandler.handleError(error);
-  console.error('Failed to send message:', errorMessage);
-}
-```
-
-### 5. Bulk Messaging
-
-For sending messages to multiple recipients with V2 API:
-
-```javascript
-async function sendBulkMessages(token, device, recipients, message, options = {}) {
-  const {
-    delay = 2000,
-    simulateTyping = true,
-    onProgress = null,
-    onError = null
-  } = options;
-  
-  const results = [];
-  let sent = 0;
-  let failed = 0;
-  
-  for (let i = 0; i < recipients.length; i++) {
-    const receiver = recipients[i];
-    
-    try {
-      const result = await sendTextMessage(token, device, receiver, message, simulateTyping);
-      
-      results.push({ 
-        receiver, 
-        success: true, 
-        messageId: result.data.id,
-        timestamp: result.data.timestamp
-      });
-      
-      sent++;
-      onProgress?.({ sent, failed, total: recipients.length, current: receiver });
-      
-      // Add delay between messages to avoid rate limiting
-      if (i < recipients.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
-      
-    } catch (error) {
-      const errorMsg = error.response?.data?.error || error.message;
-      results.push({ 
-        receiver, 
-        success: false, 
-        error: errorMsg 
-      });
-      
-      failed++;
-      onError?.(receiver, errorMsg);
-    }
-  }
-  
-  return {
-    results,
-    summary: { sent, failed, total: recipients.length }
-  };
-}
-
-// Usage with progress tracking
-const recipients = [
-  '6289876543210',
-  '6287654321098', 
-  '6285432109876'
-];
-
-const bulkResults = await sendBulkMessages(
-  'YOUR_API_TOKEN',
-  '6281234567890',
-  recipients,
-  '📢 *Important Update*\n\nOur services will be updated tonight from 2-4 AM.\n\nSorry for any inconvenience! 🙏',
-  {
-    delay: 3000, // 3 seconds between messages
-    simulateTyping: true,
-    onProgress: (progress) => {
-      console.log(`Progress: ${progress.sent}/${progress.total} sent (${progress.failed} failed)`);
-    },
-    onError: (receiver, error) => {
-      console.warn(`Failed to send to ${receiver}: ${error}`);
-    }
-  }
-);
-
-console.log('Bulk messaging completed:', bulkResults.summary);
-
-// Send personalized messages
-async function sendPersonalizedMessages(token, device, contacts) {
-  const results = [];
-  
-  for (const contact of contacts) {
-    const personalizedMsg = `Hi ${contact.name}! 👋\n\nThanks for being a valued customer. Your account status: ${contact.status}\n\nQuestions? Just reply! 💬`;
-    
-    try {
-      const result = await sendTextMessage(token, device, contact.phone, personalizedMsg);
-      results.push({ ...contact, success: true, messageId: result.data.id });
-    } catch (error) {
-      results.push({ ...contact, success: false, error: error.message });
-    }
-    
-    // Wait 2 seconds between personalized messages
-    await new Promise(resolve => setTimeout(resolve, 2000));
-  }
-  
-  return results;
-}
-
-// Usage
-const contacts = [
-  { name: 'John Doe', phone: '6289876543210', status: 'Active' },
-  { name: 'Jane Smith', phone: '6287654321098', status: 'Premium' }
-];
-
-const personalizedResults = await sendPersonalizedMessages(
-  'YOUR_API_TOKEN', 
-  '6281234567890', 
-  contacts
-);
-console.log('Personalized messages sent:', personalizedResults);
-```
-
-## ⚠️ Limitations & Guidelines
-
-- **Message Length**: Maximum 4096 characters per message
-- **Rate Limits**: Recommended 1-2 messages per second to avoid temporary blocks
-- **Contact Verification**: Recipients must have WhatsApp installed and active
-- **Device Connection**: Sender device must be online and connected to WhatsApp Web
-- **Business Compliance**: Follow WhatsApp's business messaging policies and terms
-- **International Messaging**: Ensure proper country code formatting for cross-border messages
-
-## 🔗 Related Endpoints
-
-- [Send Image Messages](./send-image) - Send images with captions  
-- [Send File Messages](./send-file) - Send documents and files
-- [Send Location Messages](./send-location) - Share location coordinates
-- [Device Management](../devices/get-devices) - Check device connection status
-- [Authentication](../authentication) - API token management
-
-## 💡 Use Cases
-
-### Customer Support
-```javascript
-const supportMsg = `👋 Hi! Thanks for contacting support.
-
-🔍 *Issue*: ${customerIssue}
-🎟️ *Ticket*: #${ticketNumber}
-⏱️ *Response Time*: Within 2 hours
-
-📞 Urgent? Call: +1-800-SUPPORT
-💬 Questions? Just reply here!
-
-_We're here to help!_ ✨`;
-```
-
-### Marketing Campaigns
-```javascript
-const campaignMsg = `🎉 *FLASH SALE ALERT* 🎉
-
-⚡ *50% OFF* Everything!
-⏰ Today only: ${new Date().toLocaleDateString()}
-🛍️ Shop now: ${shopUrl}
-
-💰 Use code: *FLASH50*
-🚚 Free shipping on orders $75+
-
-*Limited time offer!* ⏳`;
-```
-
-### Appointment Reminders
-```javascript
-const reminderMsg = `📅 *Appointment Reminder*
-
-👤 *Patient*: ${patientName}
-🏥 *Doctor*: Dr. ${doctorName}
-📅 *Date*: ${appointmentDate}
-⏰ *Time*: ${appointmentTime}
-📍 *Location*: ${clinicAddress}
-
-✅ Reply *CONFIRM* to confirm
-❌ Reply *CANCEL* to reschedule
-
-📞 Questions? Call: ${clinicPhone}`;
-```
+- [Send image](./send-image.md): images with captions
+- [Send file](./send-file.md): documents and other files
+- [Send location](./send-location.md): location coordinates
+- [Get message](./get-message.md): check a message's delivery status
+- [Device management](../device-management.md): check that your device is connected
+- [Authentication](../authentication.md): API tokens

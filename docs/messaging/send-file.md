@@ -1,95 +1,46 @@
 ---
-sidebar_position: 3
+title: Send file message
+description: Send a document or other file from a public URL with POST /messages.
 ---
 
-# 📄 Send File Messages
+# Send file message
 
-Send documents, PDFs, and other files to WhatsApp contacts using the Whatspie API with support for various file formats and automatic file type detection.
+Send a document or any other file from a public URL to a phone number. The recipient receives it as a WhatsApp document they can open or save.
 
-<div style={{background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', padding: '1.5rem', borderRadius: '8px', color: '#1a202c', margin: '1.5rem 0'}}>
-  <h3 style={{color: '#1a202c', margin: '0 0 1rem 0'}}>📎 Universal File Support</h3>
-  <p style={{margin: 0}}>Send any document type with automatic file detection, preview generation, and intelligent compression for optimal delivery.</p>
-</div>
-
-## 🌐 Endpoint
+## Endpoint
 
 ```
 POST https://api.whatspie.com/messages
 ```
 
-## 🔐 Authentication
+Send your API token in the `Authorization: Bearer YOUR_API_TOKEN` header. See [Authentication](../authentication.md).
 
-Bearer token required with proper JSON content headers.
-
-## 📋 Request Parameters
+## Request
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `device` | string | ✅ | Your registered WhatsApp device number |
-| `receiver` | string | ✅ | Recipient's phone number (international format) |
-| `type` | string | ✅ | Message type: `"file"` for file messages |
-| `params` | object | ✅ | Message parameters containing file data |
-| `params.document` | object | ✅ | Document object with URL |
-| `params.document.url` | string | ✅ | Direct URL to the file |
-| `params.fileName` | string | ✅ | Display filename with extension |
-| `params.mimetype` | string | ✅ | MIME type of the file |
-| `simulate_typing` | integer | ❌ | Show typing indicator: `1` (yes) or `0` (no) |
+|---|---|---|---|
+| `device` | string | Yes | Phone number of your sending device: the `phone` field from [List devices](../devices/list.md), not the numeric device `id`. |
+| `receiver` | string | Yes | Recipient's phone number. Up to 35 characters. |
+| `type` | string | Yes | `file`. |
+| `params` | object | Yes | Message content. |
+| `params.document.url` | string | Yes | Direct, public URL of the file. |
+| `params.fileName` | string | No, recommended | File name shown to the recipient, with extension, for example `invoice.pdf`. Without it, the recipient may see an unclear name. |
+| `params.mimetype` | string | No, recommended | MIME type, for example `application/pdf`. Helps WhatsApp show the right icon and open the file with the right app. |
+| `params.caption` | string | No | Text shown with the file. |
 
-## 📁 Supported File Formats
+Write phone numbers in international format without `+`. See [Phone number format](./send-text.md#phone-number-format).
 
-<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', margin: '1.5rem 0'}}>
-  <div style={{background: '#fef5e7', border: '1px solid #fed7aa', borderRadius: '8px', padding: '1rem'}}>
-    <h4 style={{color: '#d97706', marginTop: 0}}>📋 Documents</h4>
-    <ul style={{margin: 0, fontSize: '0.9rem'}}>
-      <li>PDF (.pdf)</li>
-      <li>Word (.doc, .docx)</li>
-      <li>Excel (.xls, .xlsx)</li>
-      <li>PowerPoint (.ppt, .pptx)</li>
-      <li>Text files (.txt)</li>
-    </ul>
-  </div>
-  
-  <div style={{background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '8px', padding: '1rem'}}>
-    <h4 style={{color: '#0284c7', marginTop: 0}}>🗜️ Archives</h4>
-    <ul style={{margin: 0, fontSize: '0.9rem'}}>
-      <li>ZIP (.zip)</li>
-      <li>RAR (.rar)</li>
-      <li>7-Zip (.7z)</li>
-      <li>TAR (.tar, .tar.gz)</li>
-    </ul>
-  </div>
-  
-  <div style={{background: '#f0fdf4', border: '1px solid #dcfce7', borderRadius: '8px', padding: '1rem'}}>
-    <h4 style={{color: '#059669', marginTop: 0}}>💻 Development</h4>
-    <ul style={{margin: 0, fontSize: '0.9rem'}}>
-      <li>JavaScript (.js, .jsx)</li>
-      <li>Python (.py)</li>
-      <li>Java (.java)</li>
-      <li>C/C++ (.c, .cpp, .h)</li>
-      <li>HTML/CSS (.html, .css)</li>
-    </ul>
-  </div>
-  
-  <div style={{background: '#fdf2f8', border: '1px solid #fce7f3', borderRadius: '8px', padding: '1rem'}}>
-    <h4 style={{color: '#be185d', marginTop: 0}}>🎵 Media Files</h4>
-    <ul style={{margin: 0, fontSize: '0.9rem'}}>
-      <li>Audio (.mp3, .wav, .ogg)</li>
-      <li>Video (.mp4, .avi, .mov)</li>
-      <li>Images (.jpg, .png, .gif)</li>
-      <li>eBooks (.epub, .mobi)</li>
-    </ul>
-  </div>
-</div>
+`params` accepts only these keys: `text`, `caption`, `fileName`, `mimetype`, `location`, `image`, `document`, `video`. Any other key is rejected with `400`.
 
-## 🚀 Request Examples
+## Examples
 
-### Basic File Message
+### Basic file message
 
 ```bash
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
     "device": "6281234567890",
     "receiver": "6289876543210",
@@ -100,18 +51,19 @@ curl -X POST "https://api.whatspie.com/messages" \
       },
       "fileName": "Monthly_Sales_Report_Q4_2024.pdf",
       "mimetype": "application/pdf"
-    },
-    "simulate_typing": 1
+    }
   }'
 ```
 
-### File with Description
+In these examples, `6281234567890` is your device (the `phone` from [List devices](../devices/list.md)) and `6289876543210` is the receiver. Replace both with your own numbers.
+
+### Presentation with a caption
 
 ```bash
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
     "device": "6281234567890",
     "receiver": "6289876543210",
@@ -121,203 +73,129 @@ curl -X POST "https://api.whatspie.com/messages" \
         "url": "https://cdn.example.com/files/presentation.pptx"
       },
       "fileName": "Product_Launch_Presentation_Q1.pptx",
-      "mimetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-    },
-    "simulate_typing": 1
+      "mimetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "caption": "Slides for Monday'\''s launch meeting"
+    }
   }'
 ```
 
-### Technical Document
+### Technical document (legacy format)
 
 ```bash
-curl -X POST "https://api.whatspie.com/messages" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+curl -X POST 'https://api.whatspie.com/messages' \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -d '{
     "device": "6281234567890",
-    "receiver": "6289876543210", 
+    "receiver": "6289876543210",
     "type": "file",
     "file_url": "https://docs.example.com/api/documentation.pdf",
-    "message": "📚 API Documentation v2.1\n\nLatest version with new endpoints and examples.",
-    "simulate_typing": 1
+    "message": "📚 API Documentation v2.1\n\nLatest version with new endpoints and examples."
   }'
 ```
 
+The recipient gets `documentation.pdf` with the text from `message` as its caption.
 
-## 📊 Response Format
+## Supported file formats
 
-### Success Response
+The API does not download or check the file when it accepts your request. WhatsApp applies its own limits when the file is delivered. Commonly sent formats:
+
+| Category | Formats |
+|---|---|
+| Documents | PDF (`.pdf`), Word (`.doc`, `.docx`), Excel (`.xls`, `.xlsx`), PowerPoint (`.ppt`, `.pptx`), text (`.txt`) |
+| Archives | ZIP (`.zip`), RAR (`.rar`), 7-Zip (`.7z`), TAR (`.tar`, `.tar.gz`) |
+| Development | JavaScript (`.js`, `.jsx`), Python (`.py`), Java (`.java`), C/C++ (`.c`, `.cpp`, `.h`), HTML/CSS (`.html`, `.css`) |
+| Media | Audio (`.mp3`, `.wav`, `.ogg`), video (`.mp4`, `.avi`, `.mov`), images (`.jpg`, `.png`, `.gif`), eBooks (`.epub`, `.mobi`) |
+
+Media files sent this way arrive as documents, not as photos or playable videos. To send a photo, use [Send image](./send-image.md).
+
+Maximum file size: 100 MB.
+
+## Response
+
+A successful request returns HTTP `200` with the queued message. The fields are the same as for [text messages](./send-text.md#response-fields). For a file sent with `params`:
+
+- `body` holds the caption, or the file name if there is no caption.
+- `params` holds the document URL, file name, MIME type, and caption.
+- `file_url`, `file_name`, and `file_mime` are `null`.
 
 ```json
 {
-  "code": 200,
-  "message": "File sent successfully",
+  "status": 200,
+  "message": "OK",
   "data": {
-    "id": "msg_file_12345",
-    "status": "pending",
+    "id": 36259784,
+    "device_id": 12,
+    "from_number": "6281234567890",
+    "to_number": "6289876543210",
     "type": "file",
-    "device": "6281234567890",
-    "receiver": "6289876543210",
-    "file_url": "https://example.com/document.pdf",
-    "message": "📄 Important Document",
-    "file_info": {
-      "name": "document.pdf",
-      "size": "2.5MB",
-      "type": "application/pdf"
+    "msg_type": "outgoing",
+    "body": "Monthly_Sales_Report_Q4_2024.pdf",
+    "status": "PENDING",
+    "wa_id": null,
+    "retry": 0,
+    "failed_reason": null,
+    "file_url": null,
+    "file_name": null,
+    "file_caption": null,
+    "file_size": null,
+    "file_mime": null,
+    "params": {
+      "fileName": "Monthly_Sales_Report_Q4_2024.pdf",
+      "mimetype": "application/pdf",
+      "document": { "url": "https://example.com/documents/report.pdf" }
     },
-    "timestamp": "2024-12-20T10:30:00Z"
+    "is_group": false,
+    "created_at": "2025-08-22T03:36:02Z",
+    "updated_at": "2025-08-22T03:36:02Z"
   }
 }
 ```
 
-### Error Response - Invalid File URL
+With the legacy format, `body` holds `message`, `file_url` holds the URL, `file_name` holds the name taken from the URL, `file_mime` holds the guessed MIME type, and `file_caption` holds `file_caption` if you sent it.
 
-```json
-{
-  "code": 400,
-  "message": "Invalid file URL",
-  "error": "File URL is not accessible or file too large (max 100MB)"
-}
-```
+## Errors
 
-## 💡 Best Practices
+| HTTP status | `message` | Cause |
+|---|---|---|
+| `400` | `Invalid message params: ...` | `params` contains a key that is not allowed, or `document` is not an object with only `url`. |
+| `400` | `File URL is required for file type` | Legacy format without `file_url`, or a request with neither `params` nor `file_url`. |
+| `400` | `File name is required in message field for file type` | Legacy format without `message`. Despite the wording, `message` is used as the caption. |
+| `400` | `Invalid request body: ...` | The body is not valid JSON, or `device`, `receiver`, or `type` is missing. |
+| `403` | `Missing Authorization header`, `Missing token in Authorization header`, `Invalid Authentication Token` | Token problem. See [Authentication](../authentication.md#errors). |
+| `403` | `Device not found or access denied` | `device` is not a device on your account. |
+| `403` | Quota or subscription message | Your package has no messages left. |
+| `500` | Error description | Internal error, for example the message could not be saved. Try again later. |
 
-### 1. File URL Validation
+Problems with the file itself, such as a dead link, a private URL, or a file that is too large, do not cause an error response because the API accepts the request first and sends it in the background. The same goes for sending failures, such as a disconnected device or a number that is not on WhatsApp. They show up later as status `ERROR` with a `failed_reason`. Check them with [Get message](./get-message.md); see [Status values](./get-message.md#status-values).
 
-```javascript
-function validateFileUrl(url) {
-  const urlPattern = /^https?:\/\/.+/;
-  
-  if (!urlPattern.test(url)) {
-    throw new Error('File URL must use HTTP or HTTPS protocol');
-  }
-  
-  // Check file extension
-  const allowedExtensions = [
-    'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
-    'txt', 'csv', 'zip', 'rar', '7z', 'tar', 'gz',
-    'jpg', 'jpeg', 'png', 'gif', 'mp3', 'mp4', 'avi'
-  ];
-  
-  const extension = url.split('.').pop().toLowerCase();
-  
-  if (!allowedExtensions.includes(extension)) {
-    throw new Error(`File type .${extension} is not supported`);
-  }
-  
-  return true;
-}
-```
+## Legacy format
 
-### 2. File Description Best Practices
+The older format, without `params`, is still accepted for backward compatibility. It behaves differently from what the field names suggest:
 
-```javascript
-function formatFileMessage(fileName, description, fileSize = null) {
-  let message = '';
-  
-  // Add appropriate emoji based on file type
-  const extension = fileName.split('.').pop().toLowerCase();
-  const fileEmojis = {
-    'pdf': '📄',
-    'doc': '📝', 'docx': '📝',
-    'xls': '📊', 'xlsx': '📊',
-    'ppt': '📽️', 'pptx': '📽️',
-    'zip': '📦', 'rar': '📦',
-    'jpg': '🖼️', 'png': '🖼️',
-    'mp3': '🎵', 'mp4': '🎬'
-  };
-  
-  const emoji = fileEmojis[extension] || '📎';
-  message += `${emoji} ${fileName}`;
-  
-  if (fileSize) {
-    message += ` (${fileSize})`;
-  }
-  
-  if (description) {
-    message += `\n\n${description}`;
-  }
-  
-  return message;
-}
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `file_url` | string | Yes | Direct, public URL of the file. |
+| `message` | string | Yes | Used as the **caption**, not as the file name. |
+| `file_caption` | string | No | If set, used as the caption instead of `message`. |
 
-// Usage
-const message = formatFileMessage(
-  'quarterly-report.pdf',
-  'Q3 financial results and market analysis',
-  '3.2MB'
-);
-// Result: "📄 quarterly-report.pdf (3.2MB)\n\nQ3 financial results and market analysis"
-```
+In this format the file name is taken from the end of the URL (`.../report.pdf` → `report.pdf`) and the MIME type is guessed from the file extension. To choose the file name yourself, use `params`.
 
-### 3. Batch File Sending
+## Code examples
 
-```javascript
-async function sendMultipleFiles(token, device, receiver, files, delay = 2000) {
-  const results = [];
-  
-  for (const file of files) {
-    try {
-      const result = await sendFileMessage(
-        token,
-        device,
-        receiver,
-        file.url,
-        file.message
-      );
-      
-      results.push({
-        file: file.name,
-        success: true,
-        messageId: result.data.id
-      });
-      
-      // Delay between files to avoid rate limiting
-      if (delay > 0) {
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
-      
-    } catch (error) {
-      results.push({
-        file: file.name,
-        success: false,
-        error: error.message
-      });
-    }
-  }
-  
-  return results;
-}
+JavaScript helpers, validation, batch sending, retries, and use cases for file messages are in the [Messaging guide](./guide.md).
 
-// Usage
-const files = [
-  {
-    name: 'contract.pdf',
-    url: 'https://docs.example.com/contract.pdf',
-    message: '📋 Service Contract\n\nPlease review and sign.'
-  },
-  {
-    name: 'invoice.pdf', 
-    url: 'https://billing.example.com/invoice.pdf',
-    message: '💳 Invoice #12345\n\nPayment due: Dec 30, 2024'
-  }
-];
+## Limitations
 
-const results = await sendMultipleFiles('YOUR_TOKEN', '6281234567890', '6289876543210', files);
-console.log('Batch send results:', results);
-```
+- **File size:** up to 100 MB per file (WhatsApp limit).
+- **File URL:** must be public and reachable over HTTP or HTTPS. The API does not check it; see [Errors](#errors).
+- **File types:** WhatsApp may refuse some file types.
+- **Large files:** take longer to deliver.
+- **Retention:** files may be cached temporarily for delivery.
 
-## ⚠️ Limitations
+## Related
 
-- **File size**: Maximum 100MB per file
-- **File URL**: Must be publicly accessible via HTTP/HTTPS
-- **File types**: Limited to supported formats only
-- **Upload time**: Large files may take longer to process
-- **Retention**: Files cached temporarily for delivery optimization
-
-## 🔗 Related Endpoints
-
-- [Send Image Messages](./send-image) - For image-specific messaging
-- [Send Text Messages](./send-text) - For file descriptions
-- [Get Message Status](../messages/get-messages) - Check delivery status
+- [Send image](./send-image.md): send photos that display inline
+- [Send text](./send-text.md): plain text messages
+- [Get message](./get-message.md): check a message's delivery status

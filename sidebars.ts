@@ -14,42 +14,60 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
  */
 const sidebars: SidebarsConfig = {
   // Main API documentation sidebar
+  // Ordered by the reader's workflow: token → device → send → groups → contacts → events → AI tooling
   apiSidebar: [
     'intro',
-    'authentication', 
-    'webhooks',
-    'device-management',
+    'quickstart',
+    'authentication',
     {
       type: 'category',
-      label: '💬 Messaging',
+      label: 'Devices',
       items: [
+        {type: 'doc', id: 'device-management', label: 'Overview'},
+        'devices/create',
+        'devices/list',
+        'devices/get',
+        'devices/qr',
+        'devices/update',
+        'devices/delete',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Messaging',
+      items: [
+        'messaging/get-message',
         'messaging/send-text',
         'messaging/send-image',
         'messaging/send-video',
         'messaging/send-file',
         'messaging/send-location',
-        'messaging/get-message',
-        'messaging/send-reaction'
+        'messaging/send-reaction',
+        'messaging/guide',
       ],
     },
     {
       type: 'category',
-      label: '👥 Group Management',
+      label: 'Groups',
       items: [
-        'groups/send-group-messages',
         'groups/list-groups',
         'groups/get-group',
-        'groups/update-group',
-        'groups/add-members',
         'groups/refresh-groups',
+        'groups/send-group-messages',
+        'groups/add-members',
+        'groups/update-group',
       ],
     },
     {
       type: 'category',
-      label: '📞 Contacts',
-      items: [
-        'contacts/check-contacts',
-      ],
+      label: 'Contacts',
+      items: ['contacts/check-contacts'],
+    },
+    'webhooks',
+    {
+      type: 'category',
+      label: 'MCP Server',
+      items: ['mcp/quickstart', 'mcp/guides', 'mcp/reference'],
     },
   ],
 };
