@@ -110,27 +110,7 @@ const config: Config = {
     },
     footer: {
       style: 'light',
-      links: [
-        {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Introduction',
-              to: '/docs/intro',
-            },
-          ],
-        },
-        {
-          title: 'Community',
-          items: [
-            {
-              label: 'WhatsApp Channel',
-              href: 'https://whatsapp.com/channel/0029VabNvSSCHDykGTPTK42a/108',
-            }
-          ],
-        }
-      ],
-      copyright: `Copyright © ${new Date().getFullYear()} Whatspie. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Whatspie.`,
     },
     prism: {
       theme: prismThemes.github,
